@@ -25,12 +25,12 @@ export default function Header() {
               <span>+256 789 395 815</span>
             </a>
             <span className="hidden opacity-40 sm:inline">|</span>
-            <a href="mailto:info@ssemuyabafoundation.org" className="contact-chip group hidden sm:inline-flex">
+            <a href="mailto:info@ssemuyabafoundation.org" className="group hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap">
               <MailIcon className="contact-chip-icon h-4 w-4" />
               <span>info@ssemuyabafoundation.org</span>
             </a>
             <span className="hidden opacity-40 sm:inline">|</span>
-            <span className="contact-chip hidden sm:inline-flex">
+            <span className="hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap">
               <MapPinIcon className="contact-chip-icon h-4 w-4" />
               <span>Naama Village, Mityana, Uganda</span>
             </span>
