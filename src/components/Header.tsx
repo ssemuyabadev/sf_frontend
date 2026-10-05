@@ -13,6 +13,55 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 shadow-sm">
       <div className="bg-[#006b2f] text-white">
+        <div className="section-wrap flex flex-col gap-1.5 py-1.5 text-[10px] font-semibold sm:flex-row sm:min-h-[38px] sm:items-center sm:justify-between sm:gap-4 sm:py-0 sm:text-xs">
+          <div className="flex items-center gap-3 leading-tight sm:gap-4">
+            <a href="tel:+256705283679" className="contact-chip group">
+              <PhoneIcon className="contact-chip-icon h-4 w-4" />
+              <span>+256 705 283 679</span>
+            </a>
+            <span className="opacity-40">|</span>
+            <a href="tel:+256789395815" className="contact-chip group">
+              <PhoneIcon className="contact-chip-icon h-4 w-4" />
+              <span>+256 789 395 815</span>
+            </a>
+            <span className="hidden opacity-40 sm:inline">|</span>
+            <a href="mailto:info@ssemuyabafoundation.org" className="contact-chip group hidden sm:inline-flex">
+              <MailIcon className="contact-chip-icon h-4 w-4" />
+              <span>info@ssemuyabafoundation.org</span>
+            </a>
+            <span className="hidden opacity-40 sm:inline">|</span>
+            <span className="contact-chip hidden sm:inline-flex">
+              <MapPinIcon className="contact-chip-icon h-4 w-4" />
+              <span>Naama Village, Mityana, Uganda</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold">Follow Us:</span>
+            <div className="flex items-center gap-1.5" aria-label="Social media">
+              <a href="#" aria-label="Facebook" className="social-brand social-brand-header"><FacebookIcon /></a>
+              <a href="#" aria-label="Instagram" className="social-brand social-brand-header"><InstagramIcon /></a>
+              <a href="#" aria-label="X" className="social-brand social-brand-header"><XSocialIcon /></a>
+              <a href="#" aria-label="LinkedIn" className="social-brand social-brand-header"><LinkedInIcon /></a>
+              <a href="#" aria-label="YouTube" className="social-brand social-brand-header"><YouTubeIcon /></a>
+              <a href="https://wa.me/256705283679" aria-label="WhatsApp" className="social-brand social-brand-header"><WhatsAppIcon /></a>
+            </div>
+          </div>
+        </div>
+      </div>lient";
+
+import Image from "next/image";
+import { useState } from "react";
+import { FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, MenuIcon, PhoneIcon, WhatsAppIcon, XIcon, XSocialIcon, YouTubeIcon } from "./icons";
+
+const navItems = ["Home", "About Us", "Our Causes", "Get Involved", "Gallery", "News & Updates", "Contact Us"];
+const ids = ["home", "about", "programs", "involved", "gallery", "news", "contact"];
+
+export default function Header() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <header className="sticky top-0 z-50 shadow-sm">
+      <div className="bg-[#006b2f] text-white">
         <div className="section-wrap flex min-h-[38px] items-center justify-between gap-3 py-1.5 text-[10px] font-semibold sm:min-h-[38px] sm:py-0 sm:text-xs">
           <div className="flex flex-col gap-0.5 leading-tight sm:flex-row sm:items-center sm:gap-4">
             <a href="tel:+256705283679" className="contact-chip group">
