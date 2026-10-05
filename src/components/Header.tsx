@@ -30,13 +30,6 @@ export default function Header() {
                 {x}
               </span>
             ))}
-            <a
-              href="#donate"
-              className="ml-2 flex items-center gap-1.5 rounded-full bg-[#ff1d2d] px-4 py-1.5 font-bold transition hover:scale-[1.03]"
-            >
-              <HeartIcon className="h-3.5 w-3.5" />
-              Donate Now
-            </a>
           </div>
         </div>
       </div>
@@ -70,7 +63,7 @@ export default function Header() {
                 </span>
                 <span className="ml-1.5 h-[2px] w-5 bg-[#0c8f3e]" aria-hidden="true" />
               </span>
-              <span className="mt-1 max-w-[190px] text-[5.5px] font-semibold tracking-[0.01em] text-[#111] sm:text-[6px]">
+              <span className="mt-1 max-w-[235px] text-[7px] font-extrabold leading-[1.25] tracking-[0.01em] text-[#087a35] sm:text-[8px]">
                 Empowering Vulnerable Orphans, Children and Widows.
               </span>
             </span>
