@@ -42,7 +42,7 @@ export default function Footer() {
               <a href={siteContact.x || "#"} aria-label="X" className="social-brand social-brand-footer"><XSocialIcon/></a>
               <a href={siteContact.linkedin || "#"} aria-label="LinkedIn" className="social-brand social-brand-footer"><LinkedInIcon/></a>
               <a href={siteContact.youtube || "#"} aria-label="YouTube" className="social-brand social-brand-footer"><YouTubeIcon/></a>
-              <a href={whatsappHref(siteContact.phone)} aria-label="WhatsApp" className="social-brand social-brand-footer"><WhatsAppIcon/></a>
+              <a href={siteContact.whatsapp || whatsappHref(siteContact.phone)} aria-label="WhatsApp" className="social-brand social-brand-footer"><WhatsAppIcon/></a>
             </div>
           </div>
         </div>
