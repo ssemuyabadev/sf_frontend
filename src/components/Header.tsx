@@ -21,7 +21,7 @@ export default function Header() {
             <span className="opacity-60">|</span>
             <span>✉ info@ssemuyabafoundation.org</span>
             <span className="opacity-60">|</span>
-            <span>⌖ Kampala, Uganda</span>
+            <span>⌖ Naama Village, Mityana, Uganda</span>
           </div>
           <div className="ml-auto flex items-center gap-2.5">
             <span className="hidden sm:inline">Follow Us:</span>
