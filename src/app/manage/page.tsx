@@ -28,44 +28,7 @@ const nav = [
   { id: "news" as Section, label: "News & Updates", icon: "▤" },
   { id: "settings" as Section, label: "Settings", icon: "⚙" },
 ];
-
-const messages = [
-  { name: "Sarah Namukasa", email: "sarah.n@example.com", subject: "Sponsoring a child", date: "Today, 10:42", status: "New" },
-  { name: "Daniel Kato", email: "daniel.k@example.com", subject: "Community partnership", date: "Today, 08:15", status: "New" },
-  { name: "Grace Achieng", email: "grace.a@example.com", subject: "Medical support request", date: "Yesterday", status: "Replied" },
-  { name: "Peter Mugisha", email: "peter.m@example.com", subject: "Donation question", date: "Sep 30", status: "Read" },
-];
-
-const subscribers = [
-  { email: "james.kato@example.com", joined: "Oct 05, 2026", source: "Website" },
-  { email: "maria.n@example.com", joined: "Oct 04, 2026", source: "Website" },
-  { email: "hope.foundation@example.com", joined: "Oct 03, 2026", source: "Campaign" },
-  { email: "ivan.m@example.com", joined: "Oct 01, 2026", source: "Website" },
-];
-
-const volunteers = [
-  { name: "Aisha Namirembe", role: "Community Outreach", date: "Oct 05, 2026", status: "New" },
-  { name: "Brian Ssemanda", role: "Education Support", date: "Oct 04, 2026", status: "Reviewing" },
-  { name: "Ruth Nakato", role: "Medical Outreach", date: "Oct 02, 2026", status: "Approved" },
-  { name: "Samuel Waiswa", role: "Media & Events", date: "Sep 28, 2026", status: "Approved" },
-];
-
-const gallery = [
-  { title: "Community Food Outreach", image: "/images/food-4.jpg", category: "Community" },
-  { title: "Education Support", image: "/images/books.jpg", category: "Education" },
-  { title: "Widow Empowerment", image: "/images/donation.jpg", category: "Livelihoods" },
-  { title: "Healthcare Outreach", image: "/images/health-1.jpg", category: "Healthcare" },
-  { title: "Faith & Community", image: "/images/preaching.jpg", category: "Outreach" },
-  { title: "Hope In Action", image: "/images/home-hero.jpg", category: "Featured" },
-];
-
-const news = [
-  { title: "School Fees Support for 100 Orphans", date: "Sep 12, 2026", status: "Published", image: "/images/books.jpg" },
-  { title: "Widows Empowerment Program Launched", date: "Sep 08, 2026", status: "Published", image: "/images/donation.jpg" },
-  { title: "Medical Support Reaches Remote Communities", date: "Sep 02, 2026", status: "Published", image: "/images/health-1.jpg" },
-  { title: "Community Outreach Brings Hope", date: "Aug 28, 2026", status: "Draft", image: "/images/preaching.jpg" },
-];
-
+\n\n\n\n\n
 function Status({ children }: { children: string }) {
   const tone =
     children === "New" ? "bg-[#e8fff0] text-[#087a35]" :
