@@ -11,7 +11,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white shadow-md">
       <div className="bg-[#006b2f] text-white">
         <div className="section-wrap flex flex-col gap-1.5 py-1.5 text-[10px] font-semibold sm:flex-row sm:min-h-[38px] sm:items-center sm:justify-between sm:gap-4 sm:py-0 sm:text-xs">
           <div className="flex items-center gap-3 leading-tight sm:gap-4">
@@ -35,7 +35,7 @@ export default function Header() {
               <span>Naama Village, Mityana, Uganda</span>
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-2 sm:flex">
             <span className="text-[10px] font-bold">Follow Us:</span>
             <div className="flex items-center gap-1.5" aria-label="Social media">
               <a href="#" aria-label="Facebook" className="social-brand social-brand-header"><FacebookIcon /></a>
@@ -47,9 +47,9 @@ export default function Header() {
             </div>
           </div>
         </div>
-      </div>l
+      </div>
 
-      <div className="nav-shell relative border-b border-black/5 bg-white">
+      <div className="nav-shell relative -mt-px border-b border-black/5 bg-white">
         <div className="section-wrap relative z-10 flex min-h-[78px] items-center justify-between">
           <a
             href="#home"
