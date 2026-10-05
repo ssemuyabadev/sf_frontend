@@ -85,9 +85,4 @@ a {
     width: min(100% - 28px, 1180px);
   }
 
-  .nav-shell::after {
-    width: 92vw;
-    bottom: -12px;
-    height: 24px;
-  }
 }
