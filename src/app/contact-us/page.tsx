@@ -50,7 +50,7 @@ export default function ContactPage() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a href="#contact-details" className="inline-flex items-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3 text-sm font-extrabold shadow-xl transition hover:-translate-y-1 hover:bg-[#e91424]">Get in Touch <ArrowRight className="h-4 w-4" /></a>
-              <a href={whatsappHref(siteContact.phone)} className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/10 px-6 py-3 text-sm font-extrabold backdrop-blur transition hover:-translate-y-1 hover:bg-white hover:text-[#03491f]"><WhatsAppIcon className="h-4 w-4" /> WhatsApp Us</a>
+              <a href={siteContact.whatsapp || whatsappHref(siteContact.phone)} className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/10 px-6 py-3 text-sm font-extrabold backdrop-blur transition hover:-translate-y-1 hover:bg-white hover:text-[#03491f]"><WhatsAppIcon className="h-4 w-4" /> WhatsApp Us</a>
             </div>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function ContactPage() {
               <div className="mt-7 grid grid-cols-3 gap-2 sm:grid-cols-6 lg:grid-cols-3">
                 {socials.map(([Icon, label]) => {
                   const C = Icon as React.ComponentType<{ className?: string }>;
-                  return <a key={label as string} href={label === "WhatsApp" ? whatsappHref(siteContact.phone) : label === "Facebook" ? siteContact.facebook || "#" : label === "Instagram" ? siteContact.instagram || "#" : label === "X" ? siteContact.x || "#" : label === "LinkedIn" ? siteContact.linkedin || "#" : label === "YouTube" ? siteContact.youtube || "#" : "#"} aria-label={label as string} className="grid h-11 w-11 place-items-center rounded-full bg-[#087a35] text-white transition hover:-translate-y-1 hover:bg-[#13b947]"><C className="h-4 w-4" /></a>;
+                  return <a key={label as string} href={label === "WhatsApp" ? siteContact.whatsapp || whatsappHref(siteContact.phone) : label === "Facebook" ? siteContact.facebook || "#" : label === "Instagram" ? siteContact.instagram || "#" : label === "X" ? siteContact.x || "#" : label === "LinkedIn" ? siteContact.linkedin || "#" : label === "YouTube" ? siteContact.youtube || "#" : "#"} aria-label={label as string} className="grid h-11 w-11 place-items-center rounded-full bg-[#087a35] text-white transition hover:-translate-y-1 hover:bg-[#13b947]"><C className="h-4 w-4" /></a>;
                 })}
               </div>
               <div className="mt-8 rounded-2xl bg-[#063019] p-5 text-white">
@@ -153,7 +153,7 @@ export default function ContactPage() {
                 <p className="mt-2 text-sm font-bold">Call us or send a WhatsApp message today.</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <a href={phoneHref(siteContact.phone)} className="rounded-full bg-white px-4 py-2 text-xs font-extrabold text-[#063019]">Call Now</a>
-                  <a href={whatsappHref(siteContact.phone)} className="rounded-full bg-[#13d74c] px-4 py-2 text-xs font-extrabold text-[#063019]">WhatsApp</a>
+                  <a href={siteContact.whatsapp || whatsappHref(siteContact.phone)} className="rounded-full bg-[#13d74c] px-4 py-2 text-xs font-extrabold text-[#063019]">WhatsApp</a>
                 </div>
               </div>
             </div>
