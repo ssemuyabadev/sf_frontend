@@ -135,7 +135,7 @@ export default function GalleryPage() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-            <Link href="/donate" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff1d2d] px-7 py-4 text-sm font-black text-white shadow-[0_18px_45px_rgba(255,29,45,.2)] transition hover:-translate-y-1 hover:bg-[#e91424)">
+            <Link href="/donate" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff1d2d] px-7 py-4 text-sm font-black text-white shadow-[0_18px_45px_rgba(255,29,45,.2)] transition hover:-translate-y-1 hover:bg-[#e91424]">
               <HeartIcon className="h-4 w-4" /> Donate &amp; make a difference
             </Link>
             <Link href="/contact-us" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-4 text-sm font-black text-white backdrop-blur transition hover:bg-white/15">
