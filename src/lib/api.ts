@@ -38,3 +38,48 @@ export const mutations = {
   sponsor: `mutation($input:SponsorInput!){ submitSponsor(input:$input){ id } }`,
   newsletter: `mutation($email:String!){ subscribeNewsletter(email:$email){ id email } }`,
 };
+
+type ContactPayload = {
+  name: string;
+  email: string;
+  phone?: string;
+  subject?: string;
+  message: string;
+};
+
+type VolunteerPayload = {
+  name: string;
+  email: string;
+  phone: string;
+  interest: string;
+  availability?: string;
+  message?: string;
+};
+
+type SponsorPayload = {
+  fullName: string;
+  email: string;
+  phone: string;
+  country?: string;
+  city?: string;
+  preferredContact?: string;
+  sponsorshipPreference?: string;
+  message?: string;
+  consent: boolean;
+};
+
+export async function submitContact(input: ContactPayload) {
+  return gql<{ submitContact: { id: string } }>(mutations.contact, { input });
+}
+
+export async function submitVolunteer(input: VolunteerPayload) {
+  return gql<{ submitVolunteer: { id: string } }>(mutations.volunteer, { input });
+}
+
+export async function submitSponsor(input: SponsorPayload) {
+  return gql<{ submitSponsor: { id: string } }>(mutations.sponsor, { input });
+}
+
+export async function subscribeNewsletter(email: string) {
+  return gql<{ subscribeNewsletter: { id: string; email: string } }>(mutations.newsletter, { email });
+}
