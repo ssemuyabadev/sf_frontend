@@ -10,17 +10,17 @@ const programs=[
  {title:"Sustainable Livelihoods",text:"Creating long-term opportunities.",icon:LeafIcon}
 ];
 const updates=[
- {image:"/images/update-1.png",date:"12",month:"Sep",title:"School Fees Support for 100 Orphans",text:"We are grateful to our donors for helping 100 children return to school..."},
- {image:"/images/update-2.png",date:"08",month:"Sep",title:"Widows Empowerment Program Launched",text:"Our new skills training program is helping widows build better futures..."},
- {image:"/images/update-3.png",date:"02",month:"Sep",title:"Medical Support Reaches Remote Communities",text:"We provided healthcare support to vulnerable families in rural areas..."},
- {image:"/images/update-4.png",date:"28",month:"Aug",title:"Community Outreach Brings Hope",text:"Our team visited several communities to share love, food and encouragement..."}
+ {image:"/images/update-1.svg",date:"12",month:"Sep",title:"School Fees Support for 100 Orphans",text:"We are grateful to our donors for helping 100 children return to school..."},
+ {image:"/images/update-2.svg",date:"08",month:"Sep",title:"Widows Empowerment Program Launched",text:"Our new skills training program is helping widows build better futures..."},
+ {image:"/images/update-3.svg",date:"02",month:"Sep",title:"Medical Support Reaches Remote Communities",text:"We provided healthcare support to vulnerable families in rural areas..."},
+ {image:"/images/update-4.svg",date:"28",month:"Aug",title:"Community Outreach Brings Hope",text:"Our team visited several communities to share love, food and encouragement..."}
 ];
 
 export default function Home(){
  return <main>
   <Header/>
   <section id="home" className="relative min-h-[510px] overflow-hidden bg-[#062416]">
-   <Image src="/images/hero-family.png" alt="A mother and children smiling together" fill priority className="object-cover object-right"/>
+   <Image src="/images/hero-family.svg" alt="A mother and children smiling together" fill priority className="object-cover object-right"/>
    <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/15"/>
    <div className="section-wrap relative flex min-h-[510px] items-center py-14"><div className="max-w-[540px] text-white">
     <p className="mb-3 text-xs font-extrabold tracking-[0.18em] sm:text-sm">SSEMUYABA FOUNDATION</p>
@@ -44,7 +44,7 @@ export default function Home(){
   </div></section>
 
   <section id="donate" className="grid min-h-[300px] lg:grid-cols-2">
-   <div className="relative min-h-[300px] overflow-hidden"><Image src="/images/testimonial-child.png" alt="Child smiling at school" fill className="object-cover object-center"/><div className="absolute inset-0 bg-gradient-to-r from-black/5 to-black/75"/><div className="absolute inset-y-0 right-0 flex w-[52%] items-center p-6 text-white sm:p-10"><div><div className="mb-2 text-4xl font-black text-[#13d74c]">“</div><p className="text-xl font-bold leading-6">Because of your support,<br/>I now go to school,<br/>I have <span className="text-[#13d74c]">hope</span>, and I believe<br/>in my dreams.</p><p className="mt-3 text-xs font-semibold">— A beneficiary child</p></div></div></div>
+   <div className="relative min-h-[300px] overflow-hidden"><Image src="/images/testimonial-child.svg" alt="Child smiling at school" fill className="object-cover object-center"/><div className="absolute inset-0 bg-gradient-to-r from-black/5 to-black/75"/><div className="absolute inset-y-0 right-0 flex w-[52%] items-center p-6 text-white sm:p-10"><div><div className="mb-2 text-4xl font-black text-[#13d74c]">“</div><p className="text-xl font-bold leading-6">Because of your support,<br/>I now go to school,<br/>I have <span className="text-[#13d74c]">hope</span>, and I believe<br/>in my dreams.</p><p className="mt-3 text-xs font-semibold">— A beneficiary child</p></div></div></div>
    <div className="relative overflow-hidden bg-[#006b2f] px-7 py-10 text-white sm:px-12"><div className="relative mx-auto max-w-xl"><h2 className="flex items-center gap-3 text-2xl font-black sm:text-3xl"><HeartIcon className="h-10 w-10"/><span>Make a Difference Today</span></h2><p className="mt-2 text-sm text-white/90">Your support can change a life. Donate today and be part of the solution.</p><div className="mt-5 grid grid-cols-4 gap-2">{["$10","$25","$50","$100"].map((amount,i)=><button key={amount} className={"rounded-full border px-3 py-2 text-sm font-bold "+(i===1?"border-[#13d74c] bg-[#13d74c]":"border-white/40")}>{amount}</button>)}</div><button className="mx-auto mt-5 flex w-full max-w-[250px] items-center justify-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3 text-sm font-extrabold"><HeartIcon className="h-4 w-4"/>Donate Now</button><p className="mt-3 text-center text-[10px] font-semibold text-white/80">▣ Secure &amp; Trusted Payments</p></div></div>
   </section>
 
@@ -53,7 +53,7 @@ export default function Home(){
   </div></section>
 
   <footer id="contact" className="bg-[#03160b] text-white"><div className="section-wrap grid gap-8 py-8 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1.2fr_1fr]">
-   <div><Image src="/images/ssemuyaba-logo.png" alt="Ssemuyaba Foundation" width={270} height={210} className="h-24 w-auto object-contain object-left"/></div>
+   <div><Image src="/images/ssemuyaba-logo.svg" alt="Ssemuyaba Foundation" width={270} height={210} className="h-24 w-auto object-contain object-left"/></div>
    <div><h3 className="font-bold">Quick Links</h3><div className="mt-3 grid grid-cols-2 gap-y-2 text-xs text-white/75">{["Home","About Us","Our Programs","Get Involved","Gallery","News & Updates","Contact","Donate"].map(x=><a href={"#"+(x==="Home"?"home":x==="About Us"?"about":x==="News & Updates"?"news":x==="Contact"?"contact":"programs")} key={x}>{x}</a>)}</div></div>
    <div><h3 className="font-bold">Contact Us</h3><div className="mt-3 space-y-2 text-xs text-white/80"><p>☎ +256 705 283 679 | +256 789 395 815</p><p>✉ info@ssemuyabafoundation.org</p><p>⌖ Kampala, Uganda</p></div></div>
    <div><h3 className="font-bold">Follow Us</h3><div className="mt-3 flex gap-2">{["f","𝕏","◎","▶"].map(x=><span key={x} className="grid h-8 w-8 place-items-center rounded-full bg-white/10 text-sm">{x}</span>)}</div><p className="mt-6 text-2xl font-black italic text-[#13d74c]">Together<br/>We Can <span className="text-[#ff1d2d]">♡</span></p></div>
