@@ -20,9 +20,9 @@ export const queries = {
   volunteers: `query { volunteerApplications { id name email phone interest availability message status createdAt updatedAt } }`,
   sponsors: `query { sponsorEnquiries { id fullName email phone country city preferredContact sponsorshipPreference message consent status createdAt updatedAt } }`,
   gallery: `query { adminGallery { id title imageUrl description category published createdAt } }`,
-  news: `query { adminNews { id title slug excerpt body imageUrl published publishedAt createdAt } }`,
+  news: `query { adminNews { id title slug category excerpt body imageUrl published publishedAt createdAt updatedAt } }`,
   publicGallery: `query { gallery(publishedOnly: true) { id title imageUrl description category } }`,
-  publicNews: `query { news(publishedOnly: true) { id title slug excerpt body imageUrl publishedAt } }`,
+  publicNews: `query { news(publishedOnly: true) { id title slug category excerpt body imageUrl publishedAt } }`,
 };
 
 export const mutations = {
@@ -38,8 +38,8 @@ export const mutations = {
   createGallery: `mutation($input:GalleryInput!){ createGallery(input:$input){ id title imageUrl description category published createdAt } }`,
   updateGallery: `mutation($id:String!,$input:GalleryInput!){ updateGallery(id:$id,input:$input){ id title imageUrl description category published createdAt } }`,
   deleteGallery: `mutation($id:String!){ deleteGallery(id:$id) }`,
-  createNews: `mutation($input:NewsInput!){ createNews(input:$input){ id title slug excerpt body imageUrl published publishedAt createdAt } }`,
-  updateNews: `mutation($id:String!,$input:NewsInput!){ updateNews(id:$id,input:$input){ id title slug excerpt body imageUrl published publishedAt createdAt } }`,
+  createNews: `mutation($input:NewsInput!){ createNews(input:$input){ id title slug category excerpt body imageUrl published publishedAt createdAt updatedAt } }`,
+  updateNews: `mutation($id:String!,$input:NewsInput!){ updateNews(id:$id,input:$input){ id title slug category excerpt body imageUrl published publishedAt createdAt updatedAt } }`,
   deleteNews: `mutation($id:String!){ deleteNews(id:$id) }`,
   contact: `mutation($input:ContactInput!){ submitContact(input:$input){ id } }`,
   volunteer: `mutation($input:VolunteerInput!){ submitVolunteer(input:$input){ id } }`,
