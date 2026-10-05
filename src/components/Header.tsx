@@ -50,7 +50,7 @@ export default function Header() {
               <a href={siteContact.x || "#"} aria-label="X" className="social-brand social-brand-header"><XSocialIcon /></a>
               <a href={siteContact.linkedin || "#"} aria-label="LinkedIn" className="social-brand social-brand-header"><LinkedInIcon /></a>
               <a href={siteContact.youtube || "#"} aria-label="YouTube" className="social-brand social-brand-header"><YouTubeIcon /></a>
-              <a href={whatsappHref(siteContact.phone)} aria-label="WhatsApp" className="social-brand social-brand-header"><WhatsAppIcon /></a>
+              <a href={siteContact.whatsapp || whatsappHref(siteContact.phone)} aria-label="WhatsApp" className="social-brand social-brand-header"><WhatsAppIcon /></a>
             </div>
           </div>
         </div>
