@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import Header from "../components/Header";
 import ScrollToTop from "../components/ScrollToTop";
 import {ArrowRight,FacebookIcon,GraduationIcon,HeartIcon,HeartPulseIcon,InstagramIcon,LeafIcon,LinkedInIcon,MailIcon,MapPinIcon,PhoneIcon,PinIcon,ToolsIcon,UsersIcon,WhatsAppIcon,XSocialIcon,YouTubeIcon} from "../components/icons";
@@ -22,14 +23,15 @@ export default function Home(){
   <Header/>
   <section id="home" className="hero-section relative min-h-[470px] overflow-hidden bg-[#061d11] sm:min-h-[485px] lg:min-h-[500px]">
    <Image
-    src="/images/home-hero.jpg"
-    alt="A mother and children smiling together"
+    src="/images/food-3.jpg"
+    alt="Ssemuyaba Foundation community food outreach"
     fill
     priority
     sizes="100vw"
-    className="hero-image object-cover object-[62%_center] sm:object-[60%_center]"
+    className="hero-image object-cover object-center sm:object-[58%_center]"
    />
-   <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.84)_0%,rgba(0,0,0,.66)_34%,rgba(0,0,0,.20)_67%,rgba(0,0,0,.04)_100%)]"/>
+   <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,20,10,.90)_0%,rgba(0,30,16,.76)_34%,rgba(0,20,10,.38)_64%,rgba(0,0,0,.12)_100%)]"/>
+   <div className="absolute inset-0 bg-gradient-to-t from-[#03160b]/45 via-transparent to-transparent"/>
    <div className="section-wrap relative z-10 flex min-h-[470px] items-center py-14 sm:min-h-[485px] lg:min-h-[500px] lg:py-16">
     <div className="max-w-[560px] text-white">
      <p className="mb-2 text-[11px] font-extrabold tracking-[0.22em] sm:text-xs">SSEMUYABA FOUNDATION</p>
@@ -54,14 +56,33 @@ export default function Home(){
   </div></section>
 
   <section id="about" className="bg-[#f1fbf5] py-8 sm:py-10"><div className="section-wrap grid gap-8 lg:grid-cols-[1.1fr_2fr_1fr] lg:items-center">
-   <div><h2 className="border-l-2 border-[#ff1d2d] pl-3 text-3xl font-black sm:text-4xl">Our <span className="text-[#087a35]">Mission</span></h2><p className="mt-3 max-w-md text-sm leading-5 sm:text-base">To empower vulnerable orphans, children and widows through holistic support, including education, healthcare, skills development and sustainable livelihoods.</p><a href="#programs" className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#12b941] px-5 py-2.5 text-sm font-bold text-white">Learn More <ArrowRight className="h-4 w-4"/></a></div>
+   <div><h2 className="border-l-2 border-[#ff1d2d] pl-3 text-3xl font-black sm:text-4xl">Our <span className="text-[#087a35]">Mission</span></h2><p className="mt-3 max-w-md text-sm leading-5 sm:text-base">To empower vulnerable orphans, children and widows through holistic support, including education, healthcare, skills development and sustainable livelihoods.</p><Link href="/about-us" className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#12b941] px-5 py-2.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#0ca83a]">Learn More <ArrowRight className="h-4 w-4"/></Link></div>
    <div id="programs" className="grid grid-cols-2 divide-x divide-[#cde8d6] sm:grid-cols-4">{programs.map(({title,text,icon:Icon})=><div key={title} className="px-3 text-center sm:px-4"><div className="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-full border border-[#bde5cb] text-[#087a35]"><Icon/></div><h3 className="text-sm font-black leading-tight">{title}</h3><p className="mt-2 text-[11px] leading-4 text-black/70">{text}</p></div>)}</div>
    <div className="hidden text-right lg:block"><p className="text-3xl font-black italic leading-[1.05]">Real People<br/>Real Stories<br/><span className="text-[#0c8f3e]">Real Change</span> <span className="text-[#ff1d2d]">♡</span></p><div className="ml-auto mt-2 h-1 w-28 rotate-[-4deg] rounded-full bg-[#ff1d2d]"/></div>
   </div></section>
 
-  <section id="donate" className="grid min-h-[300px] lg:grid-cols-2">
-   <div className="relative min-h-[300px] overflow-hidden"><Image src="/images/testimonial-child.svg" alt="Child smiling at school" fill className="object-cover object-center"/><div className="absolute inset-0 bg-gradient-to-r from-black/5 to-black/75"/><div className="absolute inset-y-0 right-0 flex w-[52%] items-center p-6 text-white sm:p-10"><div><div className="mb-2 text-4xl font-black text-[#13d74c]">“</div><p className="text-xl font-bold leading-6">Because of your support,<br/>I now go to school,<br/>I have <span className="text-[#13d74c]">hope</span>, and I believe<br/>in my dreams.</p><p className="mt-3 text-xs font-semibold">— A beneficiary child</p></div></div></div>
-   <div className="relative overflow-hidden bg-[#006b2f] px-7 py-10 text-white sm:px-12"><div className="relative mx-auto max-w-xl"><h2 className="flex items-center gap-3 text-2xl font-black sm:text-3xl"><HeartIcon className="h-10 w-10"/><span>Make a Difference Today</span></h2><p className="mt-2 text-sm text-white/90">Your support can change a life. Donate today and be part of the solution.</p><div className="mt-5 grid grid-cols-4 gap-2">{["$10","$25","$50","$100"].map((amount,i)=><button key={amount} className={"rounded-full border px-3 py-2 text-sm font-bold "+(i===1?"border-[#13d74c] bg-[#13d74c]":"border-white/40")}>{amount}</button>)}</div><button className="mx-auto mt-5 flex w-full max-w-[250px] items-center justify-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3 text-sm font-extrabold"><HeartIcon className="h-4 w-4"/>Donate Now</button><p className="mt-3 text-center text-[10px] font-semibold text-white/80">▣ Secure &amp; Trusted Payments</p></div></div>
+  <section id="donate" className="grid min-h-[340px] lg:grid-cols-2">
+   <div className="relative min-h-[340px] overflow-hidden">
+    <Image src="/images/books-2.jpg" alt="Books prepared for children and education support" fill className="object-cover object-center"/>
+    <div className="absolute inset-0 bg-gradient-to-t from-[#03160b]/85 via-[#03160b]/20 to-transparent"/>
+    <div className="absolute inset-x-0 bottom-0 p-7 text-white sm:p-10">
+     <span className="inline-flex rounded-full bg-[#13d74c] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#063019]">Invest in a future</span>
+     <h3 className="mt-2 max-w-md text-2xl font-black leading-tight sm:text-3xl">Every child deserves the tools to learn, grow and dream.</h3>
+    </div>
+   </div>
+   <div className="relative overflow-hidden bg-[#006b2f] px-7 py-10 text-white sm:px-12">
+    <div className="relative mx-auto max-w-xl">
+     <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/10"><HeartIcon className="h-7 w-7 text-[#13d74c]"/></div>
+     <h2 className="text-2xl font-black sm:text-3xl">Make a Difference Today</h2>
+     <p className="mt-2 max-w-lg text-sm leading-6 text-white/90">Your support can change a life. Help us provide education, healthcare, food and sustainable opportunities for vulnerable children and widows.</p>
+     <div className="mt-6 rounded-2xl border border-white/15 bg-white/10 p-4">
+      <p className="text-sm font-bold">Give what you can. Every contribution matters.</p>
+      <p className="mt-1 text-xs leading-5 text-white/75">Your generosity helps us reach families who need practical support and hope.</p>
+     </div>
+     <button className="mt-6 flex w-full max-w-[250px] items-center justify-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3 text-sm font-extrabold transition hover:-translate-y-0.5 hover:bg-[#e91424]"><HeartIcon className="h-4 w-4"/>Donate Now</button>
+     <p className="mt-3 text-[10px] font-semibold text-white/70">▣ Secure &amp; Trusted Payments</p>
+    </div>
+   </div>
   </section>
 
   <section id="news" className="bg-white py-9 sm:py-11"><div className="section-wrap"><div className="mb-5 flex items-end justify-between gap-4"><div><h2 className="border-l-2 border-[#ff1d2d] pl-3 text-2xl font-black sm:text-3xl">Latest <span className="text-[#087a35]">Updates</span></h2><p className="mt-1 text-xs sm:text-sm">Stories, events and impact from our work.</p></div><a href="#news" className="hidden items-center gap-2 rounded-full bg-[#0c8f3e] px-5 py-2 text-xs font-bold text-white sm:flex">View All News <ArrowRight className="h-4 w-4"/></a></div>
