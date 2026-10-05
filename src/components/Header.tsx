@@ -41,7 +41,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="nav-shell border-b border-black/5 bg-white">
+      <div className="nav-shell relative border-b border-black/5 bg-white">
         <div className="section-wrap relative z-10 flex min-h-[72px] items-center justify-between">
           <a href="#home" onClick={() => setOpen(false)}>
             <Image
@@ -81,7 +81,7 @@ export default function Header() {
           </button>
         </div>
 
-        {open && (
+        <svg className="pointer-events-none absolute -bottom-[18px] left-0 z-0 h-[24px] w-full" viewBox="0 0 1200 24" preserveAspectRatio="none" aria-hidden="true">\n          <path d="M0 2 C300 16 900 16 1200 2 L1200 24 L0 24 Z" fill="white"/>\n        </svg>\n\n        {open && (
           <nav className="border-t border-black/5 bg-white px-5 py-4 lg:hidden">
             {navItems.map((item, i) => (
               <a
