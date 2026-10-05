@@ -88,7 +88,7 @@ export default function Header() {
             {navItems.map((item, i) => (
               <a
                 key={item}
-                href={i === 5 ? "/news-updates" : i === 6 ? "/contact-us" : "#" + ids[i]}
+                href={i === 4 ? "/gallery" : i === 5 ? "/news-updates" : i === 6 ? "/contact-us" : "#" + ids[i]}
                 className={
                   "flex items-center gap-1 border-b-2 py-6 text-[13px] font-bold transition " +
                   (i === 0
