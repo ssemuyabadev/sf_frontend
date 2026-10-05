@@ -50,8 +50,7 @@ export function phoneHref(phone: string) {
   return "tel:" + phone.replace(/[^+\\d]/g, "");
 }
 
-export function whatsappHref(phone: string, message?: string) {
-  const digits = phone.replace(/\\D/g, "");
-  const base = "https://wa.me/" + digits;
-  return message ? base + "?text=" + encodeURIComponent(message) : base;
+export function whatsappHref(phoneOrUrl: string, message?: string) {
+  const base = /^https?:\/\//i.test(phoneOrUrl) ? phoneOrUrl : "https://wa.me/" + phoneOrUrl.replace(/\D/g, "");
+  return message ? base + (base.includes("?") ? "&" : "?") + "text=" + encodeURIComponent(message) : base;
 }
