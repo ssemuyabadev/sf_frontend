@@ -29,6 +29,7 @@ export const mutations = {
   updateSettings: `mutation($input:SettingsInput!){ updateSiteSettings(input:$input){ id phone secondaryPhone email location facebook instagram x linkedin youtube whatsapp } }`,
   updateDonationMethod: `mutation($id:String!,$input:DonationMethodInput!){ updateDonationMethod(id:$id,input:$input){ id key name eyebrow detailsJson note updatedAt } }`,
   uploadNewsImage: `mutation($filename:String!,$contentBase64:String!){ uploadNewsImage(filename:$filename,contentBase64:$contentBase64) }`,
+  uploadGalleryImage: `mutation($filename:String!,$contentBase64:String!){ uploadGalleryImage(filename:$filename,contentBase64:$contentBase64) }`,
   updateMessageStatus: `mutation($id:String!,$status:String!){ updateContactStatus(id:$id,status:$status){ id status } }`,
   updateVolunteerStatus: `mutation($id:String!,$status:String!){ updateVolunteerStatus(id:$id,status:$status){ id status } }`,
   updateNewsletterStatus: `mutation($id:String!,$status:String!){ updateNewsletterStatus(id:$id,status:$status){ id email status updatedAt } }`,
