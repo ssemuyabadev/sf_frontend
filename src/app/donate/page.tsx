@@ -40,7 +40,7 @@ export default function DonatePage() {
             <p className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg">One generous act can help a child return to school, bring care to a family, or give a widow a fresh start. Your support turns compassion into real-world impact.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="#donation-methods" className="inline-flex items-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3.5 text-sm font-extrabold shadow-[0_10px_35px_rgba(255,29,45,.3)] transition duration-300 hover:-translate-y-1 hover:bg-[#e91424]">Choose how to give <ArrowRight className="h-4 w-4"/></a>
-              <a href="{whatsappMessage("Hello Ssemuyaba Foundation, I would like to make an online donation.")}" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-extrabold transition hover:-translate-y-1 hover:bg-white/10"><WhatsAppIcon className="h-4 w-4"/> Donate online</a>
+              <a href={whatsappMessage("Hello Ssemuyaba Foundation, I would like to make an online donation.")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-extrabold transition hover:-translate-y-1 hover:bg-white/10"><WhatsAppIcon className="h-4 w-4"/> Donate online</a>
             </div>
             <p className="mt-4 text-[11px] text-white/50">Want help arranging your gift? Message our team directly on WhatsApp.</p>
           </div>
@@ -90,7 +90,7 @@ export default function DonatePage() {
                   {m.details.map(d=><div key={d.label} className="flex items-center justify-between gap-3 rounded-xl border border-black/[.045] bg-[#f9fcfa] px-4 py-3"><div className="min-w-0"><p className="text-[9px] font-bold uppercase tracking-[.12em] text-black/45">{d.label}</p>{d.copy?<a href={d.label==="Telephone"||d.label==="Mobile Money number"?"tel:"+d.copy:undefined} className="mt-1 block break-all text-sm font-black text-[#132219] sm:text-base">{d.value}</a>:<p className="mt-1 break-words text-sm font-black text-[#132219] sm:text-base">{d.value}</p>}</div>{d.copy&&<CopyButton value={d.copy}/>}</div>)}
                 </div>
                 <p className="mt-4 text-xs leading-5 text-black/55">{m.note}</p>
-                <a href={"{whatsappMessage("Hello Ssemuyaba Foundation, I would like to donate via "+m.name+". Please guide me through the process.")}} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#087a35]/20 bg-white px-5 py-3 text-xs font-extrabold text-[#087a35] transition hover:border-[#087a35] hover:bg-[#087a35] hover:text-white"><WhatsAppIcon className="h-4 w-4"/> Ask about this method <ArrowRight className="h-3.5 w-3.5"/></a>
+                <a href={whatsappMessage("Hello Ssemuyaba Foundation, I would like to donate via "+m.name+". Please guide me through the process.")} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#087a35]/20 bg-white px-5 py-3 text-xs font-extrabold text-[#087a35] transition hover:border-[#087a35] hover:bg-[#087a35] hover:text-white"><WhatsAppIcon className="h-4 w-4"/> Ask about this method <ArrowRight className="h-3.5 w-3.5"/></a>
               </div>
             </article>)}
           </div>
@@ -102,7 +102,7 @@ export default function DonatePage() {
         <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full border-[40px] border-white/5" /><div className="absolute -right-20 -bottom-28 h-80 w-80 rounded-full bg-[#13d74c]/10 blur-3xl" />
         <div className="section-wrap relative z-10 grid items-center gap-8 lg:grid-cols-[1fr_auto]">
           <div className="max-w-3xl"><p className="text-[10px] font-black uppercase tracking-[.23em] text-[#79f59b]">Every act of kindness counts</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">Be the reason someone believes in tomorrow.</h2><p className="mt-4 max-w-2xl text-sm leading-6 text-white/65">If you would like to make an online donation or need help choosing a payment method, our team is ready to assist you.</p></div>
-          <a href="https://wa.me/256789395815?text=Hello%20Ssemuyaba%20Foundation%2C%20I%20would%20like%20to%20make%20an%20online%20donation." target="_blank" rel="noreferrer" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#ff1d2d] px-7 py-4 text-sm font-extrabold shadow-xl transition duration-300 hover:-translate-y-1 hover:bg-[#e91424]"><WhatsAppIcon className="h-5 w-5"/> Start an online donation <ArrowRight className="h-4 w-4"/></a>
+          <a href={whatsappMessage("Hello Ssemuyaba Foundation, I would like to make an online donation.")} target="_blank" rel="noreferrer" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#ff1d2d] px-7 py-4 text-sm font-extrabold shadow-xl transition duration-300 hover:-translate-y-1 hover:bg-[#e91424]"><WhatsAppIcon className="h-5 w-5"/> Start an online donation <ArrowRight className="h-4 w-4"/></a>
         </div>
       </section>
     </main>
