@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, HeartIcon, WhatsAppIcon } from "../../components/icons";
+import { fetchSiteSettings, whatsappHref, DEFAULT_SITE_SETTINGS, type SiteSettings } from "../../lib/siteSettings";
 
 type Detail = { label: string; value: string; copy?: string };
 function CopyButton({ value }: { value: string }) {
@@ -19,8 +20,8 @@ function CopyButton({ value }: { value: string }) {
 }
 
 const methods = [
-  { id: "mtn", name: "MTN Mobile Money", short: "MoMo", eyebrow: "FAST & CONVENIENT", theme: "from-[#ffcf22] to-[#ffb900]", panel: "bg-[#fff9df]", logo: "MTN", logoText: "MOBILE MONEY", details: [{label:"Mobile Money number",value:"+256 789 395 815",copy:"+256789395815"},{label:"Account name",value:"JAMES SSEMUYABA"}] as Detail[], note: "Send your gift directly from your phone using MTN Mobile Money." },
-  { id: "airtel", name: "Airtel Money", short: "Airtel", eyebrow: "GIVE IN A FEW TAPS", theme: "from-[#f52235] to-[#b90019]", panel: "bg-[#fff0f1]", logo: "airtel", logoText: "money", details: [{label:"Mobile Money number",value:"+256 705 283 679",copy:"+256705283679"},{label:"Account name",value:"JAMES SSEMUYABA"}] as Detail[], note: "Use Airtel Money to send your donation securely to the number shown." },
+  { id: "mtn", name: "MTN Mobile Money", short: "MoMo", eyebrow: "FAST & CONVENIENT", theme: "from-[#ffcf22] to-[#ffb900]", panel: "bg-[#fff9df]", logo: "MTN", logoText: "MOBILE MONEY", details: [{label:"Mobile Money number",value:secondaryPhone,copy:secondaryPhone.replace(/[^\\d]/g,"")},{label:"Account name",value:"JAMES SSEMUYABA"}] as Detail[], note: "Send your gift directly from your phone using MTN Mobile Money." },
+  { id: "airtel", name: "Airtel Money", short: "Airtel", eyebrow: "GIVE IN A FEW TAPS", theme: "from-[#f52235] to-[#b90019]", panel: "bg-[#fff0f1]", logo: "airtel", logoText: "money", details: [{label:"Mobile Money number",value:primaryPhone,copy:primaryPhone.replace(/[^\\d]/g,"")},{label:"Account name",value:"JAMES SSEMUYABA"}] as Detail[], note: "Use Airtel Money to send your donation securely to the number shown." },
   { id: "bank", name: "Bank Transfer", short: "Bank", eyebrow: "DIRECT BANK GIVING", theme: "from-[#087a35] to-[#03491f]", panel: "bg-[#edf9f1]", logo: "EQUITY", logoText: "BANK", details: [{label:"Bank",value:"Equity Bank Uganda"},{label:"Account name",value:"JAMES SSEMUYABA"},{label:"Account number",value:"890494848484",copy:"890494848484"},{label:"SWIFT code",value:"793003",copy:"793003"},{label:"Country",value:"Uganda"},{label:"Branch",value:"Mityana"}] as Detail[], note: "For bank transfers, include a donation reference if your bank asks for one." },
   { id: "western", name: "Western Union", short: "Western Union", eyebrow: "INTERNATIONAL GIVING", theme: "from-[#ffcf22] to-[#f5a900]", panel: "bg-[#fff9df]", logo: "WU", logoText: "WESTERN UNION", details: [{label:"Receiver name",value:"JAMES SSEMUYABA"},{label:"Country",value:"Uganda"},{label:"City",value:"Kampala"},{label:"Telephone",value:"+256 789 395 815",copy:"+256789395815"}] as Detail[], note: "Use the receiver details exactly as displayed when arranging your transfer." },
 ];
@@ -39,7 +40,7 @@ export default function DonatePage() {
             <p className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg">One generous act can help a child return to school, bring care to a family, or give a widow a fresh start. Your support turns compassion into real-world impact.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="#donation-methods" className="inline-flex items-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3.5 text-sm font-extrabold shadow-[0_10px_35px_rgba(255,29,45,.3)] transition duration-300 hover:-translate-y-1 hover:bg-[#e91424]">Choose how to give <ArrowRight className="h-4 w-4"/></a>
-              <a href="https://wa.me/256789395815?text=Hello%20Ssemuyaba%20Foundation%2C%20I%20would%20like%20to%20make%20an%20online%20donation." target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-extrabold transition hover:-translate-y-1 hover:bg-white/10"><WhatsAppIcon className="h-4 w-4"/> Donate online</a>
+              <a href="{whatsappMessage("Hello Ssemuyaba Foundation, I would like to make an online donation.")}" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-extrabold transition hover:-translate-y-1 hover:bg-white/10"><WhatsAppIcon className="h-4 w-4"/> Donate online</a>
             </div>
             <p className="mt-4 text-[11px] text-white/50">Want help arranging your gift? Message our team directly on WhatsApp.</p>
           </div>
@@ -89,7 +90,7 @@ export default function DonatePage() {
                   {m.details.map(d=><div key={d.label} className="flex items-center justify-between gap-3 rounded-xl border border-black/[.045] bg-[#f9fcfa] px-4 py-3"><div className="min-w-0"><p className="text-[9px] font-bold uppercase tracking-[.12em] text-black/45">{d.label}</p>{d.copy?<a href={d.label==="Telephone"||d.label==="Mobile Money number"?"tel:"+d.copy:undefined} className="mt-1 block break-all text-sm font-black text-[#132219] sm:text-base">{d.value}</a>:<p className="mt-1 break-words text-sm font-black text-[#132219] sm:text-base">{d.value}</p>}</div>{d.copy&&<CopyButton value={d.copy}/>}</div>)}
                 </div>
                 <p className="mt-4 text-xs leading-5 text-black/55">{m.note}</p>
-                <a href={"https://wa.me/256789395815?text="+encodeURIComponent("Hello Ssemuyaba Foundation, I would like to donate via "+m.name+". Please guide me through the process.")} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#087a35]/20 bg-white px-5 py-3 text-xs font-extrabold text-[#087a35] transition hover:border-[#087a35] hover:bg-[#087a35] hover:text-white"><WhatsAppIcon className="h-4 w-4"/> Ask about this method <ArrowRight className="h-3.5 w-3.5"/></a>
+                <a href={"{whatsappMessage("Hello Ssemuyaba Foundation, I would like to donate via "+m.name+". Please guide me through the process.")}} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#087a35]/20 bg-white px-5 py-3 text-xs font-extrabold text-[#087a35] transition hover:border-[#087a35] hover:bg-[#087a35] hover:text-white"><WhatsAppIcon className="h-4 w-4"/> Ask about this method <ArrowRight className="h-3.5 w-3.5"/></a>
               </div>
             </article>)}
           </div>
