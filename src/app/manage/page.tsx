@@ -82,6 +82,9 @@ export default function ManagePage() {
   const [section, setSection] = useState<Section>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notice, setNotice] = useState("");
+  const [messageSearch, setMessageSearch] = useState("");
+  const [messageFilter, setMessageFilter] = useState("ALL");
+  const [selectedMessage, setSelectedMessage] = useState<any|null>(null);
   const [contact, setContact] = useState({
     phone1: "+256 705 283 679",
     phone2: "+256 789 395 815",
@@ -121,6 +124,7 @@ export default function ManagePage() {
 
   const sectionLabel = useMemo(() => nav.find((item) => item.id === section)?.label || "Dashboard", [section]);
   const navBadge = (id: Section) => id === "messages" ? stats.newMessages : id === "newsletter" ? stats.pendingNewsletter : 0;
+  const filteredMessages = messages.filter((item) => { const haystack=[item.name,item.email||"",item.subject||"",item.message||""].join(" ").toLowerCase(); return (!messageSearch || haystack.includes(messageSearch.toLowerCase())) && (messageFilter==="ALL" || item.status===messageFilter); });
 
   async function login(e: React.FormEvent) {
     e.preventDefault();
@@ -141,9 +145,9 @@ export default function ManagePage() {
     } catch(error) { setNotice(error instanceof Error ? error.message : "Could not save contact details."); }
   }
 
-  async function markMessage(emailAddress:string) {
-    const item=messages.find(x=>x.email===emailAddress); if(!item)return;
-    try { await gql(mutations.updateMessageStatus,{id:item.id,status:"READ"}); setMessages(items=>items.map(x=>x.id===item.id?{...x,status:"Read"}:x)); }
+  async function markMessage(id:string) {
+    const item=messages.find(x=>x.id===id); if(!item || item.status==="READ")return;
+    try { await gql(mutations.updateMessageStatus,{id:item.id,status:"READ"}); setMessages(items=>items.map(x=>x.id===item.id?{...x,status:"READ"}:x)); setStats(current=>({...current,newMessages:Math.max(0,current.newMessages-1)})); if(selectedMessage?.id===item.id)setSelectedMessage({...item,status:"READ"}); }
     catch(error) { setNotice(error instanceof Error ? error.message : "Could not update message."); }
   }
 
@@ -392,10 +396,11 @@ export default function ManagePage() {
             <>
               <SectionTitle eyebrow="Inbox" title="Contact messages" description="Review enquiries submitted through the public contact form." action={<button className="manage-primary-btn" onClick={()=>exportRows("contact-messages.csv",[["Name","Email","Subject","Message","Status","Date"],...messages.map(x=>[x.name,x.email,x.subject||"",x.message,x.status,x.date])])}>Export CSV</button>} />
               <div className="manage-card overflow-hidden">
-                <div className="flex flex-col gap-3 border-b border-[#edf1ee] p-4 sm:flex-row sm:items-center sm:justify-between"><input className="manage-input max-w-sm" placeholder="Search messages..." /><select className="manage-select"><option>All statuses</option><option>New</option><option>Read</option><option>Replied</option></select></div>
-                <div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Sender</th><th>Subject</th><th>Received</th><th>Status</th><th /></tr></thead><tbody>{messages.map((item) => <tr key={item.email}><td><strong>{item.name}</strong><span>{item.email}</span></td><td>{item.subject}</td><td>{item.date}</td><td><Status>{item.status}</Status></td><td><button onClick={()=>markMessage(item.email)} className="text-[10px] font-extrabold text-[#087a35]">Mark read →</button></td></tr>)}</tbody></table></div>
-                <div className="divide-y divide-[#edf1ee] md:hidden">{messages.map((item) => <div key={item.email} className="p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-extrabold">{item.subject}</p><p className="mt-1 text-[10px] text-[#849089]">{item.name} • {item.email}</p></div><Status>{item.status}</Status></div><div className="mt-3 flex justify-between text-[9px] text-[#98a39c]"><span>{item.date}</span><button className="font-extrabold text-[#087a35]">Open →</button></div></div>)}</div>
+                <div className="flex flex-col gap-3 border-b border-[#edf1ee] p-4 sm:flex-row sm:items-center sm:justify-between"><input value={messageSearch} onChange={e=>setMessageSearch(e.target.value)} className="manage-input max-w-sm" placeholder="Search name, email, subject..." /><select value={messageFilter} onChange={e=>setMessageFilter(e.target.value)} className="manage-select"><option value="ALL">All statuses</option><option value="NEW">New</option><option value="READ">Read</option><option value="REPLIED">Replied</option></select></div>
+                <div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Sender</th><th>Subject</th><th>Received</th><th>Status</th><th /></tr></thead><tbody>{filteredMessages.map((item) => <tr key={item.id}><td><strong>{item.name}</strong><span>{item.email||"No email provided"}{item.phone&&<><br />{item.phone}</>}</span></td><td>{item.subject||"General enquiry"}<span>{item.message}</span></td><td>{item.date}</td><td><Status>{item.status==="NEW"?"New":item.status==="READ"?"Read":"Replied"}</Status></td><td><div className="flex gap-3"><button onClick={()=>setSelectedMessage(item)} className="text-[10px] font-extrabold text-[#087a35]">Open →</button>{item.status==="NEW"&&<button onClick={()=>markMessage(item.id)} className="text-[10px] font-extrabold text-[#087a35]">Mark read</button>}</div></td></tr>)}</tbody></table></div>
+                <div className="divide-y divide-[#edf1ee] md:hidden">{filteredMessages.map((item) => <div key={item.id} className="p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-extrabold">{item.subject||"General enquiry"}</p><p className="mt-1 text-[10px] text-[#849089]">{item.name} • {item.email||"No email provided"}</p></div><Status>{item.status==="NEW"?"New":item.status==="READ"?"Read":"Replied"}</Status></div><div className="mt-3 flex justify-between text-[9px] text-[#98a39c]"><span>{item.date}</span><button onClick={()=>setSelectedMessage(item)} className="font-extrabold text-[#087a35]">Open →</button></div></div>)}</div>
               </div>
+              {selectedMessage&&<div className="fixed inset-0 z-[90] grid place-items-center bg-[#03160b]/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true"><div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[.18em] text-[#0c8f3e]">Contact enquiry</p><h3 className="mt-2 text-2xl font-black">{selectedMessage.subject||"General enquiry"}</h3></div><button onClick={()=>setSelectedMessage(null)} className="grid h-9 w-9 place-items-center rounded-full bg-[#f1fbf5] text-xl">×</button></div><div className="mt-6 grid gap-4 rounded-2xl bg-[#f7faf8] p-5 sm:grid-cols-2"><div><p className="text-[9px] font-black uppercase text-[#89958e]">From</p><p className="mt-1 text-sm font-bold">{selectedMessage.name}</p></div><div><p className="text-[9px] font-black uppercase text-[#89958e]">Email</p><p className="mt-1 text-sm font-bold">{selectedMessage.email||"Not provided"}</p></div><div><p className="text-[9px] font-black uppercase text-[#89958e]">Phone</p><p className="mt-1 text-sm font-bold">{selectedMessage.phone||"Not provided"}</p></div><div><p className="text-[9px] font-black uppercase text-[#89958e]">Received</p><p className="mt-1 text-sm font-bold">{selectedMessage.date}</p></div></div><div className="mt-6 whitespace-pre-wrap rounded-2xl border border-[#e5ebe7] p-5 text-sm leading-7 text-[#405049]">{selectedMessage.message}</div><div className="mt-6 flex justify-end gap-3"><button onClick={()=>setSelectedMessage(null)} className="rounded-full border border-[#dfe8e2] px-5 py-2.5 text-xs font-extrabold">Close</button>{selectedMessage.status==="NEW"&&<button onClick={()=>markMessage(selectedMessage.id)} className="rounded-full bg-[#087a35] px-5 py-2.5 text-xs font-extrabold text-white">Mark as read</button>}</div></div></div>}
             </>
           )}
 
