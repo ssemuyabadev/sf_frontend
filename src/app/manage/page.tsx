@@ -98,7 +98,7 @@ export default function ManagePage() {
     whatsapp: "",
   });
 
-  const [stats, setStats] = useState({ messages: 0, newMessages: 0, newsletter: 0, pendingNewsletter: 0, volunteers: 0, sponsors: 0, pendingSponsors: 0, gallery: 0, news: 0 });
+  const [stats, setStats] = useState({ messages: 0, newMessages: 0, newsletter: 0, pendingNewsletter: 0, volunteers: 0, pendingVolunteers: 0, sponsors: 0, pendingSponsors: 0, gallery: 0, news: 0 });
   const [messages, setMessages] = useState<any[]>([]);
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [volunteers, setVolunteers] = useState<any[]>([]);
@@ -123,7 +123,7 @@ export default function ManagePage() {
   }, []);
 
   const sectionLabel = useMemo(() => nav.find((item) => item.id === section)?.label || "Dashboard", [section]);
-  const navBadge = (id: Section) => id === "messages" ? stats.newMessages : id === "newsletter" ? stats.pendingNewsletter : id === "sponsors" ? stats.pendingSponsors : 0;
+  const navBadge = (id: Section) => id === "messages" ? stats.newMessages : id === "newsletter" ? stats.pendingNewsletter : id === "volunteers" ? stats.pendingVolunteers : id === "sponsors" ? stats.pendingSponsors : 0;
   const filteredMessages = messages.filter((item) => { const haystack=[item.name,item.email||"",item.subject||"",item.message||""].join(" ").toLowerCase(); return (!messageSearch || haystack.includes(messageSearch.toLowerCase())) && (messageFilter==="ALL" || item.status===messageFilter); });
 
   async function login(e: React.FormEvent) {
@@ -151,11 +151,13 @@ export default function ManagePage() {
     catch(error) { setNotice(error instanceof Error ? error.message : "Could not update message."); }
   }
 
-  async function reviewVolunteer(name:string) {
-    const item=volunteers.find(x=>x.name===name); if(!item)return;
-    const next=item.status==="New"?"REVIEWING":item.status==="Reviewing"?"APPROVED":"REVIEWING";
-    try { await gql(mutations.updateVolunteerStatus,{id:item.id,status:next}); setVolunteers(items=>items.map(x=>x.id===item.id?{...x,status:next==="REVIEWING"?"Reviewing":"Approved"}:x)); }
-    catch(error) { setNotice(error instanceof Error ? error.message : "Could not update application."); }
+  async function reviewVolunteer(id:string,status:"REPLIED"|"ARCHIVED") {
+    try {
+      const r=await gql<any>(mutations.updateVolunteerStatus,{id,status});
+      setVolunteers(items=>items.map(x=>x.id===id?{...x,status:r.updateVolunteerStatus.status}:x));
+      setStats(current=>({...current,pendingVolunteers:Math.max(0,current.pendingVolunteers-1)}));
+      setNotice(status==="REPLIED"?"Volunteer application marked replied.":"Volunteer application archived.");
+    } catch(error) { setNotice(error instanceof Error ? error.message : "Could not update volunteer application."); }
   }
   async function reviewSponsor(id:string,status:"REPLIED"|"ARCHIVED") {
     try {
@@ -337,7 +339,7 @@ export default function ManagePage() {
                 {[
                   ["Contact messages", String(stats.messages), `${stats.newMessages} new`, "✉"],
                   ["Newsletter subscribers", String(stats.newsletter), `${stats.pendingNewsletter} pending review`, "◉"],
-                  ["Volunteer applications", String(stats.volunteers), "Live applications", "♧"],
+                  ["Volunteer applications", String(stats.volunteers), `${stats.pendingVolunteers} new`, "♧"],
                   ["Sponsor enquiries", String(stats.sponsors), `${stats.pendingSponsors} new`, "♡"],
                   ["Published stories", String(stats.news), "Published", "▤"],
                 ].map(([label, value, note, icon]) => (
@@ -425,8 +427,16 @@ export default function ManagePage() {
 
           {section === "volunteers" && (
             <>
-              <SectionTitle eyebrow="People" title="Volunteer applications" description="Review people who want to contribute their time, skills and energy to the foundation." action={<button className="manage-primary-btn">Export list</button>} />
-              <div className="manage-card overflow-hidden"><div className="flex flex-col gap-3 border-b border-[#edf1ee] p-4 sm:flex-row sm:items-center sm:justify-between"><input className="manage-input max-w-sm" placeholder="Search volunteers..." /><select className="manage-select"><option>All applications</option><option>New</option><option>Reviewing</option><option>Approved</option></select></div><div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Applicant</th><th>Interest</th><th>Applied</th><th>Status</th><th /></tr></thead><tbody>{volunteers.map((item) => <tr key={item.name}><td><strong>{item.name}</strong><span>Uganda</span></td><td>{item.role}</td><td>{item.date}</td><td><Status>{item.status}</Status></td><td><button onClick={()=>reviewVolunteer(item.name)} className="text-[10px] font-extrabold text-[#087a35]">Review →</button></td></tr>)}</tbody></table></div><div className="divide-y divide-[#edf1ee] md:hidden">{volunteers.map((item) => <div key={item.name} className="p-4"><div className="flex justify-between gap-3"><div><p className="text-xs font-extrabold">{item.name}</p><p className="mt-1 text-[10px] text-[#8b9790]">{item.role} • {item.date}</p></div><Status>{item.status}</Status></div><button onClick={()=>reviewVolunteer(item.name)} className="mt-3 text-[10px] font-extrabold text-[#087a35]">Review application →</button></div>)}</div></div>
+              <SectionTitle eyebrow="People" title="Volunteer applications" description="Review volunteer expressions of interest, follow up with applicants and archive completed records." action={<button className="manage-primary-btn" onClick={()=>exportRows("volunteer-applications.csv",[["Name","Email","Phone","Interest","Availability","Message","Status","Applied"],...volunteers.map(x=>[x.name,x.email||"",x.phone,x.interest,x.availability||"",x.message||"",x.status,new Date(x.createdAt).toLocaleString()])])}>Export CSV</button>} />
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Total applications</p><strong className="mt-1 block text-3xl font-black">{stats.volunteers}</strong><span className="text-[10px] font-bold text-[#087a35]">Live from database</span></div>
+                <div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">New applications</p><strong className="mt-1 block text-3xl font-black">{stats.pendingVolunteers}</strong><span className="text-[10px] font-bold text-[#087a35]">Need follow-up</span></div>
+                <div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Replied</p><strong className="mt-1 block text-3xl font-black">{volunteers.filter(x=>x.status==="REPLIED").length}</strong><span className="text-[10px] font-bold text-[#087a35]">Follow-up completed</span></div>
+              </div>
+              <div className="manage-card mt-5 overflow-hidden">
+                <div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Applicant</th><th>Interest</th><th>Availability</th><th>Contact</th><th>Applied</th><th>Status</th><th>Actions</th></tr></thead><tbody>{volunteers.map((item)=><tr key={item.id}><td><strong>{item.name}</strong><span>{item.email||"No email provided"}</span></td><td>{item.interest}</td><td>{item.availability||"—"}</td><td>{item.phone}</td><td>{new Date(item.createdAt).toLocaleDateString()}</td><td><Status>{item.status==="NEW"?"New":item.status==="REPLIED"?"Replied":"Archived"}</Status></td><td><div className="flex gap-2">{item.status!=="REPLIED"&&item.status!=="ARCHIVED"&&<button onClick={()=>reviewVolunteer(item.id,"REPLIED")} className="rounded-lg bg-[#e8fff0] px-2.5 py-1.5 text-[9px] font-extrabold text-[#087a35]">Replied</button>}{item.status!=="ARCHIVED"&&<button onClick={()=>reviewVolunteer(item.id,"ARCHIVED")} className="rounded-lg bg-[#fff0f1] px-2.5 py-1.5 text-[9px] font-extrabold text-[#c91525]">Archive</button>}</div></td></tr>)}</tbody></table></div>
+                <div className="divide-y divide-[#edf1ee] md:hidden">{volunteers.map((item)=><div key={item.id} className="p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-extrabold">{item.name}</p><p className="mt-1 text-[10px] text-[#8b9790]">{item.email||"No email provided"} • {item.phone}</p></div><Status>{item.status==="NEW"?"New":item.status==="REPLIED"?"Replied":"Archived"}</Status></div><p className="mt-2 text-[10px]">{item.interest} • {item.availability||"Availability not supplied"}</p><div className="mt-3 flex gap-2">{item.status!=="REPLIED"&&item.status!=="ARCHIVED"&&<button onClick={()=>reviewVolunteer(item.id,"REPLIED")} className="rounded-lg bg-[#e8fff0] px-2.5 py-1.5 text-[9px] font-extrabold text-[#087a35]">Replied</button>}{item.status!=="ARCHIVED"&&<button onClick={()=>reviewVolunteer(item.id,"ARCHIVED")} className="rounded-lg bg-[#fff0f1] px-2.5 py-1.5 text-[9px] font-extrabold text-[#c91525]">Archive</button>}</div></div>)}</div>
+              </div>
             </>
           )}
 
