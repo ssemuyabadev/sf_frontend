@@ -29,7 +29,7 @@ export default function Header() {
             <span className="opacity-40">|</span>
             <a href={phoneHref(siteContact.secondaryPhone)} className="contact-chip group">
               <PhoneIcon className="contact-chip-icon h-4 w-4" />
-              <span>{siteContact.secondary}</span>
+              <span>{siteContact.secondaryPhone}</span>
             </a>
             <span className="hidden opacity-40 sm:inline">|</span>
             <a href={"mailto:"+siteContact.email} className="group hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap">
