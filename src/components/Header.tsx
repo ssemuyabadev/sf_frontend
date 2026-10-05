@@ -43,15 +43,37 @@ export default function Header() {
 
       <div className="nav-shell relative border-b border-black/5 bg-white">
         <div className="section-wrap relative z-10 flex min-h-[72px] items-center justify-between">
-          <a href="#home" onClick={() => setOpen(false)}>
+          <a
+            href="#home"
+            onClick={() => setOpen(false)}
+            className="flex shrink-0 items-center"
+            aria-label="Ssemuyaba Foundation home"
+          >
             <Image
-              src="/images/ssemuyaba-logo.png"
-              alt="Ssemuyaba Foundation"
-              width={270}
-              height={210}
-              className="h-[62px] w-auto object-contain sm:h-[68px]"
+              src="/images/ssemuyaba-logo-icon.png"
+              alt=""
+              width={160}
+              height={160}
+              className="h-[52px] w-[52px] object-contain sm:h-[56px] sm:w-[56px]"
               priority
             />
+            <span className="ml-2.5 flex flex-col leading-none">
+              <span className="flex items-center gap-1.5">
+                <span className="text-[20px] font-black tracking-[-0.04em] text-[#087a35] sm:text-[22px]">
+                  SSEMUYABA
+                </span>
+                <span className="mt-[3px] h-[2px] w-4 bg-[#ff1d2d]" aria-hidden="true" />
+              </span>
+              <span className="mt-[2px] flex items-center">
+                <span className="text-[10px] font-extrabold tracking-[0.48em] text-[#151515] sm:text-[11px]">
+                  FOUNDATION
+                </span>
+                <span className="ml-1.5 h-[2px] w-5 bg-[#0c8f3e]" aria-hidden="true" />
+              </span>
+              <span className="mt-1 max-w-[190px] text-[5.5px] font-semibold tracking-[0.01em] text-[#111] sm:text-[6px]">
+                Empowering Vulnerable Orphans, Children and Widows.
+              </span>
+            </span>
           </a>
 
           <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary navigation">
