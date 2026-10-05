@@ -103,7 +103,7 @@ export default function Header() {
           </nav>
 
           <a
-            href="#donate"
+            href="/donate"
             className="hidden shrink-0 items-center gap-1.5 rounded-full bg-[#ff1d2d] px-4 py-2.5 text-[12px] font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#e91424] lg:flex"
           >
             <HeartIcon className="h-3.5 w-3.5" />
@@ -136,7 +136,7 @@ export default function Header() {
                 {item}
               </a>
             ))}
-            <a href="#donate" onClick={() => setOpen(false)} className="mt-3 flex items-center justify-center gap-2 rounded-full bg-[#ff1d2d] px-5 py-3 text-sm font-extrabold text-white">
+            <a href="/donate" onClick={() => setOpen(false)} className="mt-3 flex items-center justify-center gap-2 rounded-full bg-[#ff1d2d] px-5 py-3 text-sm font-extrabold text-white">
               <HeartIcon className="h-4 w-4" />
               Donate Now
             </a>
