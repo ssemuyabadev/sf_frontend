@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import Header from "../../components/Header";
-import ScrollToTop from "../../components/ScrollToTop";
 import { ArrowRight, FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, PhoneIcon, WhatsAppIcon, XSocialIcon, YouTubeIcon } from "../../components/icons";
 
 const contactCards = [
@@ -20,9 +18,7 @@ const socials = [
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-white">
-      <Header />
-
-      <section className="relative isolate min-h-[430px] overflow-hidden bg-[#03160b] sm:min-h-[480px]">
+<section className="relative isolate min-h-[430px] overflow-hidden bg-[#03160b] sm:min-h-[480px]">
         <Image src="/images/home-hero.jpg" alt="Ssemuyaba Foundation community" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(1,24,12,.95)_0%,rgba(2,43,22,.78)_42%,rgba(0,20,10,.34)_100%)]" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#03160b]/75 via-transparent to-transparent" />
