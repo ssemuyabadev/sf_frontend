@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react" from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { gql, queries, submitContact } from "../../lib/api";
