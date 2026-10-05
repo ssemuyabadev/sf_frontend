@@ -129,7 +129,7 @@ export default function Header() {
             {navItems.map((item, i) => (
               <a
                 key={item}
-                href={i === 6 ? "/contact-us" : "#" + ids[i]}
+                href={i === 5 ? "/news-updates" : i === 6 ? "/contact-us" : "#" + ids[i]}
                 onClick={() => setOpen(false)}
                 className="block border-b border-black/5 py-3 text-sm font-bold"
               >
