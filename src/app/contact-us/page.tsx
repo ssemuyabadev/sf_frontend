@@ -153,7 +153,7 @@ export default function ContactPage() {
                 <p className="mt-2 text-sm font-bold">Call us or send a WhatsApp message today.</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <a href={phoneHref(siteContact.phone)} className="rounded-full bg-white px-4 py-2 text-xs font-extrabold text-[#063019]">Call Now</a>
-                  <a href="https://wa.me/256705283679" className="rounded-full bg-[#13d74c] px-4 py-2 text-xs font-extrabold text-[#063019]">WhatsApp</a>
+                  <a href={whatsappHref(siteContact.phone)} className="rounded-full bg-[#13d74c] px-4 py-2 text-xs font-extrabold text-[#063019]">WhatsApp</a>
                 </div>
               </div>
             </div>
