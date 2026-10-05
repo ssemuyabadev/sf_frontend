@@ -236,3 +236,23 @@ a {
   color: #fff;
   filter: brightness(1.12);
 }
+
+
+/* Donation page atmosphere, motion and accessible reduced-motion fallback. */
+.donate-hero { isolation: isolate; }
+.donate-orb { position:absolute; z-index:-1; border-radius:9999px; filter:blur(2px); pointer-events:none; }
+.donate-orb-one { width:25rem;height:25rem;left:-8rem;top:3rem;background:radial-gradient(circle,rgba(19,215,76,.18),rgba(19,215,76,0) 70%);animation:donateDrift 12s ease-in-out infinite; }
+.donate-orb-two { width:32rem;height:32rem;right:-8rem;top:-8rem;background:radial-gradient(circle,rgba(255,29,45,.16),rgba(255,29,45,0) 70%);animation:donateDrift 16s ease-in-out infinite reverse; }
+.donate-orb-three { width:22rem;height:22rem;right:20%;bottom:-12rem;background:radial-gradient(circle,rgba(19,215,76,.12),rgba(19,215,76,0) 70%);animation:donateDrift 14s ease-in-out infinite 1s; }
+.donate-gradient-text { background:linear-gradient(100deg,#13d74c 10%,#a1ffb7 48%,#ffcf22 90%);background-size:180% auto;color:transparent;background-clip:text;-webkit-background-clip:text;animation:donateShimmer 7s linear infinite; }
+.donate-enter { animation:donateRise .8s cubic-bezier(.2,.75,.25,1) both; }
+.donate-enter-later { animation-delay:.16s; }
+.donation-method { animation:donateRise .65s cubic-bezier(.2,.75,.25,1) both; }
+.impact-card { animation:donateRise .6s ease both; }
+@keyframes donateRise { from { opacity:0;transform:translateY(22px); } to { opacity:1;transform:translateY(0); } }
+@keyframes donateDrift { 0%,100% { transform:translate3d(0,0,0) scale(1); } 50% { transform:translate3d(18px,-22px,0) scale(1.07); } }
+@keyframes donateShimmer { to { background-position:180% center; } }
+@media (prefers-reduced-motion: reduce) {
+  .donate-orb,.donate-gradient-text,.donate-enter,.donation-method,.impact-card { animation:none !important; }
+  .donation-method,.impact-card { transition:none !important; }
+}
