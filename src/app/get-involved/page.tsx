@@ -272,7 +272,7 @@ export default function GetInvolvedPage() {
                     </label>
                     <label className="text-sm font-bold">
                       Email address
-                      <input required name="email" type="email" placeholder="you@example.com" className="volunteer-input mt-2" />
+                      <input name="email" type="email" placeholder="you@example.com" className="volunteer-input mt-2" />
                     </label>
                     <label className="text-sm font-bold">
                       Phone / WhatsApp
