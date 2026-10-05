@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ChevronDown, HeartIcon, MenuIcon, XIcon } from "./icons";
+import { HeartIcon, MenuIcon, XIcon } from "./icons";
 
-const navItems = ["Home", "About Us", "Our Programs", "Get Involved", "Gallery", "News & Updates", "Contact"];
+const navItems = ["Home", "About Us", "Our Causes", "Get Involved", "Gallery", "News & Updates", "Contact Us"];
 const ids = ["home", "about", "programs", "involved", "gallery", "news", "contact"];
 
 export default function Header() {
@@ -76,7 +76,7 @@ export default function Header() {
             </span>
           </a>
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary navigation">
+          <nav className="hidden items-center gap-5 xl:gap-7 lg:flex" aria-label="Primary navigation">
             {navItems.map((item, i) => (
               <a
                 key={item}
@@ -89,7 +89,7 @@ export default function Header() {
                 }
               >
                 {item}
-                {(item === "Our Programs" || item === "Get Involved") && <ChevronDown className="h-3.5 w-3.5" />}
+
               </a>
             ))}
           </nav>
