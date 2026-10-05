@@ -86,3 +86,126 @@ a {
   }
 
 }
+
+
+@keyframes contactIconPulse {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.08); }
+}
+
+@keyframes socialFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.contact-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.contact-chip-icon {
+  color: #7ff2a2;
+  transition: transform 220ms ease, color 220ms ease;
+}
+
+.contact-chip:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.contact-chip:hover .contact-chip-icon {
+  color: #ffffff;
+  animation: contactIconPulse 650ms ease-in-out;
+}
+
+.footer-contact {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.footer-contact:hover {
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+.footer-contact-icon {
+  display: grid;
+  width: 2.15rem;
+  height: 2.15rem;
+  flex: 0 0 2.15rem;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+  color: #13d74c;
+  transition: background 180ms ease, color 180ms ease, transform 220ms ease;
+}
+
+.footer-contact-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.footer-contact:hover .footer-contact-icon {
+  background: #13d74c;
+  color: #03160b;
+  transform: scale(1.08);
+}
+
+.social-brand {
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.social-brand:hover {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 8px 18px rgba(0,0,0,.22);
+  animation: socialFloat 900ms ease-in-out infinite;
+  filter: brightness(1.08);
+}
+
+.social-brand svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.social-brand-header {
+  width: 1.75rem;
+  height: 1.75rem;
+  background: rgba(255,255,255,.13);
+  color: #fff;
+}
+
+.social-brand-footer {
+  width: 2.35rem;
+  height: 2.35rem;
+  background: rgba(255,255,255,.09);
+  color: #fff;
+}
+
+.social-brand-header:hover,
+.social-brand-footer:hover {
+  background: #13d74c;
+  color: #03160b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-chip:hover .contact-chip-icon,
+  .social-brand:hover {
+    animation: none;
+  }
+
+  .contact-chip,
+  .footer-contact,
+  .footer-contact-icon,
+  .social-brand {
+    transition: none;
+  }
+}
