@@ -50,7 +50,7 @@ export default function Header() {
             aria-label="Ssemuyaba Foundation home"
           >
             <Image
-              src="/images/ssemuyaba-logo-icon.png"
+              src="/images/ssemuyaba-logo-icon-transparent.png"
               alt=""
               width={160}
               height={160}
@@ -103,8 +103,9 @@ export default function Header() {
           </button>
         </div>
 
-        <svg className="pointer-events-none absolute -bottom-[18px] left-0 z-0 h-[24px] w-full" viewBox="0 0 1200 24" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 2 C300 16 900 16 1200 2 L1200 24 L0 24 Z" fill="white"/>
+        <svg className="pointer-events-none absolute -bottom-[20px] left-0 z-20 h-[28px] w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.08)]" viewBox="0 0 1200 28" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 0 C260 18 940 18 1200 0 L1200 28 L0 28 Z" fill="white"/>
+          <path d="M0 0 C260 18 940 18 1200 0" fill="none" stroke="#e8eee9" stroke-width="1.5"/>
         </svg>
 
         {open && (
