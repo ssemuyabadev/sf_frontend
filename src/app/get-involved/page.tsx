@@ -67,7 +67,7 @@ export default function GetInvolvedPage() {
     const form=event.currentTarget; const data=new FormData(form);
     try {
       await submitVolunteer({
-        name:String(data.get("name")), email:String(data.get("email")), phone:String(data.get("phone")),
+        name:String(data.get("name")), email:String(data.get("email")||"") || undefined, phone:String(data.get("phone")),
         interest:String(data.get("interest")), availability:String(data.get("availability")||""),
         message:[`Location: ${data.get("location")||""}`,`Preferred involvement: ${data.get("involvement")||""}`,String(data.get("message")||"")].join("\n\n")
       });
