@@ -8,12 +8,13 @@ import { MailIcon, MapPinIcon, PhoneIcon, FacebookIcon, InstagramIcon, XSocialIc
 export default function Footer() {
   const [siteContact,setSiteContact]=useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
   const [newsletterEmail,setNewsletterEmail]=useState("");
-  const [newsletterSent,setNewsletterSent]=useState(false);
+  const [newsletterSent,setNewsletterSent]=useState(false);const [newsletterError,setNewsletterError]=useState("");const [newsletterSubmitting,setNewsletterSubmitting]=useState(false);
   useEffect(()=>{fetchSiteSettings().then(setSiteContact).catch(()=>{});},[]);
-  async function handleNewsletter(e:React.FormEvent){e.preventDefault();if(!newsletterEmail)return;try{await subscribeNewsletter(newsletterEmail);setNewsletterSent(true);setNewsletterEmail("")}catch{}}
+  async function handleNewsletter(e:React.FormEvent){e.preventDefault();if(!newsletterEmail||newsletterSubmitting)return;setNewsletterError("");setNewsletterSubmitting(true);try{await subscribeNewsletter(newsletterEmail);setNewsletterSent(true);setNewsletterEmail("")}catch(error){setNewsletterError(error instanceof Error?error.message:"We could not complete your subscription. Please try again.");}finally{setNewsletterSubmitting(false)}}
   const currentYear = new Date().getFullYear();
   return (
     <footer id="contact" className="bg-[#03160b] text-white">
+      {newsletterSent&&<div className="fixed inset-0 z-[100] grid place-items-center bg-[#03160b]/70 px-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="newsletter-success-title"><div className="relative w-full max-w-md rounded-[2rem] border border-white/10 bg-white p-7 text-[#092113] shadow-[0_30px_100px_rgba(0,0,0,.3)] sm:p-9"><button type="button" onClick={()=>setNewsletterSent(false)} aria-label="Close newsletter confirmation" className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-[#f1fbf5] text-[#526158] transition hover:bg-[#e4f5e9]">×</button><div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#e8fff0] text-2xl text-[#087a35]">✓</div><div className="mt-5 text-center"><p className="text-[10px] font-black uppercase tracking-[.2em] text-[#0c8f3e]">Subscription successful</p><h2 id="newsletter-success-title" className="mt-2 text-2xl font-black tracking-tight">You’re on the list!</h2><p className="mt-3 text-sm leading-6 text-[#68766e]">Thank you for joining the Ssemuyaba Foundation newsletter. A confirmation email has been sent to your inbox.</p><button type="button" onClick={()=>setNewsletterSent(false)} className="mt-7 w-full rounded-full bg-[#0c8f3e] px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#087a35]">Continue</button></div></div></div>}
       <div className="section-wrap grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[1.15fr_.8fr_1.15fr_1.25fr]">
         <div>
           <div className="inline-flex rounded-2xl bg-white p-3 shadow-lg">
@@ -53,10 +54,10 @@ export default function Footer() {
             <label htmlFor="newsletter-email" className="sr-only">Email address</label>
             <div className="flex flex-col gap-2 rounded-2xl border border-white/15 bg-white/10 p-1.5 backdrop-blur sm:flex-row sm:items-center sm:rounded-full">
               <input id="newsletter-email" type="email" value={newsletterEmail} onChange={e=>setNewsletterEmail(e.target.value)} placeholder="Your email address" className="min-w-0 w-full flex-1 bg-transparent px-3 py-2 text-xs text-white outline-none placeholder:text-white/50 sm:py-1.5" required/>
-              <button type="submit" className="w-full shrink-0 rounded-full bg-[#ff1d2d] px-4 py-2 text-xs font-extrabold transition hover:bg-[#e91424] sm:w-auto">Subscribe</button>
+              <button type="submit" disabled={newsletterSubmitting} className="w-full shrink-0 rounded-full bg-[#ff1d2d] px-4 py-2 text-xs font-extrabold transition hover:bg-[#e91424] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto">{newsletterSubmitting?"Sending...":"Subscribe"}</button>
             </div>
           </form>
-          <p className="mt-3 text-[10px] text-white/50">{newsletterSent?"You’re subscribed. Thank you!":"No spam. Just meaningful stories and impact."}</p>
+          <p className="mt-3 text-[10px] text-white/50">{newsletterError||"No spam. Just meaningful stories and impact."}</p>
           <p className="mt-6 text-base font-black italic leading-tight text-[#13d74c] sm:text-xl">We reachout to the unreachable and provide</p>
         </div>
       </div>
