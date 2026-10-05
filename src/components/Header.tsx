@@ -5,7 +5,6 @@ import { useState } from "react";
 import { FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, MenuIcon, PhoneIcon, WhatsAppIcon, XIcon, XSocialIcon, YouTubeIcon } from "./icons";
 
 const navItems = ["Home", "About Us", "Our Causes", "Get Involved", "Gallery", "News & Updates", "Contact Us"];
-const ids = ["home", "about", "programs", "involved", "gallery", "news", "contact"];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -129,7 +128,7 @@ export default function Header() {
             {navItems.map((item, i) => (
               <a
                 key={item}
-                href={i === 2 ? "/causes" : i === 3 ? "/get-involved" : i === 4 ? "/gallery" : i === 5 ? "/news-updates" : i === 6 ? "/contact-us" : "#" + ids[i]}
+                href={i === 0 ? "/" : i === 1 ? "/about-us" : i === 2 ? "/causes" : i === 3 ? "/get-involved" : i === 4 ? "/gallery" : i === 5 ? "/news-updates" : "/contact-us"}
                 onClick={() => setOpen(false)}
                 className="block border-b border-black/5 py-3 text-sm font-bold"
               >
