@@ -78,7 +78,7 @@ export default function Header() {
                 </span>
                 <span className="ml-1.5 h-[2px] w-5 bg-[#0c8f3e]" aria-hidden="true" />
               </span>
-              <span className="mt-1 max-w-[235px] text-[7px] font-extrabold leading-[1.25] tracking-[0.01em] text-[#087a35] sm:text-[8px]">
+              <span className="mt-1 max-w-[235px] text-[7px] font-extrabold leading-[1.25] tracking-[0.01em] text-[#111111] sm:text-[8px]">
                 Empowering Vulnerable Orphans, Children and Widows.
               </span>
             </span>
