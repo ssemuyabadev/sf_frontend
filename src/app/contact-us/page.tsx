@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react" from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { submitContact } from "../../lib/api";
+import { gql, queries, submitContact } from "../../lib/api";
 import { ArrowRight, FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, PhoneIcon, WhatsAppIcon, XSocialIcon, YouTubeIcon } from "../../components/icons";
 
-const contactCards = [
+const defaultContactCards = [
   { title: "Call Us", value: "+256 705 283 679", second: "+256 789 395 815", href: "tel:+256705283679", icon: PhoneIcon },
   { title: "Email Us", value: "info@ssemuyabafoundation.org", second: "We reply as soon as possible.", href: "mailto:info@ssemuyabafoundation.org", icon: MailIcon },
   { title: "Visit Us", value: "Naama Village, Mityana", second: "Uganda", href: "https://www.google.com/maps/search/?api=1&query=Naama+Village+Mityana+Uganda", icon: MapPinIcon },
@@ -18,6 +18,8 @@ const socials = [
 ];
 
 export default function ContactPage() {
+  const [contactCards,setContactCards]=useState(defaultContactCards);
+  useEffect(()=>{gql<any>(queries.settings).then(r=>{const s=r.siteSettings;setContactCards([{title:"Call Us",value:s.phone,second:s.secondaryPhone||"",href:"tel:"+s.phone.replace(/\\s+/g,""),icon:PhoneIcon},{title:"Email Us",value:s.email,second:"We reply as soon as possible.",href:"mailto:"+s.email,icon:MailIcon},{title:"Visit Us",value:s.location.split(",")[0]||s.location,second:s.location.split(",").slice(1).join(",").trim()||"Uganda",href:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.location),icon:MapPinIcon}]);}).catch(()=>{});},[]);
   const [sent,setSent]=useState(false);
   const [sending,setSending]=useState(false);
   const [error,setError]=useState("");
