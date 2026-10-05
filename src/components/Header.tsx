@@ -3,15 +3,15 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { gql, queries } from "../lib/api";
+import { fetchSiteSettings, phoneHref, whatsappHref, DEFAULT_SITE_SETTINGS, type SiteSettings } from "../lib/siteSettings";
 import { FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, MenuIcon, PhoneIcon, WhatsAppIcon, XIcon, XSocialIcon, YouTubeIcon } from "./icons";
 
 const navItems = ["Home", "About Us", "Our Causes", "Get Involved", "Gallery", "News & Updates", "Contact Us"];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const [siteContact, setSiteContact] = useState({phone:"+256 705 283 679", secondary:"+256 789 395 815", email:"info@ssemuyabafoundation.org", location:"Naama Village, Mityana, Uganda"});
-  useEffect(()=>{gql<any>(queries.settings).then(r=>{const s=r.siteSettings;setSiteContact({phone:s.phone,secondary:s.secondaryPhone||"",email:s.email,location:s.location})}).catch(()=>{});},[]);
+  const [siteContact, setSiteContact] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+  useEffect(()=>{fetchSiteSettings().then(setSiteContact).catch(()=>{});},[]);
   const pathname = usePathname();
 
   const navRoutes = ["/", "/about-us", "/causes", "/get-involved", "/gallery", "/news-updates", "/contact-us"];
@@ -22,12 +22,12 @@ export default function Header() {
       <div className="bg-[#006b2f] text-white">
         <div className="section-wrap flex flex-col gap-1.5 py-2 text-[10px] font-semibold sm:flex-row sm:min-h-[38px] sm:items-center sm:justify-between sm:gap-4 sm:py-0 sm:text-xs">
           <div className="flex w-full items-center justify-center gap-3 leading-tight sm:w-auto sm:justify-start sm:gap-4">
-            <a href={"tel:"+siteContact.phone.replace(/\s+/g,"")} className="contact-chip group">
+            <a href={phoneHref(siteContact.phone)} className="contact-chip group">
               <PhoneIcon className="contact-chip-icon h-4 w-4" />
               <span>{siteContact.phone}</span>
             </a>
             <span className="opacity-40">|</span>
-            <a href={"tel:"+siteContact.secondary.replace(/\s+/g,"")} className="contact-chip group">
+            <a href={phoneHref(siteContact.secondaryPhone)} className="contact-chip group">
               <PhoneIcon className="contact-chip-icon h-4 w-4" />
               <span>{siteContact.secondary}</span>
             </a>
@@ -45,12 +45,12 @@ export default function Header() {
           <div className="flex w-full items-center justify-center gap-2 sm:w-auto sm:justify-start">
             <span className="text-[10px] font-bold">Follow Us:</span>
             <div className="flex items-center gap-1.5" aria-label="Social media">
-              <a href="#" aria-label="Facebook" className="social-brand social-brand-header"><FacebookIcon /></a>
-              <a href="#" aria-label="Instagram" className="social-brand social-brand-header"><InstagramIcon /></a>
-              <a href="#" aria-label="X" className="social-brand social-brand-header"><XSocialIcon /></a>
-              <a href="#" aria-label="LinkedIn" className="social-brand social-brand-header"><LinkedInIcon /></a>
-              <a href="#" aria-label="YouTube" className="social-brand social-brand-header"><YouTubeIcon /></a>
-              <a href="https://wa.me/256705283679" aria-label="WhatsApp" className="social-brand social-brand-header"><WhatsAppIcon /></a>
+              <a href={siteContact.facebook || "#"} aria-label="Facebook" className="social-brand social-brand-header"><FacebookIcon /></a>
+              <a href={siteContact.instagram || "#"} aria-label="Instagram" className="social-brand social-brand-header"><InstagramIcon /></a>
+              <a href={siteContact.x || "#"} aria-label="X" className="social-brand social-brand-header"><XSocialIcon /></a>
+              <a href={siteContact.linkedin || "#"} aria-label="LinkedIn" className="social-brand social-brand-header"><LinkedInIcon /></a>
+              <a href={siteContact.youtube || "#"} aria-label="YouTube" className="social-brand social-brand-header"><YouTubeIcon /></a>
+              <a href={whatsappHref(siteContact.phone)} aria-label="WhatsApp" className="social-brand social-brand-header"><WhatsAppIcon /></a>
             </div>
           </div>
         </div>
