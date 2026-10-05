@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import SiteChrome from "../components/SiteChrome";
 import ScrollToTop from "../components/ScrollToTop";
 import "./globals.css";
 
@@ -31,9 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.variable}>
-        <Header />
-        {children}
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
         <ScrollToTop />
       </body>
     </html>
