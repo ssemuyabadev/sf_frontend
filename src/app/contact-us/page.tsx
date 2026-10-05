@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { gql, queries, submitContact } from "../../lib/api";
+import { submitContact } from "../../lib/api";
+import { fetchSiteSettings, phoneHref, whatsappHref, DEFAULT_SITE_SETTINGS, type SiteSettings } from "../../lib/siteSettings";
 import { ArrowRight, FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, PhoneIcon, WhatsAppIcon, XSocialIcon, YouTubeIcon } from "../../components/icons";
 
 const defaultContactCards = [
@@ -18,8 +19,9 @@ const socials = [
 ];
 
 export default function ContactPage() {
+  const [siteContact,setSiteContact]=useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
   const [contactCards,setContactCards]=useState(defaultContactCards);
-  useEffect(()=>{gql<any>(queries.settings).then(r=>{const s=r.siteSettings;setContactCards([{title:"Call Us",value:s.phone,second:s.secondaryPhone||"",href:"tel:"+s.phone.replace(/\s+/g,""),icon:PhoneIcon},{title:"Email Us",value:s.email,second:"We reply as soon as possible.",href:"mailto:"+s.email,icon:MailIcon},{title:"Visit Us",value:s.location.split(",")[0]||s.location,second:s.location.split(",").slice(1).join(",").trim()||"Uganda",href:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.location),icon:MapPinIcon}]);}).catch(()=>{});},[]);
+  useEffect(()=>{fetchSiteSettings().then(s=>{setSiteContact(s);setContactCards([{title:"Call Us",value:s.phone,second:s.secondaryPhone,href:phoneHref(s.phone),icon:PhoneIcon},{title:"Email Us",value:s.email,second:"We reply as soon as possible.",href:"mailto:"+s.email,icon:MailIcon},{title:"Visit Us",value:s.location.split(",")[0]||s.location,second:s.location.split(",").slice(1).join(",").trim()||"Uganda",href:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.location),icon:MapPinIcon}]);}).catch(()=>{});},[]);
   const [sent,setSent]=useState(false);
   const [sending,setSending]=useState(false);
   const [error,setError]=useState("");
@@ -48,7 +50,7 @@ export default function ContactPage() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a href="#contact-details" className="inline-flex items-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3 text-sm font-extrabold shadow-xl transition hover:-translate-y-1 hover:bg-[#e91424]">Get in Touch <ArrowRight className="h-4 w-4" /></a>
-              <a href="https://wa.me/256705283679" className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/10 px-6 py-3 text-sm font-extrabold backdrop-blur transition hover:-translate-y-1 hover:bg-white hover:text-[#03491f]"><WhatsAppIcon className="h-4 w-4" /> WhatsApp Us</a>
+              <a href={whatsappHref(siteContact.phone)} className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/10 px-6 py-3 text-sm font-extrabold backdrop-blur transition hover:-translate-y-1 hover:bg-white hover:text-[#03491f]"><WhatsAppIcon className="h-4 w-4" /> WhatsApp Us</a>
             </div>
           </div>
         </div>
@@ -143,14 +145,14 @@ export default function ContactPage() {
               <div className="mt-7 grid grid-cols-3 gap-2 sm:grid-cols-6 lg:grid-cols-3">
                 {socials.map(([Icon, label]) => {
                   const C = Icon as React.ComponentType<{ className?: string }>;
-                  return <a key={label as string} href={label === "WhatsApp" ? "https://wa.me/256705283679" : "#"} aria-label={label as string} className="grid h-11 w-11 place-items-center rounded-full bg-[#087a35] text-white transition hover:-translate-y-1 hover:bg-[#13b947]"><C className="h-4 w-4" /></a>;
+                  return <a key={label as string} href={label === "WhatsApp" ? whatsappHref(siteContact.phone) : label === "Facebook" ? siteContact.facebook || "#" : label === "Instagram" ? siteContact.instagram || "#" : label === "X" ? siteContact.x || "#" : label === "LinkedIn" ? siteContact.linkedin || "#" : label === "YouTube" ? siteContact.youtube || "#" : "#"} aria-label={label as string} className="grid h-11 w-11 place-items-center rounded-full bg-[#087a35] text-white transition hover:-translate-y-1 hover:bg-[#13b947]"><C className="h-4 w-4" /></a>;
                 })}
               </div>
               <div className="mt-8 rounded-2xl bg-[#063019] p-5 text-white">
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#79f59b]">Prefer a quick conversation?</p>
                 <p className="mt-2 text-sm font-bold">Call us or send a WhatsApp message today.</p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <a href="tel:+256705283679" className="rounded-full bg-white px-4 py-2 text-xs font-extrabold text-[#063019]">Call Now</a>
+                  <a href={phoneHref(siteContact.phone)} className="rounded-full bg-white px-4 py-2 text-xs font-extrabold text-[#063019]">Call Now</a>
                   <a href="https://wa.me/256705283679" className="rounded-full bg-[#13d74c] px-4 py-2 text-xs font-extrabold text-[#063019]">WhatsApp</a>
                 </div>
               </div>
