@@ -13,8 +13,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 shadow-sm">
       <div className="bg-[#006b2f] text-white">
-        <div className="section-wrap flex min-h-[38px] items-center justify-between gap-4 text-[10px] font-semibold sm:text-xs">
-          <div className="hidden items-center gap-4 sm:flex">
+        <div className="section-wrap flex min-h-[38px] items-center justify-between gap-3 py-1.5 text-[10px] font-semibold sm:min-h-[38px] sm:py-0 sm:text-xs">
+          <div className="flex flex-col gap-0.5 leading-tight sm:flex-row sm:items-center sm:gap-4">
             <a href="tel:+256705283679" className="contact-chip group">
               <PhoneIcon className="contact-chip-icon h-4 w-4" />
               <span>+256 705 283 679</span>
