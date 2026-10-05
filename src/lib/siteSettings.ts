@@ -10,6 +10,7 @@ export type SiteSettings = {
   x: string;
   linkedin: string;
   youtube: string;
+  whatsapp: string;
 };
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -22,6 +23,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   x: "",
   linkedin: "",
   youtube: "",
+  whatsapp: "",
 };
 
 export function normalizeSiteSettings(value: any): SiteSettings {
@@ -35,6 +37,7 @@ export function normalizeSiteSettings(value: any): SiteSettings {
     x: value?.x || "",
     linkedin: value?.linkedin || "",
     youtube: value?.youtube || "",
+    whatsapp: value?.whatsapp || "",
   };
 }
 
