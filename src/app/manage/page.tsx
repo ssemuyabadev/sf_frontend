@@ -24,6 +24,7 @@ const nav = [
   { id: "volunteers" as Section, label: "Volunteers", icon: "♧", badge: 4 },
   { id: "gallery" as Section, label: "Gallery", icon: "▦" },
   { id: "news" as Section, label: "News & Updates", icon: "▤" },
+  { id: "settings" as Section, label: "Settings", icon: "⚙" },
 ];
 
 const messages = [
