@@ -9,11 +9,11 @@ export async function gql<T>(query: string, variables?: Record<string, unknown>)
 
 export const queries = {
   me: `query { me { id email name } }`,
-  stats: `query { dashboardStats { messages newMessages newsletter pendingNewsletter volunteers sponsors pendingSponsors gallery news } }`,
+  stats: `query { dashboardStats { messages newMessages newsletter pendingNewsletter volunteers pendingVolunteers sponsors pendingSponsors gallery news } }`,
   settings: `query { siteSettings { id phone secondaryPhone email location facebook instagram x linkedin youtube whatsapp } }`,
   messages: `query { contactMessages { id name email phone subject message status createdAt } }`,
   subscribers: `query { newsletterSubscribers { id email status createdAt updatedAt } }`,
-  volunteers: `query { volunteerApplications { id name email phone interest availability message status createdAt } }`,
+  volunteers: `query { volunteerApplications { id name email phone interest availability message status createdAt updatedAt } }`,
   sponsors: `query { sponsorEnquiries { id fullName email phone country city preferredContact sponsorshipPreference message consent status createdAt updatedAt } }`,
   gallery: `query { adminGallery { id title imageUrl description category published createdAt } }`,
   news: `query { adminNews { id title slug excerpt body imageUrl published publishedAt createdAt } }`,
@@ -51,7 +51,7 @@ type ContactPayload = {
 
 type VolunteerPayload = {
   name: string;
-  email: string;
+  email?: string;
   phone: string;
   interest: string;
   availability?: string;
