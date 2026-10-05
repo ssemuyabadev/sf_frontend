@@ -793,3 +793,40 @@ a {
     transition: none !important;
   }
 }
+
+/* Sponsor journey */
+.sponsor-page { background: #fff; color: #092113; }
+.sponsor-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 590px;
+  background: #03160b;
+}
+.sponsor-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 76% 25%, rgba(19,215,76,.24), transparent 30%), radial-gradient(circle at 18% 82%, rgba(255,29,45,.12), transparent 28%);
+}
+.sponsor-orb { position:absolute; border-radius:999px; pointer-events:none; filter:blur(1px); }
+.sponsor-orb.one { width:300px;height:300px;right:-100px;top:80px;background:rgba(19,215,76,.09);animation:sponsorFloat 8s ease-in-out infinite; }
+.sponsor-orb.two { width:180px;height:180px;left:40%;bottom:-100px;background:rgba(255,29,45,.08);animation:sponsorFloat 10s ease-in-out infinite reverse; }
+@keyframes sponsorFloat { 50% { transform:translate3d(0,-18px,0) scale(1.04); } }
+.sponsor-reveal { animation:sponsorReveal .8s ease both; }
+.sponsor-reveal.delay { animation-delay:.15s; }
+.sponsor-reveal.delay2 { animation-delay:.3s; }
+@keyframes sponsorReveal { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+.sponsor-curve { filter:drop-shadow(0 -1px 0 rgba(12,143,62,.25)); }
+.sponsor-step { transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease; }
+.sponsor-step:hover { transform:translateY(-6px); border-color:#bfe3ca; box-shadow:0 24px 45px rgba(7,54,27,.09); }
+.sponsor-field { width:100%; border:1px solid #dce8df; border-radius:13px; background:#fbfdfb; padding:12px 13px; font-size:12px; outline:none; transition:border-color .2s, box-shadow .2s, background .2s; }
+.sponsor-field:focus { border-color:#54b872; background:#fff; box-shadow:0 0 0 4px rgba(12,143,62,.08); }
+.sponsor-float-card { animation:sponsorCardFloat 5s ease-in-out infinite; }
+@keyframes sponsorCardFloat { 50% { transform:translateY(-7px); } }
+@media (max-width: 640px) {
+  .sponsor-hero { min-height:650px; }
+  .sponsor-float-card { animation:none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sponsor-reveal, .sponsor-orb, .sponsor-float-card { animation:none !important; }
+}
