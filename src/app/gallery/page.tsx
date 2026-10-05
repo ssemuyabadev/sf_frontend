@@ -106,7 +106,7 @@ export default function GalleryPage() {
           </div>
 
           <div className="gallery-masonry mt-12">
-            {gallery.map((item, index) => (
+            {galleryItems.map((item: any, index) => (
               <article key={item.title} className={"gallery-tile group " + (item.featured ? "gallery-tile-featured" : "")} style={{ animationDelay: index * 55 + "ms" }}>
                 <div className="relative h-full min-h-[270px] overflow-hidden rounded-[1.65rem]">
                   <Image src={item.image} alt={item.title} fill className="object-cover transition duration-700 group-hover:scale-110" />
