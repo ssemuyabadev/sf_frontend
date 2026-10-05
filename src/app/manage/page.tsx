@@ -91,6 +91,7 @@ export default function ManagePage() {
     x: "",
     linkedin: "",
     youtube: "",
+    whatsapp: "",
   });
 
   const [stats, setStats] = useState({ messages: 0, newsletter: 0, volunteers: 0, sponsors: 0, gallery: 0, news: 0 });
@@ -104,7 +105,7 @@ export default function ManagePage() {
   async function loadAdmin() {
     const [s,settingsResult,m,n,v,sp,g,nu] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.settings),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news)]);
     setStats(s.dashboardStats);
-    const settingsData=settingsResult.siteSettings; setContact({phone1:settingsData.phone,phone2:settingsData.secondaryPhone||"",email:settingsData.email,location:settingsData.location,facebook:settingsData.facebook||"",instagram:settingsData.instagram||"",x:settingsData.x||"",linkedin:settingsData.linkedin||"",youtube:settingsData.youtube||""});
+    const settingsData=settingsResult.siteSettings; setContact({phone1:settingsData.phone,phone2:settingsData.secondaryPhone||"",email:settingsData.email,location:settingsData.location,facebook:settingsData.facebook||"",instagram:settingsData.instagram||"",x:settingsData.x||"",linkedin:settingsData.linkedin||"",youtube:settingsData.youtube||"",whatsapp:settingsData.whatsapp||""});
     setMessages(m.contactMessages.map((x:any)=>({...x,date:new Date(x.createdAt).toLocaleString()})));
     setSubscribers(n.newsletterSubscribers.map((x:any)=>({...x,joined:new Date(x.createdAt).toLocaleDateString(),source:"Website"})));
     setVolunteers(v.volunteerApplications.map((x:any)=>({...x,role:x.interest,date:new Date(x.createdAt).toLocaleDateString()})));
@@ -131,9 +132,9 @@ export default function ManagePage() {
   async function saveContact(e: React.FormEvent) {
     e.preventDefault();
     try {
-      const r=await gql<any>(mutations.updateSettings,{input:{phone:contact.phone1,secondaryPhone:contact.phone2||null,email:contact.email,location:contact.location,facebook:contact.facebook||null,instagram:contact.instagram||null,x:contact.x||null,linkedin:contact.linkedin||null,youtube:contact.youtube||null}});
+      const r=await gql<any>(mutations.updateSettings,{input:{phone:contact.phone1,secondaryPhone:contact.phone2||null,email:contact.email,location:contact.location,facebook:contact.facebook||null,instagram:contact.instagram||null,x:contact.x||null,linkedin:contact.linkedin||null,youtube:contact.youtube||null,whatsapp:contact.whatsapp||null}});
       const s=r.updateSiteSettings;
-      setContact({phone1:s.phone,phone2:s.secondaryPhone||"",email:s.email,location:s.location,facebook:s.facebook||"",instagram:s.instagram||"",x:s.x||"",linkedin:s.linkedin||"",youtube:s.youtube||""});
+      setContact({phone1:s.phone,phone2:s.secondaryPhone||"",email:s.email,location:s.location,facebook:s.facebook||"",instagram:s.instagram||"",x:s.x||"",linkedin:s.linkedin||"",youtube:s.youtube||"",whatsapp:s.whatsapp||""});
       setNotice("Contact details saved to the live database.");
     } catch(error) { setNotice(error instanceof Error ? error.message : "Could not save contact details."); }
   }
@@ -371,6 +372,7 @@ export default function ManagePage() {
                   <Field label="X / Twitter" value={contact.x} onChange={(v) => setContact({...contact, x:v})} placeholder="https://x.com/..." />
                   <Field label="LinkedIn" value={contact.linkedin} onChange={(v) => setContact({...contact, linkedin:v})} placeholder="https://linkedin.com/..." />
                   <Field label="YouTube" value={contact.youtube} onChange={(v) => setContact({...contact, youtube:v})} placeholder="https://youtube.com/..." />
+                  <Field label="WhatsApp" value={contact.whatsapp} onChange={(v) => setContact({...contact, whatsapp:v})} placeholder="https://wa.me/256..." />
                 </div>
               </div>
             </form>
