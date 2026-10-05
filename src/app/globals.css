@@ -256,3 +256,26 @@ a {
   .donate-orb,.donate-gradient-text,.donate-enter,.donation-method,.impact-card { animation:none !important; }
   .donation-method,.impact-card { transition:none !important; }
 }
+
+
+/* About page motion and image storytelling. */
+.about-hero { isolation:isolate; }
+.about-gradient-text { background:linear-gradient(100deg,#13d74c 8%,#b5ffc7 48%,#ffcf22 92%);background-size:180% auto;color:transparent;background-clip:text;-webkit-background-clip:text;animation:aboutShimmer 8s linear infinite; }
+.about-reveal { animation:aboutReveal .9s cubic-bezier(.2,.75,.25,1) both; }
+.about-photo-float { animation:aboutFloat 5s ease-in-out infinite; }
+.about-image-stack { animation:aboutReveal .8s ease both; }
+.about-purpose-card { animation:aboutReveal .7s ease both; transition:transform .45s ease,box-shadow .45s ease; }
+.about-purpose-card:hover { transform:translateY(-8px); box-shadow:0 25px 60px rgba(3,73,31,.13); }
+.about-value-card { animation:aboutReveal .65s ease both; }
+.about-impact-row { animation:aboutReveal .7s ease both; }
+.about-collage > div { animation:aboutReveal .8s ease both; }
+.about-collage > div:nth-child(2) { animation-delay:.08s; }
+.about-collage > div:nth-child(3) { animation-delay:.16s; }
+.about-collage > div:nth-child(4) { animation-delay:.24s; }
+@keyframes aboutReveal { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+@keyframes aboutFloat { 0%,100% { transform:translateY(0) rotate(2deg); } 50% { transform:translateY(-8px) rotate(1deg); } }
+@keyframes aboutShimmer { to { background-position:180% center; } }
+@media (prefers-reduced-motion: reduce) {
+  .about-gradient-text,.about-reveal,.about-photo-float,.about-image-stack,.about-purpose-card,.about-value-card,.about-impact-row,.about-collage > div { animation:none !important; }
+  .about-purpose-card { transition:none !important; }
+}
