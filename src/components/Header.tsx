@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, MenuIcon, PhoneIcon, WhatsAppIcon, XIcon, XSocialIcon, YouTubeIcon } from "./icons";
 
@@ -8,6 +9,10 @@ const navItems = ["Home", "About Us", "Our Causes", "Get Involved", "Gallery", "
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navRoutes = ["/", "/about-us", "/causes", "/get-involved", "/gallery", "/news-updates", "/contact-us"];
+  const isActive = (route: string) => pathname === route || (route !== "/" && pathname.startsWith(`${route}/`));
 
   return (
     <header className="relative z-50 lg:sticky lg:top-0 max-lg:contents">
@@ -90,7 +95,7 @@ export default function Header() {
                 href={i === 0 ? "/" : i === 1 ? "/about-us" : i === 2 ? "/causes" : i === 3 ? "/get-involved" : i === 4 ? "/gallery" : i === 5 ? "/news-updates" : "/contact-us"}
                 className={
                   "flex items-center gap-1 border-b-2 py-6 text-[13px] font-bold transition " +
-                  (i === 0
+                  (isActive(navRoutes[i])
                     ? "border-[#0c8f3e] text-[#087a35]"
                     : "border-transparent hover:border-[#0c8f3e] hover:text-[#087a35]")
                 }
@@ -130,7 +135,10 @@ export default function Header() {
                 key={item}
                 href={i === 0 ? "/" : i === 1 ? "/about-us" : i === 2 ? "/causes" : i === 3 ? "/get-involved" : i === 4 ? "/gallery" : i === 5 ? "/news-updates" : "/contact-us"}
                 onClick={() => setOpen(false)}
-                className="block border-b border-black/5 py-3 text-sm font-bold"
+                className={
+                  "block border-b border-black/5 py-3 text-sm font-bold transition " +
+                  (isActive(navRoutes[i]) ? "text-[#087a35]" : "text-[#151515] hover:text-[#087a35]")
+                }
               >
                 {item}
               </a>
