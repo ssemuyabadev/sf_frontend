@@ -13,6 +13,7 @@ import {
   UsersIcon,
   XIcon,
 } from "../../components/icons";
+import { gql, mutations, queries } from "../../lib/api";
 
 type Section = "dashboard" | "contact" | "messages" | "newsletter" | "volunteers" | "gallery" | "news" | "settings";
 
@@ -21,7 +22,8 @@ const nav = [
   { id: "contact" as Section, label: "Contact Details", icon: "⌖" },
   { id: "messages" as Section, label: "Contact Messages", icon: "✉", badge: 7 },
   { id: "newsletter" as Section, label: "Newsletter", icon: "◉", badge: 18 },
-  { id: "volunteers" as Section, label: "Volunteers", icon: "♧", badge: 4 },
+  { id: "volunteers" as Section, label: "Volunteers", icon: "♧" },
+  { id: "sponsors" as Section, label: "Sponsor Enquiries", icon: "♡" },
   { id: "gallery" as Section, label: "Gallery", icon: "▦" },
   { id: "news" as Section, label: "News & Updates", icon: "▤" },
   { id: "settings" as Section, label: "Settings", icon: "⚙" },
@@ -123,33 +125,92 @@ export default function ManagePage() {
     youtube: "",
   });
 
+  const [stats, setStats] = useState({ messages: 0, newsletter: 0, volunteers: 0, sponsors: 0, gallery: 0, news: 0 });
+  const [messages, setMessages] = useState<any[]>([]);
+  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [volunteers, setVolunteers] = useState<any[]>([]);
+  const [sponsors, setSponsors] = useState<any[]>([]);
+  const [gallery, setGallery] = useState<any[]>([]);
+  const [news, setNews] = useState<any[]>([]);
+
+  async function loadAdmin() {
+    const [s,m,n,v,sp,g,nu] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news)]);
+    setStats(s.dashboardStats);
+    setMessages(m.contactMessages.map((x:any)=>({...x,date:new Date(x.createdAt).toLocaleString()})));
+    setSubscribers(n.newsletterSubscribers.map((x:any)=>({...x,joined:new Date(x.createdAt).toLocaleDateString(),source:"Website"})));
+    setVolunteers(v.volunteerApplications.map((x:any)=>({...x,role:x.interest,date:new Date(x.createdAt).toLocaleDateString()})));
+    setSponsors(sp.sponsorEnquiries);
+    setGallery(g.adminGallery.map((x:any)=>({...x,image:x.imageUrl})));
+    setNews(nu.adminNews.map((x:any)=>({...x,date:new Date(x.publishedAt||x.createdAt).toLocaleDateString(),status:x.published?"Published":"Draft",image:x.imageUrl||"/images/home-hero.jpg"})));
+  }
+
   useEffect(() => {
-    setAuthenticated(sessionStorage.getItem("sf-admin-auth") === "1");
-    setReady(true);
+    gql(queries.me).then(() => { setAuthenticated(true); return loadAdmin(); }).catch(() => {}).finally(() => setReady(true));
   }, []);
 
   const sectionLabel = useMemo(() => nav.find((item) => item.id === section)?.label || "Dashboard", [section]);
 
-  function login(e: React.FormEvent) {
+  async function login(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim() || password.length < 4) {
-      setNotice("Enter a valid email and a password of at least 4 characters.");
-      return;
-    }
-    sessionStorage.setItem("sf-admin-auth", "1");
-    setAuthenticated(true);
-    setNotice("");
+    if (!email.trim() || password.length < 4) { setNotice("Enter a valid email and password."); return; }
+    try { await gql(mutations.login,{email,password}); setAuthenticated(true); setPassword(""); setNotice(""); await loadAdmin(); }
+    catch (error) { setNotice(error instanceof Error ? error.message : "Unable to sign in."); }
   }
 
-  function logout() {
-    sessionStorage.removeItem("sf-admin-auth");
-    setAuthenticated(false);
+  async function logout() { try { await gql(mutations.logout); } finally { setAuthenticated(false); } }
+
+  async function saveContact(e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      const r=await gql<any>(mutations.updateSettings,{input:{phone:contact.phone1,secondaryPhone:contact.phone2||null,email:contact.email,location:contact.location,facebook:contact.facebook||null,instagram:contact.instagram||null,x:contact.x||null,linkedin:contact.linkedin||null,youtube:contact.youtube||null}});
+      const s=r.updateSiteSettings;
+      setContact({phone1:s.phone,phone2:s.secondaryPhone||"",email:s.email,location:s.location,facebook:s.facebook||"",instagram:s.instagram||"",x:s.x||"",linkedin:s.linkedin||"",youtube:s.youtube||""});
+      setNotice("Contact details saved to the live database.");
+    } catch(error) { setNotice(error instanceof Error ? error.message : "Could not save contact details."); }
   }
 
-  function saveContact(e: React.FormEvent) {
-    e.preventDefault();
-    setNotice("Contact details saved for this admin session.");
-    window.setTimeout(() => setNotice(""), 2600);
+  async function markMessage(emailAddress:string) {
+    const item=messages.find(x=>x.email===emailAddress); if(!item)return;
+    try { await gql(mutations.updateMessageStatus,{id:item.id,status:"READ"}); setMessages(items=>items.map(x=>x.id===item.id?{...x,status:"Read"}:x)); }
+    catch(error) { setNotice(error instanceof Error ? error.message : "Could not update message."); }
+  }
+
+  async function reviewVolunteer(name:string) {
+    const item=volunteers.find(x=>x.name===name); if(!item)return;
+    const next=item.status==="New"?"REVIEWING":item.status==="Reviewing"?"APPROVED":"REVIEWING";
+    try { await gql(mutations.updateVolunteerStatus,{id:item.id,status:next}); setVolunteers(items=>items.map(x=>x.id===item.id?{...x,status:next==="REVIEWING"?"Reviewing":"Approved"}:x)); }
+    catch(error) { setNotice(error instanceof Error ? error.message : "Could not update application."); }
+  }
+
+  async function addGalleryItem() {
+    const title=window.prompt("Photo title"), imageUrl=window.prompt("Image URL");
+    if(!title||!imageUrl)return;
+    try { const r=await gql<any>(mutations.createGallery,{input:{title,imageUrl,category:"Community",published:true}}); setGallery(items=>[{...r.createGallery,image:r.createGallery.imageUrl},...items]); setNotice("Gallery photo published."); }
+    catch(error) { setNotice(error instanceof Error ? error.message : "Could not publish photo."); }
+  }
+
+  async function deleteGalleryItem(title:string) {
+    const item=gallery.find(x=>x.title===title); if(!item||!window.confirm("Delete this gallery item?"))return;
+    try { await gql(mutations.deleteGallery,{id:item.id}); setGallery(items=>items.filter(x=>x.id!==item.id)); setNotice("Gallery item deleted."); }
+    catch(error) { setNotice(error instanceof Error ? error.message : "Could not delete photo."); }
+  }
+
+  async function addNewsItem() {
+    const title=window.prompt("Story title"), body=window.prompt("Story body"); if(!title||!body)return;
+    const slug=title.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")+"-"+Date.now().toString().slice(-5);
+    try { const r=await gql<any>(mutations.createNews,{input:{title,slug,body,published:true}}); const item=r.createNews; setNews(items=>[{...item,date:new Date(item.publishedAt||item.createdAt).toLocaleDateString(),status:"Published",image:item.imageUrl||"/images/home-hero.jpg"},...items]); setNotice("Story published."); }
+    catch(error) { setNotice(error instanceof Error ? error.message : "Could not publish story."); }
+  }
+
+  async function deleteNewsItem(title:string) {
+    const item=news.find(x=>x.title===title); if(!item||!window.confirm("Delete this story?"))return;
+    try { await gql(mutations.deleteNews,{id:item.id}); setNews(items=>items.filter(x=>x.id!==item.id)); setNotice("Story deleted."); }
+    catch(error) { setNotice(error instanceof Error ? error.message : "Could not delete story."); }
+  }
+
+  function exportRows(filename:string,rows:string[][]) {
+    const csv=rows.map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\n");
+    const blob=new Blob([csv],{type:"text/csv"}),url=URL.createObjectURL(blob),a=document.createElement("a"); a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
   }
 
   if (!ready) return <div className="manage-loading"><div className="manage-spinner" /></div>;
@@ -348,10 +409,10 @@ export default function ManagePage() {
 
           {section === "messages" && (
             <>
-              <SectionTitle eyebrow="Inbox" title="Contact messages" description="Review enquiries submitted through the public contact form." action={<button className="manage-primary-btn">Export CSV</button>} />
+              <SectionTitle eyebrow="Inbox" title="Contact messages" description="Review enquiries submitted through the public contact form." action={<button className="manage-primary-btn" onClick={()=>exportRows("contact-messages.csv",[["Name","Email","Subject","Message","Status","Date"],...messages.map(x=>[x.name,x.email,x.subject||"",x.message,x.status,x.date])])}>Export CSV</button>} />
               <div className="manage-card overflow-hidden">
                 <div className="flex flex-col gap-3 border-b border-[#edf1ee] p-4 sm:flex-row sm:items-center sm:justify-between"><input className="manage-input max-w-sm" placeholder="Search messages..." /><select className="manage-select"><option>All statuses</option><option>New</option><option>Read</option><option>Replied</option></select></div>
-                <div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Sender</th><th>Subject</th><th>Received</th><th>Status</th><th /></tr></thead><tbody>{messages.map((item) => <tr key={item.email}><td><strong>{item.name}</strong><span>{item.email}</span></td><td>{item.subject}</td><td>{item.date}</td><td><Status>{item.status}</Status></td><td><button className="text-[10px] font-extrabold text-[#087a35]">Open →</button></td></tr>)}</tbody></table></div>
+                <div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Sender</th><th>Subject</th><th>Received</th><th>Status</th><th /></tr></thead><tbody>{messages.map((item) => <tr key={item.email}><td><strong>{item.name}</strong><span>{item.email}</span></td><td>{item.subject}</td><td>{item.date}</td><td><Status>{item.status}</Status></td><td><button onClick={()=>markMessage(item.email)} className="text-[10px] font-extrabold text-[#087a35]">Mark read →</button></td></tr>)}</tbody></table></div>
                 <div className="divide-y divide-[#edf1ee] md:hidden">{messages.map((item) => <div key={item.email} className="p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-extrabold">{item.subject}</p><p className="mt-1 text-[10px] text-[#849089]">{item.name} • {item.email}</p></div><Status>{item.status}</Status></div><div className="mt-3 flex justify-between text-[9px] text-[#98a39c]"><span>{item.date}</span><button className="font-extrabold text-[#087a35]">Open →</button></div></div>)}</div>
               </div>
             </>
@@ -359,7 +420,7 @@ export default function ManagePage() {
 
           {section === "newsletter" && (
             <>
-              <SectionTitle eyebrow="Audience" title="Newsletter subscribers" description="Manage your growing newsletter audience and see where subscribers joined from." action={<button className="manage-primary-btn">Export subscribers</button>} />
+              <SectionTitle eyebrow="Audience" title="Newsletter subscribers" description="Manage your growing newsletter audience and see where subscribers joined from." action={<button className="manage-primary-btn" onClick={()=>exportRows("newsletter-subscribers.csv",[["Email","Joined"],...subscribers.map(x=>[x.email,x.joined])])}>Export subscribers</button>} />
               <div className="grid gap-4 sm:grid-cols-3"><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Total subscribers</p><strong className="mt-1 block text-3xl font-black">1,284</strong><span className="text-[10px] font-bold text-[#087a35]">+18 this week</span></div><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">New this month</p><strong className="mt-1 block text-3xl font-black">76</strong><span className="text-[10px] font-bold text-[#087a35]">Healthy growth</span></div><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Active rate</p><strong className="mt-1 block text-3xl font-black">96.8%</strong><span className="text-[10px] font-bold text-[#087a35]">Audience is engaged</span></div></div>
               <div className="manage-card mt-5 overflow-hidden"><div className="border-b border-[#edf1ee] p-4"><input className="manage-input max-w-sm" placeholder="Search subscribers..." /></div><div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Email</th><th>Joined</th><th>Source</th><th>Status</th></tr></thead><tbody>{subscribers.map((item) => <tr key={item.email}><td><strong>{item.email}</strong></td><td>{item.joined}</td><td>{item.source}</td><td><Status>Active</Status></td></tr>)}</tbody></table></div><div className="divide-y divide-[#edf1ee] md:hidden">{subscribers.map((item) => <div key={item.email} className="flex items-center justify-between gap-3 p-4"><div><p className="text-xs font-extrabold">{item.email}</p><p className="mt-1 text-[9px] text-[#8b9790]">{item.joined} • {item.source}</p></div><Status>Active</Status></div>)}</div></div>
             </>
@@ -368,21 +429,28 @@ export default function ManagePage() {
           {section === "volunteers" && (
             <>
               <SectionTitle eyebrow="People" title="Volunteer applications" description="Review people who want to contribute their time, skills and energy to the foundation." action={<button className="manage-primary-btn">Export list</button>} />
-              <div className="manage-card overflow-hidden"><div className="flex flex-col gap-3 border-b border-[#edf1ee] p-4 sm:flex-row sm:items-center sm:justify-between"><input className="manage-input max-w-sm" placeholder="Search volunteers..." /><select className="manage-select"><option>All applications</option><option>New</option><option>Reviewing</option><option>Approved</option></select></div><div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Applicant</th><th>Interest</th><th>Applied</th><th>Status</th><th /></tr></thead><tbody>{volunteers.map((item) => <tr key={item.name}><td><strong>{item.name}</strong><span>Uganda</span></td><td>{item.role}</td><td>{item.date}</td><td><Status>{item.status}</Status></td><td><button className="text-[10px] font-extrabold text-[#087a35]">Review →</button></td></tr>)}</tbody></table></div><div className="divide-y divide-[#edf1ee] md:hidden">{volunteers.map((item) => <div key={item.name} className="p-4"><div className="flex justify-between gap-3"><div><p className="text-xs font-extrabold">{item.name}</p><p className="mt-1 text-[10px] text-[#8b9790]">{item.role} • {item.date}</p></div><Status>{item.status}</Status></div><button className="mt-3 text-[10px] font-extrabold text-[#087a35]">Review application →</button></div>)}</div></div>
+              <div className="manage-card overflow-hidden"><div className="flex flex-col gap-3 border-b border-[#edf1ee] p-4 sm:flex-row sm:items-center sm:justify-between"><input className="manage-input max-w-sm" placeholder="Search volunteers..." /><select className="manage-select"><option>All applications</option><option>New</option><option>Reviewing</option><option>Approved</option></select></div><div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Applicant</th><th>Interest</th><th>Applied</th><th>Status</th><th /></tr></thead><tbody>{volunteers.map((item) => <tr key={item.name}><td><strong>{item.name}</strong><span>Uganda</span></td><td>{item.role}</td><td>{item.date}</td><td><Status>{item.status}</Status></td><td><button onClick={()=>reviewVolunteer(item.name)} className="text-[10px] font-extrabold text-[#087a35]">Review →</button></td></tr>)}</tbody></table></div><div className="divide-y divide-[#edf1ee] md:hidden">{volunteers.map((item) => <div key={item.name} className="p-4"><div className="flex justify-between gap-3"><div><p className="text-xs font-extrabold">{item.name}</p><p className="mt-1 text-[10px] text-[#8b9790]">{item.role} • {item.date}</p></div><Status>{item.status}</Status></div><button onClick={()=>reviewVolunteer(item.name)} className="mt-3 text-[10px] font-extrabold text-[#087a35]">Review application →</button></div>)}</div></div>
+            </>
+          )}
+
+          {section === "sponsors" && (
+            <>
+              <SectionTitle eyebrow="Child sponsorship" title="Sponsor enquiries" description="Follow up with people who have expressed interest in sponsoring a child." />
+              <div className="manage-card overflow-hidden"><div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Person</th><th>Location</th><th>Preference</th><th>Contact</th><th>Received</th></tr></thead><tbody>{sponsors.map((item)=><tr key={item.id}><td><strong>{item.fullName}</strong><span>{item.email}<br />{item.phone}</span></td><td>{[item.city,item.country].filter(Boolean).join(", ")||"—"}</td><td>{item.sponsorshipPreference||"Discuss"}</td><td>{item.preferredContact||"—"}</td><td>{new Date(item.createdAt).toLocaleDateString()}</td></tr>)}</tbody></table></div><div className="divide-y divide-[#edf1ee] md:hidden">{sponsors.map((item)=><div key={item.id} className="p-4"><p className="text-xs font-extrabold">{item.fullName}</p><p className="mt-1 text-[10px] text-[#849089]">{item.email} • {item.phone}</p><p className="mt-2 text-[10px]">{item.sponsorshipPreference||"Discuss"} • {[item.city,item.country].filter(Boolean).join(", ")||"Location not supplied"}</p></div>)}</div></div>
             </>
           )}
 
           {section === "gallery" && (
             <>
-              <SectionTitle eyebrow="Media library" title="Gallery management" description="Keep the public gallery fresh with photos from outreach, education, healthcare and community work." action={<button className="manage-primary-btn">+ Add photo</button>} />
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{gallery.map((item) => <article key={item.title} className="manage-gallery-card"><div className="relative aspect-[1.55] overflow-hidden"><Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 hover:scale-105" /><span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[9px] font-black text-[#087a35] backdrop-blur">{item.category}</span></div><div className="flex items-center gap-3 p-4"><div className="min-w-0 flex-1"><h3 className="truncate text-xs font-black">{item.title}</h3><p className="mt-1 text-[9px] text-[#8b9790]">Published to website</p></div><button className="rounded-lg border border-[#e5ebe7] px-2.5 py-1.5 text-[9px] font-extrabold text-[#64736a] hover:border-[#bfe3ca] hover:text-[#087a35]">Edit</button></div></article>)}</div>
+              <SectionTitle eyebrow="Media library" title="Gallery management" description="Keep the public gallery fresh with photos from outreach, education, healthcare and community work." action={<button onClick={addGalleryItem} className="manage-primary-btn">+ Add photo</button>} />
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{gallery.map((item) => <article key={item.title} className="manage-gallery-card"><div className="relative aspect-[1.55] overflow-hidden"><Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 hover:scale-105" /><span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[9px] font-black text-[#087a35] backdrop-blur">{item.category}</span></div><div className="flex items-center gap-3 p-4"><div className="min-w-0 flex-1"><h3 className="truncate text-xs font-black">{item.title}</h3><p className="mt-1 text-[9px] text-[#8b9790]">Published to website</p></div><button onClick={()=>deleteGalleryItem(item.title)} className="rounded-lg border border-[#e5ebe7] px-2.5 py-1.5 text-[9px] font-extrabold text-[#c91525]">Delete</button></div></article>)}</div>
             </>
           )}
 
           {section === "news" && (
             <>
-              <SectionTitle eyebrow="Content studio" title="News & updates" description="Publish stories, announcements and impact updates directly to the public website." action={<button className="manage-primary-btn">+ New story</button>} />
-              <div className="grid gap-4 xl:grid-cols-2">{news.map((item) => <article key={item.title} className="manage-card flex overflow-hidden"><div className="relative hidden w-36 shrink-0 sm:block"><Image src={item.image} alt={item.title} fill className="object-cover" /></div><div className="min-w-0 flex-1 p-5"><div className="flex items-start justify-between gap-3"><Status>{item.status}</Status><button className="text-[9px] font-extrabold text-[#087a35]">Edit</button></div><h3 className="mt-3 text-sm font-black leading-5">{item.title}</h3><p className="mt-1 text-[10px] text-[#8b9790]">{item.date} • Ssemuyaba Foundation</p><p className="mt-3 text-[10px] leading-5 text-[#68766e]">Manage the headline, story copy, featured image and publication status from the content editor.</p></div></article>)}</div>
+              <SectionTitle eyebrow="Content studio" title="News & updates" description="Publish stories, announcements and impact updates directly to the public website." action={<button onClick={addNewsItem} className="manage-primary-btn">+ New story</button>} />
+              <div className="grid gap-4 xl:grid-cols-2">{news.map((item) => <article key={item.title} className="manage-card flex overflow-hidden"><div className="relative hidden w-36 shrink-0 sm:block"><Image src={item.image} alt={item.title} fill className="object-cover" /></div><div className="min-w-0 flex-1 p-5"><div className="flex items-start justify-between gap-3"><Status>{item.status}</Status><button onClick={()=>deleteNewsItem(item.title)} className="text-[9px] font-extrabold text-[#c91525]">Delete</button></div><h3 className="mt-3 text-sm font-black leading-5">{item.title}</h3><p className="mt-1 text-[10px] text-[#8b9790]">{item.date} • Ssemuyaba Foundation</p><p className="mt-3 text-[10px] leading-5 text-[#68766e]">Manage the headline, story copy, featured image and publication status from the content editor.</p></div></article>)}</div>
             </>
           )}
 
