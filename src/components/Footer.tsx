@@ -15,7 +15,7 @@ export default function Footer() {
         <div>
           <h3 className="font-bold">Quick Links</h3>
           <div className="mt-3 grid grid-cols-2 gap-y-2 text-xs text-white/75">
-            {["Home","About Us","Our Causes","Get Involved","Gallery","News & Updates","Contact Us","Donate"].map(x=><a href={x==="Contact Us"?"/contact-us":(x==="Home"?"/#home":x==="About Us"?"/#about":x==="News & Updates"?"/#news":x==="Donate"?"/#donate":"/#programs")} key={x} className="transition hover:text-[#13d74c]">{x}</a>)}
+            {["Home","About Us","Our Causes","Get Involved","Gallery","News & Updates","Contact Us","Donate"].map(x=><a href={x==="Home"?"/":x==="About Us"?"/about-us":x==="Our Causes"?"/causes":x==="Get Involved"?"/get-involved":x==="Gallery"?"/gallery":x==="News & Updates"?"/news-updates":x==="Contact Us"?"/contact-us":"/donate"} key={x} className="transition hover:text-[#13d74c]">{x}</a>)}
           </div>
         </div>
         <div>
