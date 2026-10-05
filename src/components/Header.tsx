@@ -2,13 +2,16 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { gql, queries } from "../lib/api";
 import { FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, MenuIcon, PhoneIcon, WhatsAppIcon, XIcon, XSocialIcon, YouTubeIcon } from "./icons";
 
 const navItems = ["Home", "About Us", "Our Causes", "Get Involved", "Gallery", "News & Updates", "Contact Us"];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [siteContact, setSiteContact] = useState({phone:"+256 705 283 679", secondary:"+256 789 395 815", email:"info@ssemuyabafoundation.org", location:"Naama Village, Mityana, Uganda"});
+  useEffect(()=>{gql<any>(queries.settings).then(r=>{const s=r.siteSettings;setSiteContact({phone:s.phone,secondary:s.secondaryPhone||"",email:s.email,location:s.location})}).catch(()=>{});},[]);
   const pathname = usePathname();
 
   const navRoutes = ["/", "/about-us", "/causes", "/get-involved", "/gallery", "/news-updates", "/contact-us"];
@@ -19,24 +22,24 @@ export default function Header() {
       <div className="bg-[#006b2f] text-white">
         <div className="section-wrap flex flex-col gap-1.5 py-2 text-[10px] font-semibold sm:flex-row sm:min-h-[38px] sm:items-center sm:justify-between sm:gap-4 sm:py-0 sm:text-xs">
           <div className="flex w-full items-center justify-center gap-3 leading-tight sm:w-auto sm:justify-start sm:gap-4">
-            <a href="tel:+256705283679" className="contact-chip group">
+            <a href={"tel:"+siteContact.phone.replace(/\s+/g,"")} className="contact-chip group">
               <PhoneIcon className="contact-chip-icon h-4 w-4" />
-              <span>+256 705 283 679</span>
+              <span>{siteContact.phone}</span>
             </a>
             <span className="opacity-40">|</span>
-            <a href="tel:+256789395815" className="contact-chip group">
+            <a href={"tel:"+siteContact.secondary.replace(/\s+/g,"")} className="contact-chip group">
               <PhoneIcon className="contact-chip-icon h-4 w-4" />
-              <span>+256 789 395 815</span>
+              <span>{siteContact.secondary}</span>
             </a>
             <span className="hidden opacity-40 sm:inline">|</span>
-            <a href="mailto:info@ssemuyabafoundation.org" className="group hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap">
+            <a href={"mailto:"+siteContact.email} className="group hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap">
               <MailIcon className="contact-chip-icon h-4 w-4" />
-              <span>info@ssemuyabafoundation.org</span>
+              <span>{siteContact.email}</span>
             </a>
             <span className="hidden opacity-40 sm:inline">|</span>
             <span className="hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap">
               <MapPinIcon className="contact-chip-icon h-4 w-4" />
-              <span>Naama Village, Mityana, Uganda</span>
+              <span>{siteContact.location}</span>
             </span>
           </div>
           <div className="flex w-full items-center justify-center gap-2 sm:w-auto sm:justify-start">
