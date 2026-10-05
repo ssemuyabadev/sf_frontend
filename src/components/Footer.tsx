@@ -1,7 +1,14 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { gql, queries, subscribeNewsletter } from "../lib/api";
 import { MailIcon, MapPinIcon, PhoneIcon, FacebookIcon, InstagramIcon, XSocialIcon, LinkedInIcon, YouTubeIcon, WhatsAppIcon } from "./icons";
 
 export default function Footer() {
+  const [siteContact,setSiteContact]=useState({phone:"+256 705 283 679",secondary:"+256 789 395 815",email:"info@ssemuyabafoundation.org",location:"Naama Village, Mityana, Uganda"});
+  const [newsletterEmail,setNewsletterEmail]=useState("");
+  const [newsletterSent,setNewsletterSent]=useState(false);
+  useEffect(()=>{gql<any>(queries.settings).then(r=>{const s=r.siteSettings;setSiteContact({phone:s.phone,secondary:s.secondaryPhone||"",email:s.email,location:s.location})}).catch(()=>{});},[]);
+  async function handleNewsletter(e:React.FormEvent){e.preventDefault();if(!newsletterEmail)return;try{await subscribeNewsletter(newsletterEmail);setNewsletterSent(true);setNewsletterEmail("")}catch{}}
   const currentYear = new Date().getFullYear();
   return (
     <footer id="contact" className="bg-[#03160b] text-white">
@@ -21,9 +28,9 @@ export default function Footer() {
         <div>
           <h3 className="font-bold">Contact Us</h3>
           <div className="mt-3 space-y-3 text-xs text-white/80">
-            <a href="tel:+256705283679" className="footer-contact group"><span className="footer-contact-icon"><PhoneIcon/></span><span>+256 705 283 679<br/>+256 789 395 815</span></a>
-            <a href="mailto:info@ssemuyabafoundation.org" className="footer-contact group"><span className="footer-contact-icon"><MailIcon/></span><span>info@ssemuyabafoundation.org</span></a>
-            <span className="footer-contact"><span className="footer-contact-icon"><MapPinIcon/></span><span>Naama Village, Mityana, Uganda</span></span>
+            <a href={"tel:"+siteContact.phone.replace(/\s+/g,"")} className="footer-contact group"><span className="footer-contact-icon"><PhoneIcon/></span><span>{siteContact.phone}<br/>{siteContact.secondary}</span></a>
+            <a href={"mailto:"+siteContact.email} className="footer-contact group"><span className="footer-contact-icon"><MailIcon/></span><span>{siteContact.email}</span></a>
+            <span className="footer-contact"><span className="footer-contact-icon"><MapPinIcon/></span><span>{siteContact.location}</span></span>
           </div>
           <div className="mt-5">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-white/60">Follow Us</p>
@@ -40,14 +47,14 @@ export default function Footer() {
         <div>
           <h3 className="font-bold">Subscribe to Our Newsletter</h3>
           <p className="mt-2 text-xs leading-5 text-white/70">Get stories, updates and opportunities to make a difference delivered to your inbox.</p>
-          <form className="mt-4 space-y-2">
+          <form onSubmit={handleNewsletter} className="mt-4 space-y-2">
             <label htmlFor="newsletter-email" className="sr-only">Email address</label>
             <div className="flex flex-col gap-2 rounded-2xl border border-white/15 bg-white/10 p-1.5 backdrop-blur sm:flex-row sm:items-center sm:rounded-full">
-              <input id="newsletter-email" type="email" placeholder="Your email address" className="min-w-0 w-full flex-1 bg-transparent px-3 py-2 text-xs text-white outline-none placeholder:text-white/50 sm:py-1.5" required/>
-              <button type="button" className="w-full shrink-0 rounded-full bg-[#ff1d2d] px-4 py-2 text-xs font-extrabold transition hover:bg-[#e91424] sm:w-auto">Subscribe</button>
+              <input id="newsletter-email" type="email" value={newsletterEmail} onChange={e=>setNewsletterEmail(e.target.value)} placeholder="Your email address" className="min-w-0 w-full flex-1 bg-transparent px-3 py-2 text-xs text-white outline-none placeholder:text-white/50 sm:py-1.5" required/>
+              <button type="submit" className="w-full shrink-0 rounded-full bg-[#ff1d2d] px-4 py-2 text-xs font-extrabold transition hover:bg-[#e91424] sm:w-auto">Subscribe</button>
             </div>
           </form>
-          <p className="mt-3 text-[10px] text-white/50">No spam. Just meaningful stories and impact.</p>
+          <p className="mt-3 text-[10px] text-white/50">{newsletterSent?"You’re subscribed. Thank you!":"No spam. Just meaningful stories and impact."}</p>
           <p className="mt-6 text-base font-black italic leading-tight text-[#13d74c] sm:text-xl">We reachout to the unreachable and provide</p>
         </div>
       </div>
