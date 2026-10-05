@@ -52,7 +52,7 @@ export default function Header() {
       <div className="nav-shell sticky top-0 z-50 relative -mt-px border-b border-black/5 bg-white shadow-md">
         <div className="section-wrap relative z-10 flex min-h-[78px] items-center justify-between">
           <a
-            href="#home"
+            href="/"
             onClick={() => setOpen(false)}
             className="flex shrink-0 items-center"
             aria-label="Ssemuyaba Foundation home"
@@ -88,7 +88,7 @@ export default function Header() {
             {navItems.map((item, i) => (
               <a
                 key={item}
-                href={i === 2 ? "/causes" : i === 3 ? "/get-involved" : i === 4 ? "/gallery" : i === 5 ? "/news-updates" : i === 6 ? "/contact-us" : "#" + ids[i]}
+                href={i === 0 ? "/" : i === 1 ? "/about-us" : i === 2 ? "/causes" : i === 3 ? "/get-involved" : i === 4 ? "/gallery" : i === 5 ? "/news-updates" : "/contact-us"}
                 className={
                   "flex items-center gap-1 border-b-2 py-6 text-[13px] font-bold transition " +
                   (i === 0
