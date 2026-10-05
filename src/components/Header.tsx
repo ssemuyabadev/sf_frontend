@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, MenuIcon, PhoneIcon, XIcon, XSocialIcon, YouTubeIcon } from "./icons";
+import { FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, MenuIcon, PhoneIcon, WhatsAppIcon, XIcon, XSocialIcon, YouTubeIcon } from "./icons";
 
 const navItems = ["Home", "About Us", "Our Causes", "Get Involved", "Gallery", "News & Updates", "Contact Us"];
 const ids = ["home", "about", "programs", "involved", "gallery", "news", "contact"];
@@ -13,7 +13,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 shadow-sm">
       <div className="bg-[#006b2f] text-white">
-        <div className="section-wrap flex min-h-[34px] items-center justify-between gap-4 text-[10px] font-semibold sm:text-xs">
+        <div className="section-wrap flex min-h-[38px] items-center justify-between gap-4 text-[10px] font-semibold sm:text-xs">
           <div className="hidden items-center gap-4 sm:flex">
             <a href="tel:+256705283679" className="contact-chip group">
               <PhoneIcon className="contact-chip-icon h-4 w-4" />
@@ -43,13 +43,14 @@ export default function Header() {
               <a href="#" aria-label="X" className="social-brand social-brand-header"><XSocialIcon /></a>
               <a href="#" aria-label="LinkedIn" className="social-brand social-brand-header"><LinkedInIcon /></a>
               <a href="#" aria-label="YouTube" className="social-brand social-brand-header"><YouTubeIcon /></a>
+              <a href="https://wa.me/256705283679" aria-label="WhatsApp" className="social-brand social-brand-header"><WhatsAppIcon /></a>
             </div>
           </div>
         </div>
       </div>
 
       <div className="nav-shell relative border-b border-black/5 bg-white">
-        <div className="section-wrap relative z-10 flex min-h-[72px] items-center justify-between">
+        <div className="section-wrap relative z-10 flex min-h-[78px] items-center justify-between">
           <a
             href="#home"
             onClick={() => setOpen(false)}
@@ -61,7 +62,7 @@ export default function Header() {
               alt=""
               width={160}
               height={160}
-              className="h-[52px] w-[52px] object-contain sm:h-[56px] sm:w-[56px]"
+              className="h-[56px] w-[56px] object-contain sm:h-[60px] sm:w-[60px]"
               priority
             />
             <span className="ml-2.5 flex flex-col leading-none">
