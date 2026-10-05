@@ -9,10 +9,10 @@ export async function gql<T>(query: string, variables?: Record<string, unknown>)
 
 export const queries = {
   me: `query { me { id email name } }`,
-  stats: `query { dashboardStats { messages newsletter volunteers sponsors gallery news } }`,
+  stats: `query { dashboardStats { messages newMessages newsletter pendingNewsletter volunteers sponsors gallery news } }`,
   settings: `query { siteSettings { id phone secondaryPhone email location facebook instagram x linkedin youtube whatsapp } }`,
   messages: `query { contactMessages { id name email phone subject message status createdAt } }`,
-  subscribers: `query { newsletterSubscribers { id email createdAt } }`,
+  subscribers: `query { newsletterSubscribers { id email status createdAt updatedAt } }`,
   volunteers: `query { volunteerApplications { id name email phone interest availability message status createdAt } }`,
   sponsors: `query { sponsorEnquiries { id fullName email phone country city preferredContact sponsorshipPreference message consent createdAt } }`,
   gallery: `query { adminGallery { id title imageUrl description category published createdAt } }`,
@@ -24,9 +24,10 @@ export const queries = {
 export const mutations = {
   login: `mutation($email:String!,$password:String!){ login(email:$email,password:$password){ admin { id email name } } }`,
   logout: `mutation { logout }`,
-  updateSettings: `mutation($input:SettingsInput!){ updateSiteSettings(input:$input){ id phone secondaryPhone email location facebook instagram x linkedin youtube } }`,
+  updateSettings: `mutation($input:SettingsInput!){ updateSiteSettings(input:$input){ id phone secondaryPhone email location facebook instagram x linkedin youtube whatsapp } }`,
   updateMessageStatus: `mutation($id:String!,$status:String!){ updateContactStatus(id:$id,status:$status){ id status } }`,
   updateVolunteerStatus: `mutation($id:String!,$status:String!){ updateVolunteerStatus(id:$id,status:$status){ id status } }`,
+  updateNewsletterStatus: `mutation($id:String!,$status:String!){ updateNewsletterStatus(id:$id,status:$status){ id email status updatedAt } }`,
   createGallery: `mutation($input:GalleryInput!){ createGallery(input:$input){ id title imageUrl description category published createdAt } }`,
   updateGallery: `mutation($id:String!,$input:GalleryInput!){ updateGallery(id:$id,input:$input){ id title imageUrl description category published createdAt } }`,
   deleteGallery: `mutation($id:String!){ deleteGallery(id:$id) }`,
