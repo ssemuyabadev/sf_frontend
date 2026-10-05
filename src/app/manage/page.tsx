@@ -37,8 +37,8 @@ const nav = [
 function Status({ children }: { children: string }) {
   const tone =
     children === "New" ? "bg-[#e8fff0] text-[#087a35]" :
-    children === "Approved" || children === "Published" ? "bg-[#eaf7ef] text-[#087a35]" :
-    children === "Declined" ? "bg-[#fff0f1] text-[#c91525]" :
+    children === "Approved" || children === "Published" || children === "Replied" ? "bg-[#eaf7ef] text-[#087a35]" :
+    children === "Declined" || children === "Archived" ? "bg-[#fff0f1] text-[#c91525]" :
     children === "Reviewing" ? "bg-[#fff6dc] text-[#986800]" :
     children === "Draft" ? "bg-[#f0f2f4] text-[#66727b]" :
     "bg-[#eef1f4] text-[#65717a]";
@@ -98,7 +98,7 @@ export default function ManagePage() {
     whatsapp: "",
   });
 
-  const [stats, setStats] = useState({ messages: 0, newMessages: 0, newsletter: 0, pendingNewsletter: 0, volunteers: 0, sponsors: 0, gallery: 0, news: 0 });
+  const [stats, setStats] = useState({ messages: 0, newMessages: 0, newsletter: 0, pendingNewsletter: 0, volunteers: 0, sponsors: 0, pendingSponsors: 0, gallery: 0, news: 0 });
   const [messages, setMessages] = useState<any[]>([]);
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [volunteers, setVolunteers] = useState<any[]>([]);
@@ -123,7 +123,7 @@ export default function ManagePage() {
   }, []);
 
   const sectionLabel = useMemo(() => nav.find((item) => item.id === section)?.label || "Dashboard", [section]);
-  const navBadge = (id: Section) => id === "messages" ? stats.newMessages : id === "newsletter" ? stats.pendingNewsletter : 0;
+  const navBadge = (id: Section) => id === "messages" ? stats.newMessages : id === "newsletter" ? stats.pendingNewsletter : id === "sponsors" ? stats.pendingSponsors : 0;
   const filteredMessages = messages.filter((item) => { const haystack=[item.name,item.email||"",item.subject||"",item.message||""].join(" ").toLowerCase(); return (!messageSearch || haystack.includes(messageSearch.toLowerCase())) && (messageFilter==="ALL" || item.status===messageFilter); });
 
   async function login(e: React.FormEvent) {
@@ -157,6 +157,16 @@ export default function ManagePage() {
     try { await gql(mutations.updateVolunteerStatus,{id:item.id,status:next}); setVolunteers(items=>items.map(x=>x.id===item.id?{...x,status:next==="REVIEWING"?"Reviewing":"Approved"}:x)); }
     catch(error) { setNotice(error instanceof Error ? error.message : "Could not update application."); }
   }
+  async function reviewSponsor(id:string,status:"REPLIED"|"ARCHIVED") {
+    try {
+      const r=await gql<any>(mutations.updateSponsorStatus,{id,status});
+      setSponsors(items=>items.map(x=>x.id===id?{...x,status:r.updateSponsorStatus.status}:x));
+      if(status==="REPLIED") setStats(current=>({...current,pendingSponsors:Math.max(0,current.pendingSponsors-1)}));
+      if(status==="ARCHIVED") setStats(current=>({...current,pendingSponsors:Math.max(0,current.pendingSponsors-1)}));
+      setNotice(status==="REPLIED"?"Sponsor enquiry marked replied.":"Sponsor enquiry archived.");
+    } catch(error) { setNotice(error instanceof Error ? error.message : "Could not update sponsor enquiry."); }
+  }
+
   async function reviewNewsletter(id:string,status:"APPROVED"|"DECLINED") {
     try {
       const r=await gql<any>(mutations.updateNewsletterStatus,{id,status});
@@ -323,11 +333,12 @@ export default function ManagePage() {
           {section === "dashboard" && (
             <>
               <SectionTitle eyebrow="Overview" title="Good morning, Admin." description="Here’s what is happening across the foundation website today." action={<button onClick={() => setSection("news")} className="manage-primary-btn">Create update <ArrowRight className="h-4 w-4" /></button>} />
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
                 {[
                   ["Contact messages", String(stats.messages), `${stats.newMessages} new`, "✉"],
                   ["Newsletter subscribers", String(stats.newsletter), `${stats.pendingNewsletter} pending review`, "◉"],
                   ["Volunteer applications", String(stats.volunteers), "Live applications", "♧"],
+                  ["Sponsor enquiries", String(stats.sponsors), `${stats.pendingSponsors} new`, "♡"],
                   ["Published stories", String(stats.news), "Published", "▤"],
                 ].map(([label, value, note, icon]) => (
                   <div key={label} className="manage-stat-card">
@@ -421,8 +432,16 @@ export default function ManagePage() {
 
           {section === "sponsors" && (
             <>
-              <SectionTitle eyebrow="Child sponsorship" title="Sponsor enquiries" description="Follow up with people who have expressed interest in sponsoring a child." />
-              <div className="manage-card overflow-hidden"><div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Person</th><th>Location</th><th>Preference</th><th>Contact</th><th>Received</th></tr></thead><tbody>{sponsors.map((item)=><tr key={item.id}><td><strong>{item.fullName}</strong><span>{item.email}<br />{item.phone}</span></td><td>{[item.city,item.country].filter(Boolean).join(", ")||"—"}</td><td>{item.sponsorshipPreference||"Discuss"}</td><td>{item.preferredContact||"—"}</td><td>{new Date(item.createdAt).toLocaleDateString()}</td></tr>)}</tbody></table></div><div className="divide-y divide-[#edf1ee] md:hidden">{sponsors.map((item)=><div key={item.id} className="p-4"><p className="text-xs font-extrabold">{item.fullName}</p><p className="mt-1 text-[10px] text-[#849089]">{item.email} • {item.phone}</p><p className="mt-2 text-[10px]">{item.sponsorshipPreference||"Discuss"} • {[item.city,item.country].filter(Boolean).join(", ")||"Location not supplied"}</p></div>)}</div></div>
+              <SectionTitle eyebrow="Child sponsorship" title="Sponsor enquiries" description="Track new sponsorship interest, follow up with enquiries and archive completed records." action={<button className="manage-primary-btn" onClick={()=>exportRows("sponsor-enquiries.csv",[["Name","Email","Phone","Location","Preference","Contact","Status","Received"],...sponsors.map(x=>[x.fullName,x.email||"",x.phone,[x.city,x.country].filter(Boolean).join(", "),x.sponsorshipPreference||"Discuss",x.preferredContact||"",x.status,new Date(x.createdAt).toLocaleString()])])}>Export CSV</button>} />
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Total enquiries</p><strong className="mt-1 block text-3xl font-black">{stats.sponsors}</strong><span className="text-[10px] font-bold text-[#087a35]">Live from database</span></div>
+                <div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">New enquiries</p><strong className="mt-1 block text-3xl font-black">{stats.pendingSponsors}</strong><span className="text-[10px] font-bold text-[#087a35]">Need follow-up</span></div>
+                <div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Replied</p><strong className="mt-1 block text-3xl font-black">{sponsors.filter(x=>x.status==="REPLIED").length}</strong><span className="text-[10px] font-bold text-[#087a35]">Follow-up completed</span></div>
+              </div>
+              <div className="manage-card mt-5 overflow-hidden">
+                <div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Person</th><th>Location</th><th>Preference</th><th>Contact</th><th>Received</th><th>Status</th><th>Actions</th></tr></thead><tbody>{sponsors.map((item)=><tr key={item.id}><td><strong>{item.fullName}</strong><span>{item.email||"No email provided"}<br />{item.phone}</span></td><td>{[item.city,item.country].filter(Boolean).join(", ")||"—"}</td><td>{item.sponsorshipPreference||"Discuss"}</td><td>{item.preferredContact||"—"}</td><td>{new Date(item.createdAt).toLocaleDateString()}</td><td><Status>{item.status==="NEW"?"New":item.status==="REPLIED"?"Replied":"Archived"}</Status></td><td><div className="flex gap-2">{item.status!=="REPLIED"&&item.status!=="ARCHIVED"&&<button onClick={()=>reviewSponsor(item.id,"REPLIED")} className="rounded-lg bg-[#e8fff0] px-2.5 py-1.5 text-[9px] font-extrabold text-[#087a35]">Replied</button>}{item.status!=="ARCHIVED"&&<button onClick={()=>reviewSponsor(item.id,"ARCHIVED")} className="rounded-lg bg-[#fff0f1] px-2.5 py-1.5 text-[9px] font-extrabold text-[#c91525]">Archive</button>}</div></td></tr>)}</tbody></table></div>
+                <div className="divide-y divide-[#edf1ee] md:hidden">{sponsors.map((item)=><div key={item.id} className="p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-extrabold">{item.fullName}</p><p className="mt-1 text-[10px] text-[#849089]">{item.email||"No email provided"} • {item.phone}</p></div><Status>{item.status==="NEW"?"New":item.status==="REPLIED"?"Replied":"Archived"}</Status></div><p className="mt-2 text-[10px]">{item.sponsorshipPreference||"Discuss"} • {[item.city,item.country].filter(Boolean).join(", ")||"Location not supplied"}</p><div className="mt-3 flex gap-2">{item.status!=="REPLIED"&&item.status!=="ARCHIVED"&&<button onClick={()=>reviewSponsor(item.id,"REPLIED")} className="rounded-lg bg-[#e8fff0] px-2.5 py-1.5 text-[9px] font-extrabold text-[#087a35]">Replied</button>}{item.status!=="ARCHIVED"&&<button onClick={()=>reviewSponsor(item.id,"ARCHIVED")} className="rounded-lg bg-[#fff0f1] px-2.5 py-1.5 text-[9px] font-extrabold text-[#c91525]">Archive</button>}</div></div>)}</div>
+              </div>
             </>
           )}
 
