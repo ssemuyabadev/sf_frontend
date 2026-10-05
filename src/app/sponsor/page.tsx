@@ -27,7 +27,7 @@ export default function SponsorPage() {
     return () => { mounted = false; };
   }, []);
 
-  const whatsapp = whatsappHref(siteContact.secondaryPhone || siteContact.phone);
+  const whatsapp = siteContact.whatsapp || whatsappHref(siteContact.secondaryPhone || siteContact.phone);
   const [form, setForm] = useState({
     name: "", email: "", phone: "", country: "", city: "", frequency: "Monthly", preferredContact: "WhatsApp",
     message: "", agree: false,
