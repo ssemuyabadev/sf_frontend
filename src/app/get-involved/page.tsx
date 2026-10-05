@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { submitVolunteer } from "../../lib/api";
 import {
   ArrowRight,
   GraduationIcon,
@@ -61,31 +62,17 @@ const steps = [
 export default function GetInvolvedPage() {
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = event.currentTarget;
-    const data = new FormData(form);
-    const body = [
-      "Volunteer expression of interest",
-      "",
-      `Full name: ${data.get("name")}`,
-      `Email: ${data.get("email")}`,
-      `Phone / WhatsApp: ${data.get("phone")}`,
-      `Location: ${data.get("location")}`,
-      `Area of interest: ${data.get("interest")}`,
-      `Availability: ${data.get("availability")}`,
-      `Preferred involvement: ${data.get("involvement")}`,
-      "",
-      "About me:",
-      String(data.get("message") || ""),
-    ].join("\\n");
-
-    window.location.href =
-      "mailto:info@ssemuyabafoundation.org?subject=" +
-      encodeURIComponent("Volunteer Expression of Interest") +
-      "&body=" +
-      encodeURIComponent(body);
-    setSubmitted(true);
+    const form=event.currentTarget; const data=new FormData(form);
+    try {
+      await submitVolunteer({
+        name:String(data.get("name")), email:String(data.get("email")), phone:String(data.get("phone")),
+        interest:String(data.get("interest")), availability:String(data.get("availability")||""),
+        message:[`Location: ${data.get("location")||""}`,`Preferred involvement: ${data.get("involvement")||""}`,String(data.get("message")||"")].join("\n\n")
+      });
+      setSubmitted(true); form.reset();
+    } catch { window.alert("We could not submit your application right now. Please try again."); }
   }
 
   return (
