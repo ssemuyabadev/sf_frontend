@@ -9,12 +9,12 @@ export async function gql<T>(query: string, variables?: Record<string, unknown>)
 
 export const queries = {
   me: `query { me { id email name } }`,
-  stats: `query { dashboardStats { messages newMessages newsletter pendingNewsletter volunteers sponsors gallery news } }`,
+  stats: `query { dashboardStats { messages newMessages newsletter pendingNewsletter volunteers sponsors pendingSponsors gallery news } }`,
   settings: `query { siteSettings { id phone secondaryPhone email location facebook instagram x linkedin youtube whatsapp } }`,
   messages: `query { contactMessages { id name email phone subject message status createdAt } }`,
   subscribers: `query { newsletterSubscribers { id email status createdAt updatedAt } }`,
   volunteers: `query { volunteerApplications { id name email phone interest availability message status createdAt } }`,
-  sponsors: `query { sponsorEnquiries { id fullName email phone country city preferredContact sponsorshipPreference message consent createdAt } }`,
+  sponsors: `query { sponsorEnquiries { id fullName email phone country city preferredContact sponsorshipPreference message consent status createdAt updatedAt } }`,
   gallery: `query { adminGallery { id title imageUrl description category published createdAt } }`,
   news: `query { adminNews { id title slug excerpt body imageUrl published publishedAt createdAt } }`,
   publicGallery: `query { gallery(publishedOnly: true) { id title imageUrl description category } }`,
@@ -28,6 +28,7 @@ export const mutations = {
   updateMessageStatus: `mutation($id:String!,$status:String!){ updateContactStatus(id:$id,status:$status){ id status } }`,
   updateVolunteerStatus: `mutation($id:String!,$status:String!){ updateVolunteerStatus(id:$id,status:$status){ id status } }`,
   updateNewsletterStatus: `mutation($id:String!,$status:String!){ updateNewsletterStatus(id:$id,status:$status){ id email status updatedAt } }`,
+  updateSponsorStatus: `mutation($id:String!,$status:String!){ updateSponsorStatus(id:$id,status:$status){ id status updatedAt } },
   createGallery: `mutation($input:GalleryInput!){ createGallery(input:$input){ id title imageUrl description category published createdAt } }`,
   updateGallery: `mutation($id:String!,$input:GalleryInput!){ updateGallery(id:$id,input:$input){ id title imageUrl description category published createdAt } }`,
   deleteGallery: `mutation($id:String!){ deleteGallery(id:$id) }`,
@@ -59,7 +60,7 @@ type VolunteerPayload = {
 
 type SponsorPayload = {
   fullName: string;
-  email: string;
+  email?: string;
   phone: string;
   country?: string;
   city?: string;
