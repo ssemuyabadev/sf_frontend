@@ -107,7 +107,7 @@ export default function Home(){
       <label htmlFor="newsletter-email" className="sr-only">Email address</label>
       <div className="flex overflow-hidden rounded-full border border-white/15 bg-white/10 p-1.5 backdrop-blur">
        <input id="newsletter-email" type="email" placeholder="Your email address" className="min-w-0 flex-1 bg-transparent px-3 text-xs text-white outline-none placeholder:text-white/50" required/>
-       <button type="submit" className="shrink-0 rounded-full bg-[#ff1d2d] px-4 py-2 text-xs font-extrabold transition hover:bg-[#e91424]">Subscribe</button>
+       <button type="button" className="shrink-0 rounded-full bg-[#ff1d2d] px-4 py-2 text-xs font-extrabold transition hover:bg-[#e91424]">Subscribe</button>
       </div>
      </form>
      <p className="mt-3 text-[10px] text-white/50">No spam. Just meaningful stories and impact.</p>
