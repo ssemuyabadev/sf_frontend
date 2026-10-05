@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { submitSponsor } from "../../lib/api";\nimport { fetchSiteSettings, whatsappHref, DEFAULT_SITE_SETTINGS, type SiteSettings } from "../../lib/siteSettings";
+import { submitSponsor } from "../../lib/api";
+import { fetchSiteSettings, whatsappHref, DEFAULT_SITE_SETTINGS, type SiteSettings } from "../../lib/siteSettings";
 import { ArrowRight, ChevronDown, HeartIcon, HeartPulseIcon, GraduationIcon, LeafIcon, PhoneIcon, MailIcon, UsersIcon } from "../../components/icons";
 
 const roles = [
