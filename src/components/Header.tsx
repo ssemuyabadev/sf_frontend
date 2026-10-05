@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { HeartIcon, MenuIcon, XIcon } from "./icons";
+import { FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, MenuIcon, PhoneIcon, XIcon, XSocialIcon, YouTubeIcon } from "./icons";
 
 const navItems = ["Home", "About Us", "Our Causes", "Get Involved", "Gallery", "News & Updates", "Contact Us"];
 const ids = ["home", "about", "programs", "involved", "gallery", "news", "contact"];
@@ -14,22 +14,36 @@ export default function Header() {
     <header className="sticky top-0 z-50 shadow-sm">
       <div className="bg-[#006b2f] text-white">
         <div className="section-wrap flex min-h-[34px] items-center justify-between gap-4 text-[10px] font-semibold sm:text-xs">
-          <div className="hidden items-center gap-5 sm:flex">
-            <span>+256 705 283 679</span>
-            <span className="opacity-60">|</span>
-            <span>+256 789 395 815</span>
-            <span className="opacity-60">|</span>
-            <span>✉ info@ssemuyabafoundation.org</span>
-            <span className="opacity-60">|</span>
-            <span>⌖ Naama Village, Mityana, Uganda</span>
+          <div className="hidden items-center gap-4 sm:flex">
+            <a href="tel:+256705283679" className="contact-chip group">
+              <PhoneIcon className="contact-chip-icon h-4 w-4" />
+              <span>+256 705 283 679</span>
+            </a>
+            <span className="opacity-40">|</span>
+            <a href="tel:+256789395815" className="contact-chip group">
+              <PhoneIcon className="contact-chip-icon h-4 w-4" />
+              <span>+256 789 395 815</span>
+            </a>
+            <span className="opacity-40">|</span>
+            <a href="mailto:info@ssemuyabafoundation.org" className="contact-chip group">
+              <MailIcon className="contact-chip-icon h-4 w-4" />
+              <span>info@ssemuyabafoundation.org</span>
+            </a>
+            <span className="opacity-40">|</span>
+            <span className="contact-chip">
+              <MapPinIcon className="contact-chip-icon h-4 w-4" />
+              <span>Naama Village, Mityana, Uganda</span>
+            </span>
           </div>
-          <div className="ml-auto flex items-center gap-2.5">
-            <span className="hidden sm:inline">Follow Us:</span>
-            {["f", "𝕏", "◎", "▶"].map((x) => (
-              <span key={x} className="grid h-5 w-5 place-items-center rounded-full bg-white/15 text-[10px]">
-                {x}
-              </span>
-            ))}
+          <div className="ml-auto flex items-center gap-2">
+            <span className="hidden text-[10px] font-bold sm:inline">Follow Us:</span>
+            <div className="flex items-center gap-1.5" aria-label="Social media">
+              <a href="#" aria-label="Facebook" className="social-brand social-brand-header"><FacebookIcon /></a>
+              <a href="#" aria-label="Instagram" className="social-brand social-brand-header"><InstagramIcon /></a>
+              <a href="#" aria-label="X" className="social-brand social-brand-header"><XSocialIcon /></a>
+              <a href="#" aria-label="LinkedIn" className="social-brand social-brand-header"><LinkedInIcon /></a>
+              <a href="#" aria-label="YouTube" className="social-brand social-brand-header"><YouTubeIcon /></a>
+            </div>
           </div>
         </div>
       </div>
