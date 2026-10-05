@@ -15,7 +15,7 @@ import {
 } from "../../components/icons";
 import { gql, mutations, queries } from "../../lib/api";
 
-type Section = "dashboard" | "contact" | "messages" | "newsletter" | "volunteers" | "gallery" | "news" | "settings";
+type Section = "dashboard" | "contact" | "messages" | "newsletter" | "volunteers" | "sponsors" | "gallery" | "news" | "settings";
 
 const nav = [
   { id: "dashboard" as Section, label: "Dashboard", icon: "⌂" },
@@ -134,8 +134,9 @@ export default function ManagePage() {
   const [news, setNews] = useState<any[]>([]);
 
   async function loadAdmin() {
-    const [s,m,n,v,sp,g,nu] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news)]);
+    const [s,settingsResult,m,n,v,sp,g,nu] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.settings),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news)]);
     setStats(s.dashboardStats);
+    const settingsData=settingsResult.siteSettings; setContact({phone1:settingsData.phone,phone2:settingsData.secondaryPhone||"",email:settingsData.email,location:settingsData.location,facebook:settingsData.facebook||"",instagram:settingsData.instagram||"",x:settingsData.x||"",linkedin:settingsData.linkedin||"",youtube:settingsData.youtube||""});
     setMessages(m.contactMessages.map((x:any)=>({...x,date:new Date(x.createdAt).toLocaleString()})));
     setSubscribers(n.newsletterSubscribers.map((x:any)=>({...x,joined:new Date(x.createdAt).toLocaleDateString(),source:"Website"})));
     setVolunteers(v.volunteerApplications.map((x:any)=>({...x,role:x.interest,date:new Date(x.createdAt).toLocaleDateString()})));
