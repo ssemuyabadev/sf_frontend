@@ -39,10 +39,10 @@ export default function SponsorPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.email || !form.phone || !form.agree) return;
+    if (!form.name || !form.phone || !form.agree) return;
     try {
       await submitSponsor({
-        fullName:form.name,email:form.email,phone:form.phone,country:form.country,city:form.city,
+        fullName:form.name,email:form.email || undefined,phone:form.phone,country:form.country,city:form.city,
         preferredContact:form.preferredContact,sponsorshipPreference:form.frequency,message:form.message,consent:form.agree
       });
       setSubmitted(true);
@@ -156,7 +156,7 @@ export default function SponsorPage() {
                   <div className="mb-7"><h3 className="text-xl font-black">Sponsorship enquiry</h3><p className="mt-1 text-xs leading-5 text-[#839088]">Your first conversation with us starts here.</p></div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <label><span className="sponsor-label">Full name *</span><input required value={form.name} onChange={(e) => update("name", e.target.value)} className="sponsor-field" placeholder="Your full name" /></label>
-                    <label><span className="sponsor-label">Email address *</span><input required type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className="sponsor-field" placeholder="you@example.com" /></label>
+                    <label><span className="sponsor-label">Email address</span><input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className="sponsor-field" placeholder="you@example.com" /></label>
                     <label><span className="sponsor-label">Phone / WhatsApp *</span><input required value={form.phone} onChange={(e) => update("phone", e.target.value)} className="sponsor-field" placeholder="+256 ..." /></label>
                     <label><span className="sponsor-label">Country</span><input value={form.country} onChange={(e) => update("country", e.target.value)} className="sponsor-field" placeholder="Uganda" /></label>
                     <label><span className="sponsor-label">City / Town</span><input value={form.city} onChange={(e) => update("city", e.target.value)} className="sponsor-field" placeholder="Kampala" /></label>
