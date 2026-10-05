@@ -103,9 +103,9 @@ export default function Header() {
           </button>
         </div>
 
-        <svg className="pointer-events-none absolute -bottom-[20px] left-0 z-20 h-[28px] w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.08)]" viewBox="0 0 1200 28" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 0 C260 18 940 18 1200 0 L1200 28 L0 28 Z" fill="white"/>
-          <path d="M0 0 C260 18 940 18 1200 0" fill="none" stroke="#e8eee9" stroke-width="1.5"/>
+        <svg className="pointer-events-none absolute -bottom-[14px] left-0 z-30 h-[30px] w-full" viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 0 C250 15 950 15 1200 0 L1200 30 L0 30 Z" fill="white"/>
+          <path d="M0 0 C250 15 950 15 1200 0" fill="none" stroke="#dfe8e2" stroke-width="1.5"/>
         </svg>
 
         {open && (
