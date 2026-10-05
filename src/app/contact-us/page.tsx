@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { submitContact } from "../../lib/api";
 import { ArrowRight, FacebookIcon, HeartIcon, InstagramIcon, LinkedInIcon, MailIcon, MapPinIcon, PhoneIcon, WhatsAppIcon, XSocialIcon, YouTubeIcon } from "../../components/icons";
 
 const contactCards = [
@@ -16,6 +18,18 @@ const socials = [
 ];
 
 export default function ContactPage() {
+  const [sent,setSent]=useState(false);
+  const [sending,setSending]=useState(false);
+  const [error,setError]=useState("");
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setError(""); setSending(true);
+    const data=new FormData(event.currentTarget);
+    try {
+      await submitContact({name:String(data.get("name")),email:String(data.get("email")),subject:String(data.get("subject")||""),message:String(data.get("message")),phone:String(data.get("phone")||"")});
+      setSent(true); event.currentTarget.reset();
+    } catch (err) { setError(err instanceof Error ? err.message : "Could not send your message."); }
+    finally { setSending(false); }
+  }
   return (
     <main className="min-h-screen bg-white">
 <section className="relative isolate min-h-[430px] overflow-hidden bg-[#03160b] sm:min-h-[480px]">
@@ -106,12 +120,15 @@ export default function ContactPage() {
             <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#0c8f3e]">Send a Message</p>
             <h2 className="mt-2 border-l-2 border-[#ff1d2d] pl-3 text-3xl font-black sm:text-4xl">Tell Us <span className="text-[#087a35]">How We Can Help</span></h2>
             <p className="mt-3 max-w-xl text-sm leading-6 text-black/65">Have a question, partnership idea or volunteering opportunity? Leave us a message and our team can follow up.</p>
-            <form className="mt-7 grid gap-4 sm:grid-cols-2">
-              <label className="text-xs font-bold">Your Name<input type="text" placeholder="Your full name" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
-              <label className="text-xs font-bold">Email Address<input type="email" placeholder="you@example.com" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
-              <label className="text-xs font-bold sm:col-span-2">Subject<input type="text" placeholder="How can we help?" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
-              <label className="text-xs font-bold sm:col-span-2">Message<textarea rows={5} placeholder="Write your message..." className="mt-2 w-full resize-none rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
-              <button type="button" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#087a35] px-6 py-3 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-1 hover:bg-[#006b2f]">Send Message <ArrowRight className="h-4 w-4" /></button>
+            <form onSubmit={handleSubmit} className="mt-7 grid gap-4 sm:grid-cols-2">
+              {sent ? <div className="sm:col-span-2 rounded-2xl bg-[#e9fff0] p-5 text-sm font-bold text-[#087a35]">Thank you. Your message has been sent to the foundation team. We’ll get back to you soon.</div> : null}
+              <label className="text-xs font-bold">Your Name<input required name="name" type="text" placeholder="Your full name" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
+              <label className="text-xs font-bold">Email Address<input required name="email" type="email" placeholder="you@example.com" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
+              <label className="text-xs font-bold">Phone / WhatsApp<input name="phone" type="tel" placeholder="+256 ..." className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
+              <label className="text-xs font-bold">Subject<input required name="subject" type="text" placeholder="How can we help?" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
+              <label className="text-xs font-bold sm:col-span-2">Message<textarea required name="message" rows={5} placeholder="Write your message..." className="mt-2 w-full resize-none rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
+              {error&&<p className="sm:col-span-2 rounded-xl bg-[#fff0f1] px-4 py-3 text-xs font-semibold text-[#c91525]">{error}</p>}
+              <button disabled={sending} type="submit" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#087a35] px-6 py-3 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-1 hover:bg-[#006b2f] disabled:opacity-60">{sending?"Sending…":"Send Message"} <ArrowRight className="h-4 w-4" /></button>
             </form>
           </div>
 
