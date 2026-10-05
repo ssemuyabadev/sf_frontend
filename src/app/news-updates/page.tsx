@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, HeartIcon, UsersIcon, GraduationIcon, HeartPulseIcon, LeafIcon } from "@/components/icons";
+import { useEffect, useState } from "react";
+import { gql, queries } from "../../lib/api";
 
 const stories = [
   {
@@ -57,6 +59,9 @@ const focusAreas = [
 ];
 
 export default function NewsUpdatesPage() {
+  const [liveStories,setLiveStories]=useState<any[]>([]);
+  useEffect(()=>{gql<any>(queries.publicNews).then(r=>setLiveStories(r.news.map((x:any)=>({category:"Foundation Update",date:x.publishedAt?new Date(x.publishedAt).toLocaleDateString():"Recent",title:x.title,excerpt:x.excerpt||x.body.slice(0,150),image:x.imageUrl||"/images/home-hero.jpg",slug:x.slug})))).catch(()=>{});},[]);
+  const storyItems=liveStories.length?liveStories:stories;
   return (
     <main className="overflow-hidden">
       <section className="relative isolate min-h-[560px] overflow-hidden bg-[#03160b] text-white">
