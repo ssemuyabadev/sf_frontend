@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { submitSponsor } from "../../lib/api";
+import { useEffect, useState } from "react";
+import { submitSponsor } from "../../lib/api";\nimport { fetchSiteSettings, whatsappHref, DEFAULT_SITE_SETTINGS, type SiteSettings } from "../../lib/siteSettings";
 import { ArrowRight, ChevronDown, HeartIcon, HeartPulseIcon, GraduationIcon, LeafIcon, PhoneIcon, MailIcon, UsersIcon } from "../../components/icons";
 
 const roles = [
@@ -127,7 +127,7 @@ export default function SponsorPage() {
               <div className="mt-7 space-y-3">
                 {["No commitment until you have spoken with our team.", "We will explain how sponsorship support is used.", "Your contact information will be handled responsibly."].map((x) => <div key={x} className="flex gap-3 text-xs font-semibold text-[#4f5f56]"><span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#e9fff0] text-[10px] font-black text-[#087a35]">✓</span>{x}</div>)}
               </div>
-              <div className="mt-8 rounded-2xl bg-[#03160b] p-5 text-white"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#13d74c]">Prefer to talk first?</p><p className="mt-2 text-sm font-bold">Our team is happy to answer your questions.</p><a href="https://wa.me/256705283679" className="mt-4 inline-flex items-center gap-2 text-xs font-extrabold text-[#7bf99b]">Chat with us on WhatsApp <ArrowRight className="h-3.5 w-3.5" /></a></div>
+              <div className="mt-8 rounded-2xl bg-[#03160b] p-5 text-white"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#13d74c]">Prefer to talk first?</p><p className="mt-2 text-sm font-bold">Our team is happy to answer your questions.</p><a href={whatsapp} className="mt-4 inline-flex items-center gap-2 text-xs font-extrabold text-[#7bf99b]">Chat with us on WhatsApp <ArrowRight className="h-3.5 w-3.5" /></a></div>
             </div>
 
             <div className="rounded-[2rem] border border-[#e3ebe6] bg-[#fbfdfb] p-5 shadow-[0_25px_70px_rgba(7,54,27,.07)] sm:p-8">
