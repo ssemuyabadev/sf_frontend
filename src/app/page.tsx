@@ -69,6 +69,9 @@ export default function Home(){
    </div>
    <div className="relative overflow-hidden bg-[#006b2f] px-7 py-10 text-white sm:px-12">
     <div className="relative mx-auto max-w-xl">
+     <div className="mb-5 overflow-hidden rounded-2xl ring-1 ring-white/15">
+      <Image src="/images/food-2.jpg" alt="Ssemuyaba Foundation community food support" width={900} height={560} className="h-36 w-full object-cover sm:h-44"/>
+     </div>
      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/10"><HeartIcon className="h-7 w-7 text-[#13d74c]"/></div>
      <h2 className="text-2xl font-black sm:text-3xl">Make a Difference Today</h2>
      <p className="mt-2 max-w-lg text-sm leading-6 text-white/90">Your support can change a life. Help us provide education, healthcare, food and sustainable opportunities for vulnerable children and widows.</p>
