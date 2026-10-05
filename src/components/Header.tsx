@@ -81,7 +81,11 @@ export default function Header() {
           </button>
         </div>
 
-        <svg className="pointer-events-none absolute -bottom-[18px] left-0 z-0 h-[24px] w-full" viewBox="0 0 1200 24" preserveAspectRatio="none" aria-hidden="true">\n          <path d="M0 2 C300 16 900 16 1200 2 L1200 24 L0 24 Z" fill="white"/>\n        </svg>\n\n        {open && (
+        <svg className="pointer-events-none absolute -bottom-[18px] left-0 z-0 h-[24px] w-full" viewBox="0 0 1200 24" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 2 C300 16 900 16 1200 2 L1200 24 L0 24 Z" fill="white"/>
+        </svg>
+
+        {open && (
           <nav className="border-t border-black/5 bg-white px-5 py-4 lg:hidden">
             {navItems.map((item, i) => (
               <a
