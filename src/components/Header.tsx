@@ -11,7 +11,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="relative z-50">
+    <header className="sticky top-0 z-50">
       <div className="bg-[#006b2f] text-white">
         <div className="section-wrap flex flex-col gap-1.5 py-2 text-[10px] font-semibold sm:flex-row sm:min-h-[38px] sm:items-center sm:justify-between sm:gap-4 sm:py-0 sm:text-xs">
           <div className="flex w-full items-center justify-center gap-3 leading-tight sm:w-auto sm:justify-start sm:gap-4">
@@ -49,7 +49,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="nav-shell sticky top-0 z-50 relative -mt-px border-b border-black/5 bg-white shadow-md">
+      <div className="nav-shell relative -mt-px border-b border-black/5 bg-white shadow-md">
         <div className="section-wrap relative z-10 flex min-h-[78px] items-center justify-between">
           <a
             href="#home"
