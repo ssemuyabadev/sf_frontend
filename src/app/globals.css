@@ -319,3 +319,128 @@ a {
   .gallery-hero-image,.gallery-reveal,.gallery-glow,.gallery-floating-frame,.gallery-gradient-text,.gallery-moment-card,.gallery-tile { animation:none !important; }
   .gallery-moment-card,.gallery-tile > div { transition:none !important; }
 }
+
+
+/* Get Involved / Volunteer page */
+.volunteer-hero-image {
+  animation: volunteerHeroZoom 18s ease-in-out infinite alternate;
+}
+.volunteer-reveal {
+  animation: volunteerReveal .9s cubic-bezier(.2,.75,.25,1) both;
+}
+.volunteer-orb {
+  position:absolute;
+  border-radius:9999px;
+  pointer-events:none;
+  filter:blur(2px);
+  animation: volunteerOrb 9s ease-in-out infinite;
+}
+.volunteer-orb-one {
+  right:12%;
+  top:12%;
+  width:230px;
+  height:230px;
+  background:rgba(19,215,76,.12);
+}
+.volunteer-orb-two {
+  left:40%;
+  bottom:5%;
+  width:150px;
+  height:150px;
+  background:rgba(255,29,45,.1);
+  animation-delay:-3s;
+}
+.volunteer-pulse {
+  animation: volunteerPulse 2.2s ease-in-out infinite;
+}
+.volunteer-gradient-text {
+  background:linear-gradient(100deg,#13d74c 8%,#b5ffc7 48%,#ffcf22 92%);
+  background-size:180% auto;
+  color:transparent;
+  background-clip:text;
+  -webkit-background-clip:text;
+  animation: volunteerShimmer 8s linear infinite;
+}
+.volunteer-hero-card {
+  animation: volunteerFloat 5.5s ease-in-out infinite;
+}
+.volunteer-opportunity-card {
+  animation: volunteerReveal .75s cubic-bezier(.2,.75,.25,1) both;
+  transition:transform .45s ease, box-shadow .45s ease;
+}
+.volunteer-opportunity-card:hover {
+  transform:translateY(-8px);
+  box-shadow:0 28px 65px rgba(3,73,31,.14);
+}
+.volunteer-card-image {
+  transform:scale(1.01);
+}
+.volunteer-step {
+  transition:transform .4s ease, box-shadow .4s ease, border-color .4s ease;
+}
+.volunteer-input {
+  width:100%;
+  border:1px solid #dbe7df;
+  border-radius:1rem;
+  background:#f8fbf9;
+  padding:.85rem 1rem;
+  font-size:.875rem;
+  line-height:1.5;
+  outline:none;
+  transition:border-color .25s ease, box-shadow .25s ease, background .25s ease;
+}
+.volunteer-input:focus {
+  border-color:#0c8f3e;
+  background:white;
+  box-shadow:0 0 0 4px rgba(12,143,62,.1);
+}
+.volunteer-input::placeholder {
+  color:#9aa9a0;
+}
+.volunteer-cta-glow {
+  animation:volunteerCtaGlow 7s ease-in-out infinite;
+}
+@keyframes volunteerReveal {
+  from { opacity:0; transform:translateY(26px) scale(.985); }
+  to { opacity:1; transform:translateY(0) scale(1); }
+}
+@keyframes volunteerHeroZoom {
+  from { transform:scale(1.03); }
+  to { transform:scale(1.1); }
+}
+@keyframes volunteerFloat {
+  0%,100% { transform:translateY(0) rotate(3deg); }
+  50% { transform:translateY(-13px) rotate(0deg); }
+}
+@keyframes volunteerOrb {
+  0%,100% { transform:translate3d(0,0,0) scale(1); opacity:.65; }
+  50% { transform:translate3d(22px,-18px,0) scale(1.12); opacity:1; }
+}
+@keyframes volunteerPulse {
+  0%,100% { transform:scale(1); opacity:1; box-shadow:0 0 0 0 rgba(19,215,76,.45); }
+  50% { transform:scale(1.08); opacity:.8; box-shadow:0 0 0 7px rgba(19,215,76,0); }
+}
+@keyframes volunteerShimmer {
+  to { background-position:180% center; }
+}
+@keyframes volunteerCtaGlow {
+  0%,100% { transform:translate3d(0,0,0) scale(1); opacity:.55; }
+  50% { transform:translate3d(25px,-15px,0) scale(1.15); opacity:.9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .volunteer-hero-image,
+  .volunteer-reveal,
+  .volunteer-orb,
+  .volunteer-pulse,
+  .volunteer-gradient-text,
+  .volunteer-hero-card,
+  .volunteer-opportunity-card,
+  .volunteer-cta-glow {
+    animation:none !important;
+  }
+  .volunteer-opportunity-card,
+  .volunteer-step,
+  .volunteer-input {
+    transition:none !important;
+  }
+}
