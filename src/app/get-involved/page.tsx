@@ -63,6 +63,28 @@ export default function GetInvolvedPage() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const body = [
+      "Volunteer expression of interest",
+      "",
+      `Full name: ${data.get("name")}`,
+      `Email: ${data.get("email")}`,
+      `Phone / WhatsApp: ${data.get("phone")}`,
+      `Location: ${data.get("location")}`,
+      `Area of interest: ${data.get("interest")}`,
+      `Availability: ${data.get("availability")}`,
+      `Preferred involvement: ${data.get("involvement")}`,
+      "",
+      "About me:",
+      String(data.get("message") || ""),
+    ].join("\\n");
+
+    window.location.href =
+      "mailto:info@ssemuyabafoundation.org?subject=" +
+      encodeURIComponent("Volunteer Expression of Interest") +
+      "&body=" +
+      encodeURIComponent(body);
     setSubmitted(true);
   }
 
