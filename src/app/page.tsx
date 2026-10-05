@@ -36,7 +36,7 @@ export default function Home(){
      <h1 className="hero-title text-5xl font-black sm:text-6xl lg:text-[64px]">Together We<br/><span className="text-[#19db50]">Bring Hope</span></h1>
      <div className="hero-red-stroke my-2 h-[8px] w-[285px] sm:w-[310px]"/>
      <h2 className="max-w-[430px] text-xl font-extrabold leading-[1.08] sm:text-[22px]">Empowering vulnerable Orphans,<br/>Children and Widows.</h2>
-     <p className="mt-3 max-w-[455px] text-[13px] leading-[1.55] text-white/95 sm:text-[15px]">We provide love, support, education and sustainable opportunities to help vulnerable children and widows build a better tomorrow.</p>
+     <p className="mt-3 max-w-[455px] text-[13px] leading-[1.55] text-white/95 sm:text-[15px]">We provide love, support, education and sustainable opportunities to help vulnerable children and widows build a better tomorrow. We also teach and preach the good news of Jesus Christ, the soon-coming King.</p>
      <div className="mt-5 flex flex-wrap gap-3">
       <a href="#donate" className="flex items-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3 text-[13px] font-extrabold shadow-lg transition hover:-translate-y-0.5 hover:bg-[#e91424]"><HeartIcon className="h-4 w-4"/>Donate Now</a>
       <a href="#about" className="flex items-center gap-2 rounded-full border border-white px-6 py-3 text-[13px] font-extrabold transition hover:bg-white hover:text-[#03491f]">Sponsor a child <ArrowRight className="h-4 w-4"/></a>
@@ -112,7 +112,7 @@ export default function Home(){
       </div>
      </form>
      <p className="mt-3 text-[10px] text-white/50">No spam. Just meaningful stories and impact.</p>
-     <p className="mt-6 text-base font-black italic leading-tight text-[#13d74c] sm:text-xl">Empowering Vulnerable<br/>Orphans, Children &amp; Widows <span className="text-[#ff1d2d]">♡</span></p>
+     <p className="mt-6 text-base font-black italic leading-tight text-[#13d74c] sm:text-xl">We reachout to the unreachable and provide</p>
     </div>
    </div>
    <div className="h-1 bg-gradient-to-r from-[#0c8f3e] via-[#13d74c] to-[#ff1d2d]"/>
