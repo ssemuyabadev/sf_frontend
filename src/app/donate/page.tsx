@@ -42,7 +42,7 @@ export default function DonatePage() {
 
   const primaryPhone = siteContact.phone;
   const secondaryPhone = siteContact.secondaryPhone || primaryPhone;
-  const whatsappMessage = (message: string) => whatsappHref(secondaryPhone, message);
+  const whatsappMessage = (message: string) => whatsappHref(siteContact.whatsapp || secondaryPhone, message);
   const methods = buildMethods(primaryPhone, secondaryPhone);
   return (
     <main className="overflow-hidden bg-white text-[#101b13]">
