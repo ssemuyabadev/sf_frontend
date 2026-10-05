@@ -28,7 +28,12 @@ const nav = [
   { id: "news" as Section, label: "News & Updates", icon: "▤" },
   { id: "settings" as Section, label: "Settings", icon: "⚙" },
 ];
-\n\n\n\n\n
+
+
+
+
+
+
 function Status({ children }: { children: string }) {
   const tone =
     children === "New" ? "bg-[#e8fff0] text-[#087a35]" :
@@ -173,7 +178,8 @@ export default function ManagePage() {
   }
 
   function exportRows(filename:string,rows:string[][]) {
-    const csv=rows.map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\n");
+    const csv=rows.map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("
+");
     const blob=new Blob([csv],{type:"text/csv"}),url=URL.createObjectURL(blob),a=document.createElement("a"); a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
   }
 
