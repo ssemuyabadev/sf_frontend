@@ -19,7 +19,7 @@ const socials = [
 
 export default function ContactPage() {
   const [contactCards,setContactCards]=useState(defaultContactCards);
-  useEffect(()=>{gql<any>(queries.settings).then(r=>{const s=r.siteSettings;setContactCards([{title:"Call Us",value:s.phone,second:s.secondaryPhone||"",href:"tel:"+s.phone.replace(/\\s+/g,""),icon:PhoneIcon},{title:"Email Us",value:s.email,second:"We reply as soon as possible.",href:"mailto:"+s.email,icon:MailIcon},{title:"Visit Us",value:s.location.split(",")[0]||s.location,second:s.location.split(",").slice(1).join(",").trim()||"Uganda",href:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.location),icon:MapPinIcon}]);}).catch(()=>{});},[]);
+  useEffect(()=>{gql<any>(queries.settings).then(r=>{const s=r.siteSettings;setContactCards([{title:"Call Us",value:s.phone,second:s.secondaryPhone||"",href:"tel:"+s.phone.replace(/\s+/g,""),icon:PhoneIcon},{title:"Email Us",value:s.email,second:"We reply as soon as possible.",href:"mailto:"+s.email,icon:MailIcon},{title:"Visit Us",value:s.location.split(",")[0]||s.location,second:s.location.split(",").slice(1).join(",").trim()||"Uganda",href:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.location),icon:MapPinIcon}]);}).catch(()=>{});},[]);
   const [sent,setSent]=useState(false);
   const [sending,setSending]=useState(false);
   const [error,setError]=useState("");
