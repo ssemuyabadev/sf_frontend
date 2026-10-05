@@ -85,6 +85,49 @@ export default function Home(){
    </div>
   </section>
 
+
+
+  <section id="gallery" className="relative overflow-hidden bg-[#f1fbf5] py-12 sm:py-16">
+   <div className="absolute -left-24 top-10 h-56 w-56 rounded-full bg-[#13d74c]/10 blur-3xl"/>
+   <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[#ff1d2d]/10 blur-3xl"/>
+   <div className="section-wrap relative z-10">
+    <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+     <div>
+      <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-[#0c8f3e]">Moments That Matter</p>
+      <h2 className="border-l-2 border-[#ff1d2d] pl-3 text-3xl font-black sm:text-4xl">Our <span className="text-[#087a35]">Gallery</span></h2>
+      <p className="mt-2 max-w-xl text-sm leading-6 text-black/65">A glimpse into the people, communities and moments behind our mission to bring hope.</p>
+     </div>
+     <span className="inline-flex w-fit items-center rounded-full bg-white px-4 py-2 text-xs font-bold text-[#087a35] shadow-soft ring-1 ring-black/5">Together • Hope • Impact</span>
+    </div>
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+     <div className="group relative col-span-2 row-span-2 min-h-[300px] overflow-hidden rounded-[1.5rem] bg-[#063019] shadow-xl sm:min-h-[420px]">
+      <Image src="/images/home-hero.jpg" alt="Ssemuyaba Foundation community outreach" fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover transition duration-700 group-hover:scale-105"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-[#03160b]/90 via-[#03160b]/15 to-transparent"/>
+      <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7">
+       <span className="inline-flex rounded-full bg-[#13d74c] px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-[#063019]">Featured Moment</span>
+       <h3 className="mt-2 text-xl font-black sm:text-2xl">Bringing hope closer to every community.</h3>
+      </div>
+     </div>
+     <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
+      <Image src="/images/food-4.jpg" alt="Community food outreach" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">Community Care</span>
+     </div>
+     <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
+      <Image src="/images/donation.jpg" alt="Widow empowerment support" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">Widow Support</span>
+     </div>
+     <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
+      <Image src="/images/health-1.jpg" alt="Healthcare support in the community" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">Healthcare</span>
+     </div>
+     <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
+      <Image src="/images/preaching.jpg" alt="Community preaching and outreach" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">Faith &amp; Outreach</span>
+     </div>
+    </div>
+   </div>
+  </section>
+
   <section id="news" className="bg-white py-9 sm:py-11"><div className="section-wrap"><div className="mb-5 flex items-end justify-between gap-4"><div><h2 className="border-l-2 border-[#ff1d2d] pl-3 text-2xl font-black sm:text-3xl">Latest <span className="text-[#087a35]">Updates</span></h2><p className="mt-1 text-xs sm:text-sm">Stories, events and impact from our work.</p></div><a href="#news" className="hidden items-center gap-2 rounded-full bg-[#0c8f3e] px-5 py-2 text-xs font-bold text-white sm:flex">View All News <ArrowRight className="h-4 w-4"/></a></div>
    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{updates.map(item=><article key={item.title} className="overflow-hidden rounded-lg bg-white shadow-soft ring-1 ring-black/5"><div className="relative h-24 overflow-hidden"><Image src={item.image} alt="" fill className="object-cover"/><div className="absolute bottom-0 left-3 grid min-w-11 place-items-center rounded-t-md bg-[#0c8f3e] px-2 py-1 text-white"><span className="text-sm font-black leading-none">{item.date}</span><span className="text-[9px] font-bold">{item.month}</span></div></div><div className="p-4"><h3 className="text-sm font-black leading-tight">{item.title}</h3><p className="mt-2 line-clamp-2 text-xs leading-4 text-black/65">{item.text}</p><a href="#news" className="mt-3 inline-flex items-center gap-1 text-xs font-extrabold text-[#087a35]">Read More <ArrowRight className="h-3 w-3"/></a></div></article>)}</div>
   </div></section>
