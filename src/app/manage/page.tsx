@@ -15,7 +15,9 @@ import {
 } from "../../components/icons";
 import { gql, mutations, queries } from "../../lib/api";
 
-type Section = "dashboard" | "contact" | "messages" | "newsletter" | "volunteers" | "sponsors" | "gallery" | "news" | "settings";
+type Section = "dashboard" | "contact" | "messages" | "newsletter" | "volunteers" | "sponsors" | "gallery" | "news" | "donations" | "settings";
+type DonationDetail = { label: string; value: string; copy?: string };
+type DonationMethodAdmin = { id: string; key: string; name: string; eyebrow: string; detailsJson: string; note: string; updatedAt?: string };
 
 const nav = [
   { id: "dashboard" as Section, label: "Dashboard", icon: "⌂" },
@@ -26,6 +28,7 @@ const nav = [
   { id: "sponsors" as Section, label: "Sponsor Enquiries", icon: "♡" },
   { id: "gallery" as Section, label: "Gallery", icon: "▦" },
   { id: "news" as Section, label: "News & Updates", icon: "▤" },
+  { id: "donations" as Section, label: "Donation Methods", icon: "◆" },
   { id: "settings" as Section, label: "Settings", icon: "⚙" },
 ];
 
@@ -74,7 +77,13 @@ function Field({ label, value, onChange, type = "text", placeholder }: { label: 
   );
 }
 
-export default function ManagePage() {
+function DonationMethodEditor({ method, details, onSave, onChange }: { method: DonationMethodAdmin; details: DonationDetail[]; onSave: (details: DonationDetail[]) => void; onChange: (next: Partial<DonationMethodAdmin>) => void }) {
+  const [draftDetails,setDraftDetails]=useState<DonationDetail[]>(details);
+  useEffect(()=>setDraftDetails(details),[method.id,method.detailsJson]);
+  return <div className="manage-card p-5 sm:p-7"><div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-[#0c8f3e]">{method.key}</p><h3 className="mt-1 text-lg font-black">{method.name}</h3><p className="mt-1 text-[10px] text-[#829087]">Update only the content shown inside this payment card. Its existing public design stays unchanged.</p></div><button type="button" onClick={()=>onSave(draftDetails)} className="manage-primary-btn">Save method</button></div><div className="mt-6 grid gap-4 sm:grid-cols-2"><Field label="Method name" value={method.name} onChange={(v)=>onChange({name:v})}/><Field label="Eyebrow label" value={method.eyebrow} onChange={(v)=>onChange({eyebrow:v})}/></div><div className="mt-5"><div className="flex items-center justify-between"><div><h4 className="text-xs font-black">Payment details</h4><p className="mt-1 text-[10px] text-[#829087]">Labels, values and optional copy-to-clipboard values.</p></div><button type="button" onClick={()=>setDraftDetails([...draftDetails,{label:"New detail",value:""}])} className="rounded-xl border border-[#bfe3ca] px-3 py-2 text-[10px] font-extrabold text-[#087a35]">+ Add detail</button></div><div className="mt-4 space-y-3">{draftDetails.map((detail,index)=><div key={index} className="grid gap-3 rounded-2xl border border-[#edf1ee] bg-[#fbfcfb] p-4 sm:grid-cols-[.8fr_1.2fr_.9fr_auto] sm:items-end"><Field label="Label" value={detail.label} onChange={(v)=>setDraftDetails(items=>items.map((x,i)=>i===index?{...x,label:v}:x))}/><Field label="Value" value={detail.value} onChange={(v)=>setDraftDetails(items=>items.map((x,i)=>i===index?{...x,value:v}:x))}/><Field label="Copy value (optional)" value={detail.copy||""} onChange={(v)=>setDraftDetails(items=>items.map((x,i)=>i===index?{...x,copy:v||undefined}:x))}/><button type="button" onClick={()=>setDraftDetails(items=>items.filter((_,i)=>i!==index))} className="rounded-xl border border-[#f0c8cc] px-3 py-2.5 text-[10px] font-extrabold text-[#c91525]">Remove</button></div>)}</div></div><div className="mt-5"><Field label="Card note" value={method.note} onChange={(v)=>onChange({note:v})}/></div></div>;
+}
+
+export default function ManagePage()
   const [authenticated, setAuthenticated] = useState(false);
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState("");
@@ -107,9 +116,10 @@ export default function ManagePage() {
   const [sponsors, setSponsors] = useState<any[]>([]);
   const [gallery, setGallery] = useState<any[]>([]);
   const [news, setNews] = useState<any[]>([]);
+  const [donationMethods, setDonationMethods] = useState<DonationMethodAdmin[]>([]);
 
   async function loadAdmin() {
-    const [s,settingsResult,m,n,v,sp,g,nu] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.settings),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news)]);
+    const [s,settingsResult,m,n,v,sp,g,nu,d] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.settings),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news),gql<any>(queries.adminDonationMethods)]);
     setStats(s.dashboardStats);
     const settingsData=settingsResult.siteSettings; setContact({phone1:settingsData.phone,phone2:settingsData.secondaryPhone||"",email:settingsData.email,location:settingsData.location,facebook:settingsData.facebook||"",instagram:settingsData.instagram||"",x:settingsData.x||"",linkedin:settingsData.linkedin||"",youtube:settingsData.youtube||"",whatsapp:settingsData.whatsapp||""});
     setMessages(m.contactMessages.map((x:any)=>({...x,date:new Date(x.createdAt).toLocaleString()})));
@@ -118,6 +128,7 @@ export default function ManagePage() {
     setSponsors(sp.sponsorEnquiries);
     setGallery(g.adminGallery.map((x:any)=>({...x,image:x.imageUrl})));
     setNews(nu.adminNews.map((x:any)=>({...x,date:new Date(x.publishedAt||x.createdAt).toLocaleDateString(),status:x.published?"Published":"Draft",image:x.imageUrl||"/images/home-hero.jpg"})));
+    setDonationMethods(d.adminDonationMethods);
   }
 
   useEffect(() => {
@@ -181,6 +192,8 @@ export default function ManagePage() {
     } catch(error) { setNotice(error instanceof Error ? error.message : "Could not update subscriber."); }
   }
 
+  function parseDonationDetails(value:string): DonationDetail[] { try { const parsed=JSON.parse(value); return Array.isArray(parsed)?parsed.map((x:any)=>({label:String(x?.label||""),value:String(x?.value||""),copy:x?.copy?String(x.copy):undefined})):[]; } catch { return []; } }
+  async function saveDonationMethod(method:DonationMethodAdmin, details:DonationDetail[]) { try { const detailsJson=JSON.stringify(details.map(x=>({label:x.label,value:x.value,...(x.copy?{copy:x.copy}:{})}))); const r=await gql<any>(mutations.updateDonationMethod,{id:method.id,input:{name:method.name,eyebrow:method.eyebrow,detailsJson,note:method.note}}); setDonationMethods(items=>items.map(x=>x.id===method.id?{...x,...r.updateDonationMethod}:x)); setNotice(method.name+" payment details saved."); } catch(error) { setNotice(error instanceof Error ? error.message : "Could not save donation details."); } }
   async function addGalleryItem() {
     const title=window.prompt("Photo title"), imageUrl=window.prompt("Image URL");
     if(!title||!imageUrl)return;
@@ -471,6 +484,8 @@ export default function ManagePage() {
               <div className="grid gap-4 xl:grid-cols-2">{news.map((item) => <article key={item.title} className="manage-card flex overflow-hidden"><div className="relative hidden w-36 shrink-0 sm:block"><Image src={item.image} alt={item.title} fill className="object-cover" /></div><div className="min-w-0 flex-1 p-5"><div className="flex items-start justify-between gap-3"><Status>{item.status}</Status><button onClick={()=>deleteNewsItem(item.title)} className="text-[9px] font-extrabold text-[#c91525]">Delete</button></div><h3 className="mt-3 text-sm font-black leading-5">{item.title}</h3><p className="mt-1 text-[10px] text-[#8b9790]">{item.date} • Ssemuyaba Foundation</p><p className="mt-3 text-[10px] leading-5 text-[#68766e]">Manage the headline, story copy, featured image and publication status from the content editor.</p></div></article>)}</div>
             </>
           )}
+
+          {section === "donations" && (<><SectionTitle eyebrow="Giving" title="Donation methods" description="Update the payment details shown on the public Donate page. The existing card design and branding are not changed."/><div className="space-y-5">{donationMethods.map(method=><DonationMethodEditor key={method.id} method={method} details={parseDonationDetails(method.detailsJson)} onSave={(details)=>saveDonationMethod(method,details)} onChange={(next)=>setDonationMethods(items=>items.map(x=>x.id===method.id?{...x,...next}:x))}/>)}</div></>)}
 
           {section === "settings" && (
             <SectionTitle eyebrow="Account" title="Settings" description="Admin account preferences, security and future integrations will live here." />

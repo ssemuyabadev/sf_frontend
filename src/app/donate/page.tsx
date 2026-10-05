@@ -2,40 +2,40 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, HeartIcon, WhatsAppIcon } from "../../components/icons";
+import { gql, queries } from "../../lib/api";
 import { fetchSiteSettings, whatsappHref, DEFAULT_SITE_SETTINGS, type SiteSettings } from "../../lib/siteSettings";
 
 type Detail = { label: string; value: string; copy?: string };
+type DonationMethodData = { id: string; key: string; name: string; eyebrow: string; detailsJson: string; note: string };
 function CopyButton({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      window.prompt("Copy this detail:", value);
-    }
-  }
+  async function copy() { try { await navigator.clipboard.writeText(value); setCopied(true); window.setTimeout(() => setCopied(false), 1800); } catch { window.prompt("Copy this detail:", value); } }
   return <button type="button" onClick={copy} className="rounded-full border border-black/10 bg-white/80 px-3 py-1.5 text-[10px] font-extrabold text-[#087a35] transition hover:border-[#087a35] hover:bg-[#087a35] hover:text-white">{copied ? "Copied ✓" : "Copy"}</button>;
 }
-
-function buildMethods(primaryPhone: string, secondaryPhone: string): Array<{ id: string; name: string; short: string; eyebrow: string; theme: string; panel: string; logo: string; logoText: string; details: Detail[]; note: string }> {
-  return [
-    { id: "mtn", name: "MTN Mobile Money", short: "MoMo", eyebrow: "FAST & CONVENIENT", theme: "from-[#ffcf22] to-[#ffb900]", panel: "bg-[#fff9df]", logo: "MTN", logoText: "MOBILE MONEY", details: [{label:"Mobile Money number",value:secondaryPhone,copy:secondaryPhone.replace(/[^\\d]/g,"")},{label:"Account name",value:"JAMES SSEMUYABA"}], note: "Send your gift directly from your phone using MTN Mobile Money." },
-    { id: "airtel", name: "Airtel Money", short: "Airtel", eyebrow: "GIVE IN A FEW TAPS", theme: "from-[#f52235] to-[#b90019]", panel: "bg-[#fff0f1]", logo: "airtel", logoText: "money", details: [{label:"Mobile Money number",value:primaryPhone,copy:primaryPhone.replace(/[^\\d]/g,"")},{label:"Account name",value:"JAMES SSEMUYABA"}], note: "Use Airtel Money to send your donation securely to the number shown." },
-    { id: "bank", name: "Bank Transfer", short: "Bank", eyebrow: "DIRECT BANK GIVING", theme: "from-[#087a35] to-[#03491f]", panel: "bg-[#edf9f1]", logo: "EQUITY", logoText: "BANK", details: [{label:"Bank",value:"Equity Bank Uganda"},{label:"Account name",value:"JAMES SSEMUYABA"},{label:"Account number",value:"890494848484",copy:"890494848484"},{label:"SWIFT code",value:"793003",copy:"793003"},{label:"Country",value:"Uganda"},{label:"Branch",value:"Mityana"}], note: "For bank transfers, include a donation reference if your bank asks for one." },
-    { id: "western", name: "Western Union", short: "Western Union", eyebrow: "INTERNATIONAL GIVING", theme: "from-[#ffcf22] to-[#f5a900]", panel: "bg-[#fff9df]", logo: "WU", logoText: "WESTERN UNION", details: [{label:"Receiver name",value:"JAMES SSEMUYABA"},{label:"Country",value:"Uganda"},{label:"City",value:"Kampala"},{label:"Telephone",value:secondaryPhone,copy:secondaryPhone.replace(/[^\\d]/g,"")}], note: "Use the receiver details exactly as displayed when arranging your transfer." },
-  ];
+function buildMethods(paymentData: DonationMethodData[]): Array<{ id: string; name: string; short: string; eyebrow: string; theme: string; panel: string; logo: string; logoText: string; details: Detail[]; note: string }> {
+  const visual: Record<string, { short: string; theme: string; panel: string; logo: string; logoText: string }> = {
+    mtn: { short: "MoMo", theme: "from-[#ffcf22] to-[#ffb900]", panel: "bg-[#fff9df]", logo: "MTN", logoText: "MOBILE MONEY" },
+    airtel: { short: "Airtel", theme: "from-[#f52235] to-[#b90019]", panel: "bg-[#fff0f1]", logo: "airtel", logoText: "money" },
+    bank: { short: "Bank", theme: "from-[#087a35] to-[#03491f]", panel: "bg-[#edf9f1]", logo: "EQUITY", logoText: "BANK" },
+    western: { short: "Western Union", theme: "from-[#ffcf22] to-[#f5a900]", panel: "bg-[#fff9df]", logo: "WU", logoText: "WESTERN UNION" },
+  };
+  return paymentData.map((method) => { let details: Detail[]=[]; try { details=JSON.parse(method.detailsJson) as Detail[]; } catch {}
+    return { id: method.key, name: method.name, eyebrow: method.eyebrow, details, note: method.note, ...visual[method.key] };
+  }).filter((method) => visual[method.id]);
 }
+
 
 
 export default function DonatePage() {
   const [siteContact, setSiteContact] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+  const [paymentMethods, setPaymentMethods] = useState<DonationMethodData[]>([]);
 
   useEffect(() => {
     let mounted = true;
-    fetchSiteSettings().then((settings) => {
-      if (mounted) setSiteContact(settings);
+    Promise.all([fetchSiteSettings(), gql<{ donationMethods: DonationMethodData[] }>(queries.donationMethods)]).then(([settings, paymentData]) => {
+      if (!mounted) return;
+      setSiteContact(settings);
+      setPaymentMethods(paymentData.donationMethods);
     }).catch(() => undefined);
     return () => { mounted = false; };
   }, []);
@@ -43,7 +43,7 @@ export default function DonatePage() {
   const primaryPhone = siteContact.phone;
   const secondaryPhone = siteContact.secondaryPhone || primaryPhone;
   const whatsappMessage = (message: string) => whatsappHref(siteContact.whatsapp || secondaryPhone, message);
-  const methods = buildMethods(primaryPhone, secondaryPhone);
+  const methods = buildMethods(paymentMethods);
   return (
     <main className="overflow-hidden bg-white text-[#101b13]">
       <section className="donate-hero relative isolate overflow-hidden bg-[#03160b] text-white">
