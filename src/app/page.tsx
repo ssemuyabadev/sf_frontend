@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Header from "../components/Header";
 import ScrollToTop from "../components/ScrollToTop";
-import {ArrowRight,FacebookIcon,GraduationIcon,HeartIcon,HeartPulseIcon,InstagramIcon,LeafIcon,LinkedInIcon,MailIcon,MapPinIcon,PhoneIcon,PinIcon,ToolsIcon,UsersIcon,XSocialIcon,YouTubeIcon} from "../components/icons";
+import {ArrowRight,FacebookIcon,GraduationIcon,HeartIcon,HeartPulseIcon,InstagramIcon,LeafIcon,LinkedInIcon,MailIcon,MapPinIcon,PhoneIcon,PinIcon,ToolsIcon,UsersIcon,WhatsAppIcon,XSocialIcon,YouTubeIcon} from "../components/icons";
 
 const programs=[
  {title:"Education Support",text:"Quality education for a brighter future.",icon:GraduationIcon},
@@ -97,6 +97,7 @@ export default function Home(){
        <a href="#" aria-label="X" className="social-brand social-brand-footer"><XSocialIcon/></a>
        <a href="#" aria-label="LinkedIn" className="social-brand social-brand-footer"><LinkedInIcon/></a>
        <a href="#" aria-label="YouTube" className="social-brand social-brand-footer"><YouTubeIcon/></a>
+       <a href="https://wa.me/256705283679" aria-label="WhatsApp" className="social-brand social-brand-footer"><WhatsAppIcon/></a>
       </div>
      </div>
     </div>
