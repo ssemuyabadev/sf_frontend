@@ -60,8 +60,9 @@ const focusAreas = [
 
 export default function NewsUpdatesPage() {
   const [liveStories,setLiveStories]=useState<any[]>([]);
-  useEffect(()=>{gql<any>(queries.publicNews).then(r=>setLiveStories(r.news.map((x:any)=>({category:"Foundation Update",date:x.publishedAt?new Date(x.publishedAt).toLocaleDateString():"Recent",title:x.title,excerpt:x.excerpt||x.body.slice(0,150),image:x.imageUrl||"/images/home-hero.jpg",slug:x.slug})))).catch(()=>{});},[]);
+  useEffect(()=>{gql<any>(queries.publicNews).then(r=>setLiveStories(r.news.map((x:any)=>({category:x.category||"Foundation Update",date:x.publishedAt?new Date(x.publishedAt).toLocaleDateString():"Recent",title:x.title,excerpt:x.excerpt||x.body.slice(0,150),image:x.imageUrl||"/images/home-hero.jpg",slug:x.slug})))).catch(()=>{});},[]);
   const storyItems=liveStories.length?liveStories:stories;
+  const featuredStory=storyItems[0];
   return (
     <main className="overflow-hidden">
       <section className="relative isolate min-h-[560px] overflow-hidden bg-[#03160b] text-white">
@@ -113,19 +114,19 @@ export default function NewsUpdatesPage() {
           <div className="mt-12 grid gap-6 lg:grid-cols-12">
             <article className="group overflow-hidden rounded-[2rem] bg-[#063019] text-white shadow-[0_25px_70px_rgba(3,73,31,.16)] lg:col-span-7">
               <div className="relative h-[330px] overflow-hidden sm:h-[430px]">
-                <Image src="/images/food-4.jpg" alt="Ssemuyaba Foundation community activity" fill className="object-cover transition duration-700 group-hover:scale-105" />
+                <Image src={featuredStory.image} alt={featuredStory.title} fill className="object-cover transition duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#03160b] via-[#03160b]/15 to-transparent" />
                 <div className="absolute left-6 top-6 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-[.16em] text-[#087a35]">Featured story</div>
                 <div className="absolute inset-x-0 bottom-0 p-7 sm:p-9">
-                  <p className="text-xs font-bold uppercase tracking-[.16em] text-[#8cffaa]">Community • Hope • Action</p>
-                  <h3 className="mt-3 max-w-xl text-3xl font-black leading-tight sm:text-4xl">Small acts of love can create lasting change.</h3>
-                  <p className="mt-3 max-w-xl text-sm leading-6 text-white/72">Our work begins with people — listening to communities, responding to real needs and walking alongside vulnerable families.</p>
+                  <p className="text-xs font-bold uppercase tracking-[.16em] text-[#8cffaa]">{featuredStory.category} • Hope • Action</p>
+                  <h3 className="mt-3 max-w-xl text-3xl font-black leading-tight sm:text-4xl">{featuredStory.title}</h3>
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-white/72">{featuredStory.excerpt}</p>
                 </div>
               </div>
             </article>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
-              {stories.slice(0, 2).map((story) => (
+              {storyItems.slice(1, 3).map((story) => (
                 <article key={story.title} className="group grid overflow-hidden rounded-[1.75rem] border border-black/5 bg-[#f1fbf5] shadow-sm transition duration-500 hover:-translate-y-1 hover:shadow-xl sm:grid-cols-[180px_1fr] lg:grid-cols-[190px_1fr]">
                   <div className="relative min-h-[190px] overflow-hidden">
                     <Image src={story.image} alt={story.title} fill className="object-cover transition duration-700 group-hover:scale-110" />
@@ -175,7 +176,7 @@ export default function NewsUpdatesPage() {
             </div>
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {stories.slice(2).map((story, index) => (
+            {storyItems.slice(3).map((story, index) => (
               <article key={story.title} className="group overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_12px_40px_rgba(0,0,0,.06)] transition duration-500 hover:-translate-y-2 hover:shadow-[0_24px_60px_rgba(3,73,31,.13)]">
                 <div className="relative h-56 overflow-hidden">
                   <Image src={story.image} alt={story.title} fill className="object-cover transition duration-700 group-hover:scale-105" />
