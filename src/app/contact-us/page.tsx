@@ -151,22 +151,6 @@ export default function ContactPage() {
           </div>
           <Link href="/#donate" className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#ff1d2d] px-7 py-3.5 text-sm font-extrabold shadow-xl transition hover:-translate-y-1 hover:bg-[#e91424]">Support Our Mission <HeartIcon className="h-4 w-4" /></Link>
         </div>
-      </section>
-
-      <footer className="bg-[#03160b] text-white">
-        <div className="section-wrap flex flex-col gap-5 py-8 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <Image src="/images/ssemuyaba-logo-icon-transparent.png" alt="" width={55} height={55} className="h-12 w-12 object-contain" />
-            <div><p className="font-black text-[#13d74c]">SSEMUYABA FOUNDATION</p><p className="text-[10px] text-white/55">Empowering vulnerable orphans, children and widows.</p></div>
-          </div>
-          <div className="flex flex-wrap gap-4 text-xs text-white/65">
-            <a href="tel:+256705283679" className="hover:text-white">+256 705 283 679</a>
-            <a href="mailto:info@ssemuyabafoundation.org" className="hover:text-white">info@ssemuyabafoundation.org</a>
-          </div>
-        </div>
-        <div className="h-1 bg-gradient-to-r from-[#0c8f3e] via-[#13d74c] to-[#ff1d2d]" />
-      </footer>
-      <ScrollToTop />
-    </main>
+      </section></main>
   );
 }
