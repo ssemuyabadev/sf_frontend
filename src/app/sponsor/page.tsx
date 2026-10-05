@@ -17,6 +17,17 @@ const roles = [
 export default function SponsorPage() {
   const [submitted, setSubmitted] = useState(false);
   const [open, setOpen] = useState<number | null>(0);
+  const [siteContact, setSiteContact] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchSiteSettings().then((settings) => {
+      if (mounted) setSiteContact(settings);
+    }).catch(() => undefined);
+    return () => { mounted = false; };
+  }, []);
+
+  const whatsapp = whatsappHref(siteContact.secondaryPhone || siteContact.phone);
   const [form, setForm] = useState({
     name: "", email: "", phone: "", country: "", city: "", frequency: "Monthly", preferredContact: "WhatsApp",
     message: "", agree: false,
