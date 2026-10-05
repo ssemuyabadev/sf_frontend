@@ -60,7 +60,7 @@ a {
 .nav-shell::after {
   content: "";
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   left: 50%;
   bottom: -17px;
   width: min(760px, 72vw);
