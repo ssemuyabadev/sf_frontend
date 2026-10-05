@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowRight, HeartIcon, PhoneIcon, WhatsAppIcon, MapPinIcon } from "../../components/icons";
+import { ArrowRight, HeartIcon, WhatsAppIcon } from "../../components/icons";
 
 type Detail = { label: string; value: string; copy?: string };
 function CopyButton({ value }: { value: string }) {
