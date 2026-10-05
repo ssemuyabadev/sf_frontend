@@ -94,7 +94,7 @@ export default function ManagePage() {
     whatsapp: "",
   });
 
-  const [stats, setStats] = useState({ messages: 0, newsletter: 0, volunteers: 0, sponsors: 0, gallery: 0, news: 0 });
+  const [stats, setStats] = useState({ messages: 0, newMessages: 0, newsletter: 0, pendingNewsletter: 0, volunteers: 0, sponsors: 0, gallery: 0, news: 0 });
   const [messages, setMessages] = useState<any[]>([]);
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [volunteers, setVolunteers] = useState<any[]>([]);
@@ -107,7 +107,7 @@ export default function ManagePage() {
     setStats(s.dashboardStats);
     const settingsData=settingsResult.siteSettings; setContact({phone1:settingsData.phone,phone2:settingsData.secondaryPhone||"",email:settingsData.email,location:settingsData.location,facebook:settingsData.facebook||"",instagram:settingsData.instagram||"",x:settingsData.x||"",linkedin:settingsData.linkedin||"",youtube:settingsData.youtube||"",whatsapp:settingsData.whatsapp||""});
     setMessages(m.contactMessages.map((x:any)=>({...x,date:new Date(x.createdAt).toLocaleString()})));
-    setSubscribers(n.newsletterSubscribers.map((x:any)=>({...x,joined:new Date(x.createdAt).toLocaleDateString(),source:"Website"})));
+    setSubscribers(n.newsletterSubscribers.map((x:any)=>({...x,status:x.status||"NEW",joined:new Date(x.createdAt).toLocaleDateString(),source:"Website"})));
     setVolunteers(v.volunteerApplications.map((x:any)=>({...x,role:x.interest,date:new Date(x.createdAt).toLocaleDateString()})));
     setSponsors(sp.sponsorEnquiries);
     setGallery(g.adminGallery.map((x:any)=>({...x,image:x.imageUrl})));
@@ -119,6 +119,7 @@ export default function ManagePage() {
   }, []);
 
   const sectionLabel = useMemo(() => nav.find((item) => item.id === section)?.label || "Dashboard", [section]);
+  const navBadge = (id: Section) => id === "messages" ? stats.newMessages : id === "newsletter" ? stats.pendingNewsletter : 0;
 
   async function login(e: React.FormEvent) {
     e.preventDefault();
@@ -150,6 +151,14 @@ export default function ManagePage() {
     const next=item.status==="New"?"REVIEWING":item.status==="Reviewing"?"APPROVED":"REVIEWING";
     try { await gql(mutations.updateVolunteerStatus,{id:item.id,status:next}); setVolunteers(items=>items.map(x=>x.id===item.id?{...x,status:next==="REVIEWING"?"Reviewing":"Approved"}:x)); }
     catch(error) { setNotice(error instanceof Error ? error.message : "Could not update application."); }
+  }
+  async function reviewNewsletter(id:string,status:"APPROVED"|"DECLINED") {
+    try {
+      const r=await gql<any>(mutations.updateNewsletterStatus,{id,status});
+      setSubscribers(items=>items.map(x=>x.id===id?{...x,status:r.updateNewsletterStatus.status}:x));
+      setStats(current=>({...current,pendingNewsletter:Math.max(0,current.pendingNewsletter-1)}));
+      setNotice(status==="APPROVED"?"Subscriber approved.":"Subscriber declined.");
+    } catch(error) { setNotice(error instanceof Error ? error.message : "Could not update subscriber."); }
   }
 
   async function addGalleryItem() {
@@ -268,7 +277,7 @@ export default function ManagePage() {
                 <button key={item.id} onClick={() => { setSection(item.id); setSidebarOpen(false); }} className={`manage-nav-item ${section === item.id ? "is-active" : ""}`}>
                   <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/5 text-sm">{item.icon}</span>
                   <span className="flex-1 text-left">{item.label}</span>
-                  {item.badge && <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-black ${section === item.id ? "bg-white/20 text-white" : "bg-[#ff1d2d] text-white"}`}>{item.badge}</span>}
+                  {navBadge(item.id)>0 && <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-black ${section === item.id ? "bg-white/20 text-white" : "bg-[#ff1d2d] text-white"}`}>{navBadge(item.id)}</span>}
                 </button>
               ))}
             </nav>
@@ -311,10 +320,10 @@ export default function ManagePage() {
               <SectionTitle eyebrow="Overview" title="Good morning, Admin." description="Here’s what is happening across the foundation website today." action={<button onClick={() => setSection("news")} className="manage-primary-btn">Create update <ArrowRight className="h-4 w-4" /></button>} />
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 {[
-                  ["Contact messages", "7", "3 new today", "✉"],
-                  ["Newsletter subscribers", "1,284", "+18 this week", "◉"],
-                  ["Volunteer applications", "4", "2 need review", "♧"],
-                  ["Published stories", "24", "4 this month", "▤"],
+                  ["Contact messages", String(stats.messages), `${stats.newMessages} new`, "✉"],
+                  ["Newsletter subscribers", String(stats.newsletter), `${stats.pendingNewsletter} pending review`, "◉"],
+                  ["Volunteer applications", String(stats.volunteers), "Live applications", "♧"],
+                  ["Published stories", String(stats.news), "Published", "▤"],
                 ].map(([label, value, note, icon]) => (
                   <div key={label} className="manage-stat-card">
                     <div className="flex items-start justify-between"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#eaf8ef] text-base text-[#087a35]">{icon}</span><span className="text-[9px] font-black uppercase tracking-wider text-[#13a744]">Live</span></div>
@@ -391,7 +400,7 @@ export default function ManagePage() {
 
           {section === "newsletter" && (
             <>
-              <SectionTitle eyebrow="Audience" title="Newsletter subscribers" description="Manage your growing newsletter audience and see where subscribers joined from." action={<button className="manage-primary-btn" onClick={()=>exportRows("newsletter-subscribers.csv",[["Email","Joined"],...subscribers.map(x=>[x.email,x.joined])])}>Export subscribers</button>} />
+              <SectionTitle eyebrow="Audience" title="Newsletter subscribers" description="Manage your growing newsletter audience and see where subscribers joined from." action={<button className="manage-primary-btn" onClick={()=>exportRows("newsletter-subscribers.csv",[["Email","Joined","Status"],...subscribers.map(x=>[x.email,x.joined,x.status])])}>Export subscribers</button>} />
               <div className="grid gap-4 sm:grid-cols-3"><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Total subscribers</p><strong className="mt-1 block text-3xl font-black">1,284</strong><span className="text-[10px] font-bold text-[#087a35]">+18 this week</span></div><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">New this month</p><strong className="mt-1 block text-3xl font-black">76</strong><span className="text-[10px] font-bold text-[#087a35]">Healthy growth</span></div><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Active rate</p><strong className="mt-1 block text-3xl font-black">96.8%</strong><span className="text-[10px] font-bold text-[#087a35]">Audience is engaged</span></div></div>
               <div className="manage-card mt-5 overflow-hidden"><div className="border-b border-[#edf1ee] p-4"><input className="manage-input max-w-sm" placeholder="Search subscribers..." /></div><div className="hidden overflow-x-auto md:block"><table className="manage-table"><thead><tr><th>Email</th><th>Joined</th><th>Source</th><th>Status</th></tr></thead><tbody>{subscribers.map((item) => <tr key={item.email}><td><strong>{item.email}</strong></td><td>{item.joined}</td><td>{item.source}</td><td><Status>Active</Status></td></tr>)}</tbody></table></div><div className="divide-y divide-[#edf1ee] md:hidden">{subscribers.map((item) => <div key={item.email} className="flex items-center justify-between gap-3 p-4"><div><p className="text-xs font-extrabold">{item.email}</p><p className="mt-1 text-[9px] text-[#8b9790]">{item.joined} • {item.source}</p></div><Status>Active</Status></div>)}</div></div>
             </>
