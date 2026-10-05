@@ -1,13 +1,15 @@
+"use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { gql, queries, subscribeNewsletter } from "../lib/api";
+import { subscribeNewsletter } from "../lib/api";
+import { fetchSiteSettings, phoneHref, whatsappHref, DEFAULT_SITE_SETTINGS, type SiteSettings } from "../lib/siteSettings";
 import { MailIcon, MapPinIcon, PhoneIcon, FacebookIcon, InstagramIcon, XSocialIcon, LinkedInIcon, YouTubeIcon, WhatsAppIcon } from "./icons";
 
 export default function Footer() {
-  const [siteContact,setSiteContact]=useState({phone:"+256 705 283 679",secondary:"+256 789 395 815",email:"info@ssemuyabafoundation.org",location:"Naama Village, Mityana, Uganda"});
+  const [siteContact,setSiteContact]=useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
   const [newsletterEmail,setNewsletterEmail]=useState("");
   const [newsletterSent,setNewsletterSent]=useState(false);
-  useEffect(()=>{gql<any>(queries.settings).then(r=>{const s=r.siteSettings;setSiteContact({phone:s.phone,secondary:s.secondaryPhone||"",email:s.email,location:s.location})}).catch(()=>{});},[]);
+  useEffect(()=>{fetchSiteSettings().then(setSiteContact).catch(()=>{});},[]);
   async function handleNewsletter(e:React.FormEvent){e.preventDefault();if(!newsletterEmail)return;try{await subscribeNewsletter(newsletterEmail);setNewsletterSent(true);setNewsletterEmail("")}catch{}}
   const currentYear = new Date().getFullYear();
   return (
@@ -28,19 +30,19 @@ export default function Footer() {
         <div>
           <h3 className="font-bold">Contact Us</h3>
           <div className="mt-3 space-y-3 text-xs text-white/80">
-            <a href={"tel:"+siteContact.phone.replace(/\s+/g,"")} className="footer-contact group"><span className="footer-contact-icon"><PhoneIcon/></span><span>{siteContact.phone}<br/>{siteContact.secondary}</span></a>
+            <a href={phoneHref(siteContact.phone)} className="footer-contact group"><span className="footer-contact-icon"><PhoneIcon/></span><span>{siteContact.phone}<br/>{siteContact.secondaryPhone}</span></a>
             <a href={"mailto:"+siteContact.email} className="footer-contact group"><span className="footer-contact-icon"><MailIcon/></span><span>{siteContact.email}</span></a>
             <span className="footer-contact"><span className="footer-contact-icon"><MapPinIcon/></span><span>{siteContact.location}</span></span>
           </div>
           <div className="mt-5">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-white/60">Follow Us</p>
             <div className="flex flex-wrap gap-2.5" aria-label="Social media">
-              <a href="#" aria-label="Facebook" className="social-brand social-brand-footer"><FacebookIcon/></a>
-              <a href="#" aria-label="Instagram" className="social-brand social-brand-footer"><InstagramIcon/></a>
-              <a href="#" aria-label="X" className="social-brand social-brand-footer"><XSocialIcon/></a>
-              <a href="#" aria-label="LinkedIn" className="social-brand social-brand-footer"><LinkedInIcon/></a>
-              <a href="#" aria-label="YouTube" className="social-brand social-brand-footer"><YouTubeIcon/></a>
-              <a href="https://wa.me/256705283679" aria-label="WhatsApp" className="social-brand social-brand-footer"><WhatsAppIcon/></a>
+              <a href={siteContact.facebook || "#"} aria-label="Facebook" className="social-brand social-brand-footer"><FacebookIcon/></a>
+              <a href={siteContact.instagram || "#"} aria-label="Instagram" className="social-brand social-brand-footer"><InstagramIcon/></a>
+              <a href={siteContact.x || "#"} aria-label="X" className="social-brand social-brand-footer"><XSocialIcon/></a>
+              <a href={siteContact.linkedin || "#"} aria-label="LinkedIn" className="social-brand social-brand-footer"><LinkedInIcon/></a>
+              <a href={siteContact.youtube || "#"} aria-label="YouTube" className="social-brand social-brand-footer"><YouTubeIcon/></a>
+              <a href={whatsappHref(siteContact.phone)} aria-label="WhatsApp" className="social-brand social-brand-footer"><WhatsAppIcon/></a>
             </div>
           </div>
         </div>
