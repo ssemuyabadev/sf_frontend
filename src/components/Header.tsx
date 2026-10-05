@@ -42,7 +42,7 @@ export default function Header() {
       </div>
 
       <div className="nav-shell border-b border-black/5 bg-white">
-        <div className="section-wrap flex min-h-[72px] items-center justify-between">
+        <div className="section-wrap relative z-10 flex min-h-[72px] items-center justify-between">
           <a href="#home" onClick={() => setOpen(false)}>
             <Image
               src="/images/ssemuyaba-logo.png"
