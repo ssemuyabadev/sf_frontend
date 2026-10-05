@@ -10,7 +10,7 @@ export async function gql<T>(query: string, variables?: Record<string, unknown>)
 export const queries = {
   me: `query { me { id email name } }`,
   stats: `query { dashboardStats { messages newsletter volunteers sponsors gallery news } }`,
-  settings: `query { siteSettings { id phone secondaryPhone email location facebook instagram x linkedin youtube } }`,
+  settings: `query { siteSettings { id phone secondaryPhone email location facebook instagram x linkedin youtube whatsapp } }`,
   messages: `query { contactMessages { id name email phone subject message status createdAt } }`,
   subscribers: `query { newsletterSubscribers { id email createdAt } }`,
   volunteers: `query { volunteerApplications { id name email phone interest availability message status createdAt } }`,
