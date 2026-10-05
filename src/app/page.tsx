@@ -11,10 +11,10 @@ const programs=[
  {title:"Sustainable Livelihoods",text:"Creating long-term opportunities.",icon:LeafIcon}
 ];
 const updates=[
- {image:"/images/update-1.svg",date:"12",month:"Sep",title:"School Fees Support for 100 Orphans",text:"We are grateful to our donors for helping 100 children return to school..."},
- {image:"/images/update-2.svg",date:"08",month:"Sep",title:"Widows Empowerment Program Launched",text:"Our new skills training program is helping widows build better futures..."},
- {image:"/images/update-3.svg",date:"02",month:"Sep",title:"Medical Support Reaches Remote Communities",text:"We provided healthcare support to vulnerable families in rural areas..."},
- {image:"/images/update-4.svg",date:"28",month:"Aug",title:"Community Outreach Brings Hope",text:"Our team visited several communities to share love, food and encouragement..."}
+ {image:"/images/books-2.jpg",date:"12",month:"Sep",title:"School Fees Support for 100 Orphans",text:"We are grateful to our donors for helping 100 children return to school..."},
+ {image:"/images/donation.jpg",date:"08",month:"Sep",title:"Widows Empowerment Program Launched",text:"Our new skills training program is helping widows build better futures..."},
+ {image:"/images/health-2.jpg",date:"02",month:"Sep",title:"Medical Support Reaches Remote Communities",text:"We provided healthcare support to vulnerable families in rural areas..."},
+ {image:"/images/preaching.jpg",date:"28",month:"Aug",title:"Community Outreach Brings Hope",text:"Our team visited several communities to share love, food and encouragement..."}
 ];
 
 export default function Home(){
