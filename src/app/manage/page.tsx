@@ -231,7 +231,7 @@ export default function ManagePage() {
                 </form>
                 <div className="mt-6 flex items-center gap-3 rounded-2xl bg-[#f5faf7] p-3 text-[10px] leading-4 text-[#718078]">
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-white text-[#087a35] shadow-sm">i</span>
-                  <span><strong className="text-[#26362c]">UI preview mode.</strong> Authentication and persistent content storage can be connected to your backend/database next.</span>
+                  <span><strong className="text-[#26362c]">Secure admin access.</strong> Sign in to manage foundation content and submissions.</span>
                 </div>
               </div>
               <p className="mt-5 text-center text-[10px] font-semibold text-[#8b9890]">© {new Date().getFullYear()} Ssemuyaba Foundation • Admin Portal</p>
