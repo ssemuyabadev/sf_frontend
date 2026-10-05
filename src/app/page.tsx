@@ -42,9 +42,9 @@ export default function Home(){
      </div>
     </div>
    </div>
-   <svg className="hero-curve absolute bottom-[-1px] left-0 z-20 h-[34px] w-full" viewBox="0 0 1200 34" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0 8 C300 29 900 29 1200 8 L1200 34 L0 34 Z" fill="white"/>
-    <path d="M0 8 C300 29 900 29 1200 8" fill="none" stroke="#0c8f3e" stroke-width="3"/>
+   <svg className="hero-curve absolute bottom-[-1px] left-0 z-20 h-[48px] w-full" viewBox="0 0 1200 48" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 10 C250 39 950 39 1200 10 L1200 48 L0 48 Z" fill="white"/>
+    <path d="M0 10 C250 39 950 39 1200 10" fill="none" stroke="#0c8f3e" stroke-width="4"/>
    </svg>
   </section>
 
