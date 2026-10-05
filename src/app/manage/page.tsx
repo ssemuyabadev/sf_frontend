@@ -88,6 +88,22 @@ function NewsEditor({ value, onChange, onSave, onCancel, saving }: { value: any;
   </div></div>;
 }
 
+function GalleryEditor({ value, onChange, onSave, onCancel, saving }: { value: any; onChange: (next:any)=>void; onSave: (file?:File)=>void; onCancel:()=>void; saving:boolean }) {
+  return <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#03160b]/70 p-4 backdrop-blur-sm">
+    <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8">
+      <div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-[#0c8f3e]">Media library</p><h2 className="mt-1 text-2xl font-black">{value.id?"Update photo":"Create photo"}</h2></div><button onClick={onCancel} className="rounded-full bg-[#f1f5f2] px-3 py-2 text-xs font-black">✕</button></div>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <Field label="Title" value={value.title} onChange={v=>onChange({...value,title:v})}/>
+        <Field label="Category" value={value.category} onChange={v=>onChange({...value,category:v})}/>
+      </div>
+      <div className="mt-4"><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Image</span><input type="file" accept="image/*" onChange={e=>onChange({...value,file:e.target.files?.[0]})} className="manage-input"/></label>{value.imageUrl&&<div className="relative mt-3 aspect-[1.8] overflow-hidden rounded-2xl bg-[#f1fbf5]"><Image src={value.imageUrl} alt={value.title||"Gallery preview"} fill className="object-cover"/></div>}</div>
+      <div className="mt-4"><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Description</span><textarea value={value.description||""} onChange={e=>onChange({...value,description:e.target.value})} className="manage-input min-h-28 resize-y"/></label></div>
+      <label className="mt-4 flex items-center gap-3 text-xs font-extrabold text-[#26362c]"><input type="checkbox" checked={value.published} onChange={e=>onChange({...value,published:e.target.checked})}/> Show this photo on the public gallery</label>
+      <div className="mt-7 flex justify-end gap-3"><button onClick={onCancel} className="rounded-xl border border-[#dce5df] px-4 py-2.5 text-xs font-extrabold">Cancel</button><button disabled={saving} onClick={()=>onSave(value.file)} className="manage-primary-btn">{saving?"Saving...":value.id?"Update photo":"Create photo"}</button></div>
+    </div>
+  </div>;
+}
+
 function DonationMethodEditor({ method, details, onSave, onChange }: { method: DonationMethodAdmin; details: DonationDetail[]; onSave: (details: DonationDetail[]) => void; onChange: (next: Partial<DonationMethodAdmin>) => void }) {
   const [draftDetails,setDraftDetails]=useState<DonationDetail[]>(details);
   useEffect(()=>setDraftDetails(details),[method.id,method.detailsJson]);
@@ -130,6 +146,8 @@ export default function ManagePage()
   const [donationMethods, setDonationMethods] = useState<DonationMethodAdmin[]>([]);
   const [newsEditor, setNewsEditor] = useState<any|null>(null);
   const [newsSaving, setNewsSaving] = useState(false);
+  const [galleryEditor, setGalleryEditor] = useState<any|null>(null);
+  const [gallerySaving, setGallerySaving] = useState(false);
 
   async function loadAdmin() {
     const [s,settingsResult,m,n,v,sp,g,nu,d] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.settings),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news),gql<any>(queries.adminDonationMethods)]);
@@ -207,16 +225,26 @@ export default function ManagePage()
 
   function parseDonationDetails(value:string): DonationDetail[] { try { const parsed=JSON.parse(value); return Array.isArray(parsed)?parsed.map((x:any)=>({label:String(x?.label||""),value:String(x?.value||""),copy:x?.copy?String(x.copy):undefined})):[]; } catch { return []; } }
   async function saveDonationMethod(method:DonationMethodAdmin, details:DonationDetail[]) { try { const detailsJson=JSON.stringify(details.map(x=>({label:x.label,value:x.value,...(x.copy?{copy:x.copy}:{})}))); const r=await gql<any>(mutations.updateDonationMethod,{id:method.id,input:{name:method.name,eyebrow:method.eyebrow,detailsJson,note:method.note}}); setDonationMethods(items=>items.map(x=>x.id===method.id?{...x,...r.updateDonationMethod}:x)); setNotice(method.name+" payment details saved."); } catch(error) { setNotice(error instanceof Error ? error.message : "Could not save donation details."); } }
-  async function addGalleryItem() {
-    const title=window.prompt("Photo title"), imageUrl=window.prompt("Image URL");
-    if(!title||!imageUrl)return;
-    try { const r=await gql<any>(mutations.createGallery,{input:{title,imageUrl,category:"Community",published:true}}); setGallery(items=>[{...r.createGallery,image:r.createGallery.imageUrl},...items]); setNotice("Gallery photo published."); }
-    catch(error) { setNotice(error instanceof Error ? error.message : "Could not publish photo."); }
+  async function saveGalleryEditor(file?:File) {
+    if(!galleryEditor?.title?.trim()){setNotice("Photo title is required.");return;}
+    if(!galleryEditor.id && !file && !galleryEditor.imageUrl){setNotice("Please choose an image.");return;}
+    setGallerySaving(true);
+    try {
+      let imageUrl=galleryEditor.imageUrl||"";
+      if(file){const base64=await new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(",")[1]||"");reader.onerror=reject;reader.readAsDataURL(file);}); imageUrl=(await gql<any>(mutations.uploadGalleryImage,{filename:file.name,contentBase64:base64})).uploadGalleryImage;}
+      const input={title:galleryEditor.title.trim(),imageUrl,description:galleryEditor.description?.trim()||undefined,category:galleryEditor.category?.trim()||"Community",published:!!galleryEditor.published};
+      const r=galleryEditor.id?await gql<any>(mutations.updateGallery,{id:galleryEditor.id,input}):await gql<any>(mutations.createGallery,{input});
+      const item=galleryEditor.id?r.updateGallery:r.createGallery;
+      setGallery(items=>galleryEditor.id?items.map(x=>x.id===item.id?{...item,image:item.imageUrl}:x):[{...item,image:item.imageUrl},...items]);
+      setGalleryEditor(null);setNotice(galleryEditor.id?"Gallery photo updated.":"Gallery photo created.");await loadAdmin();
+    } catch(error){setNotice(error instanceof Error?error.message:"Could not save gallery photo.");} finally{setGallerySaving(false);}
   }
+  function addGalleryItem(){setGalleryEditor({title:"",category:"Community",description:"",imageUrl:"",published:true});}
+  function editGalleryItem(item:any){setGalleryEditor({id:item.id,title:item.title,category:item.category||"Community",description:item.description||"",imageUrl:item.imageUrl||item.image||"",published:item.published!==false});}
 
-  async function deleteGalleryItem(title:string) {
-    const item=gallery.find(x=>x.title===title); if(!item||!window.confirm("Delete this gallery item?"))return;
-    try { await gql(mutations.deleteGallery,{id:item.id}); setGallery(items=>items.filter(x=>x.id!==item.id)); setNotice("Gallery item deleted."); }
+  async function deleteGalleryItem(id:string) {
+    const item=gallery.find(x=>x.id===id); if(!item||!window.confirm("Delete this gallery item?"))return;
+    try { await gql(mutations.deleteGallery,{id}); setGallery(items=>items.filter(x=>x.id!==id)); setNotice("Gallery item deleted."); }
     catch(error) { setNotice(error instanceof Error ? error.message : "Could not delete photo."); }
   }
 
@@ -489,7 +517,7 @@ export default function ManagePage()
           {section === "gallery" && (
             <>
               <SectionTitle eyebrow="Media library" title="Gallery management" description="Keep the public gallery fresh with photos from outreach, education, healthcare and community work." action={<button onClick={addGalleryItem} className="manage-primary-btn">+ Add photo</button>} />
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{gallery.map((item) => <article key={item.title} className="manage-gallery-card"><div className="relative aspect-[1.55] overflow-hidden"><Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 hover:scale-105" /><span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[9px] font-black text-[#087a35] backdrop-blur">{item.category}</span></div><div className="flex items-center gap-3 p-4"><div className="min-w-0 flex-1"><h3 className="truncate text-xs font-black">{item.title}</h3><p className="mt-1 text-[9px] text-[#8b9790]">Published to website</p></div><button onClick={()=>deleteGalleryItem(item.title)} className="rounded-lg border border-[#e5ebe7] px-2.5 py-1.5 text-[9px] font-extrabold text-[#c91525]">Delete</button></div></article>)}</div>
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{gallery.map((item) => <article key={item.title} className="manage-gallery-card"><div className="relative aspect-[1.55] overflow-hidden"><Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 hover:scale-105" /><span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[9px] font-black text-[#087a35] backdrop-blur">{item.category}</span></div><div className="flex items-center gap-3 p-4"><div className="min-w-0 flex-1"><h3 className="truncate text-xs font-black">{item.title}</h3><p className="mt-1 text-[9px] text-[#8b9790]">Published to website</p></div><div className="flex items-center gap-2"><button onClick={()=>editGalleryItem(item)} className="rounded-lg border border-[#dce8df] px-2.5 py-1.5 text-[9px] font-extrabold text-[#087a35]">Update</button><button onClick={()=>deleteGalleryItem(item.id)} className="rounded-lg border border-[#e5ebe7] px-2.5 py-1.5 text-[9px] font-extrabold text-[#c91525]">Delete</button></div></div></article>)}</div>
             </>
           )}
 
@@ -504,6 +532,7 @@ export default function ManagePage()
           {section === "donations" && (<><SectionTitle eyebrow="Giving" title="Donation methods" description="Update the payment details shown on the public Donate page. The existing card design and branding are not changed."/><div className="space-y-5">{donationMethods.map(method=><DonationMethodEditor key={method.id} method={method} details={parseDonationDetails(method.detailsJson)} onSave={(details)=>saveDonationMethod(method,details)} onChange={(next)=>setDonationMethods(items=>items.map(x=>x.id===method.id?{...x,...next}:x))}/>)}</div></>)}
 
           {newsEditor && <NewsEditor value={newsEditor} onChange={setNewsEditor} onSave={saveNewsEditor} onCancel={()=>setNewsEditor(null)} saving={newsSaving} />}
+          {galleryEditor && <GalleryEditor value={galleryEditor} onChange={setGalleryEditor} onSave={saveGalleryEditor} onCancel={()=>setGalleryEditor(null)} saving={gallerySaving} />}
 
           {section === "settings" && (
             <SectionTitle eyebrow="Account" title="Settings" description="Admin account preferences, security and future integrations will live here." />
