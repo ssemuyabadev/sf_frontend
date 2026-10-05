@@ -28,7 +28,7 @@ export const mutations = {
   updateMessageStatus: `mutation($id:String!,$status:String!){ updateContactStatus(id:$id,status:$status){ id status } }`,
   updateVolunteerStatus: `mutation($id:String!,$status:String!){ updateVolunteerStatus(id:$id,status:$status){ id status } }`,
   updateNewsletterStatus: `mutation($id:String!,$status:String!){ updateNewsletterStatus(id:$id,status:$status){ id email status updatedAt } }`,
-  updateSponsorStatus: `mutation($id:String!,$status:String!){ updateSponsorStatus(id:$id,status:$status){ id status updatedAt } },
+  updateSponsorStatus: `mutation($id:String!,$status:String!){ updateSponsorStatus(id:$id,status:$status){ id status updatedAt } }`,
   createGallery: `mutation($input:GalleryInput!){ createGallery(input:$input){ id title imageUrl description category published createdAt } }`,
   updateGallery: `mutation($id:String!,$input:GalleryInput!){ updateGallery(id:$id,input:$input){ id title imageUrl description category published createdAt } }`,
   deleteGallery: `mutation($id:String!){ deleteGallery(id:$id) }`,
