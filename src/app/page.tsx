@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Header from "../components/Header";
 import ScrollToTop from "../components/ScrollToTop";
-import {ArrowRight,GraduationIcon,HeartIcon,HeartPulseIcon,LeafIcon,PinIcon,ToolsIcon,UsersIcon} from "../components/icons";
+import {ArrowRight,FacebookIcon,GraduationIcon,HeartIcon,HeartPulseIcon,InstagramIcon,LeafIcon,LinkedInIcon,MailIcon,MapPinIcon,PhoneIcon,PinIcon,ToolsIcon,UsersIcon,XSocialIcon,YouTubeIcon} from "../components/icons";
 
 const programs=[
  {title:"Education Support",text:"Quality education for a brighter future.",icon:GraduationIcon},
@@ -17,6 +17,7 @@ const updates=[
 ];
 
 export default function Home(){
+ const currentYear = new Date().getFullYear();
  return <main>
   <Header/>
   <section id="home" className="hero-section relative min-h-[470px] overflow-hidden bg-[#061d11] sm:min-h-[485px] lg:min-h-[500px]">
@@ -67,12 +68,58 @@ export default function Home(){
    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{updates.map(item=><article key={item.title} className="overflow-hidden rounded-lg bg-white shadow-soft ring-1 ring-black/5"><div className="relative h-24 overflow-hidden"><Image src={item.image} alt="" fill className="object-cover"/><div className="absolute bottom-0 left-3 grid min-w-11 place-items-center rounded-t-md bg-[#0c8f3e] px-2 py-1 text-white"><span className="text-sm font-black leading-none">{item.date}</span><span className="text-[9px] font-bold">{item.month}</span></div></div><div className="p-4"><h3 className="text-sm font-black leading-tight">{item.title}</h3><p className="mt-2 line-clamp-2 text-xs leading-4 text-black/65">{item.text}</p><a href="#news" className="mt-3 inline-flex items-center gap-1 text-xs font-extrabold text-[#087a35]">Read More <ArrowRight className="h-3 w-3"/></a></div></article>)}</div>
   </div></section>
 
-  <footer id="contact" className="bg-[#03160b] text-white"><div className="section-wrap grid gap-8 py-8 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1.2fr_1fr]">
-   <div><Image src="/images/ssemuyaba-full-logo-transparent.png" alt="Ssemuyaba Foundation" width={718} height={307} className="h-20 w-auto max-w-full object-contain object-left sm:h-24"/></div>
-   <div><h3 className="font-bold">Quick Links</h3><div className="mt-3 grid grid-cols-2 gap-y-2 text-xs text-white/75">{["Home","About Us","Our Programs","Get Involved","Gallery","News & Updates","Contact","Donate"].map(x=><a href={"#"+(x==="Home"?"home":x==="About Us"?"about":x==="News & Updates"?"news":x==="Contact"?"contact":"programs")} key={x}>{x}</a>)}</div></div>
-   <div><h3 className="font-bold">Contact Us</h3><div className="mt-3 space-y-2 text-xs text-white/80"><p>☎ +256 705 283 679 | +256 789 395 815</p><p>✉ info@ssemuyabafoundation.org</p><p>⌖ Naama Village, Mityana, Uganda</p></div></div>
-   <div><h3 className="font-bold">Follow Us</h3><div className="mt-3 flex gap-2">{["f","𝕏","◎","▶"].map(x=><span key={x} className="grid h-8 w-8 place-items-center rounded-full bg-white/10 text-sm">{x}</span>)}</div><p className="mt-6 text-2xl font-black italic text-[#13d74c]">Together<br/>We Can <span className="text-[#ff1d2d]">♡</span></p></div>
-  </div><div className="h-1 bg-gradient-to-r from-[#0c8f3e] via-[#13d74c] to-[#ff1d2d]"/><div className="section-wrap flex flex-col gap-2 py-4 text-[10px] text-white/70 sm:flex-row sm:items-center sm:justify-between"><span>© 2025 Ssemuyaba Foundation. All rights reserved.</span><span>Empowering Vulnerable Orphans, Children and Widows. <span className="text-[#ff1d2d]">♡</span></span></div></footer>
+  <footer id="contact" className="bg-[#03160b] text-white">
+   <div className="section-wrap grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[1.15fr_.8fr_1.15fr_1.25fr]">
+    <div>
+     <div className="inline-flex rounded-2xl bg-white p-3 shadow-lg">
+      <Image src="/images/ssemuyaba-full-logo-transparent.png" alt="Ssemuyaba Foundation" width={718} height={307} className="h-20 w-auto max-w-full object-contain object-left sm:h-24"/>
+     </div>
+     <p className="mt-4 max-w-xs text-xs leading-5 text-white/70">Empowering Vulnerable Orphans, Children &amp; Widows through education, healthcare, skills development and sustainable livelihoods.</p>
+    </div>
+    <div>
+     <h3 className="font-bold">Quick Links</h3>
+     <div className="mt-3 grid grid-cols-2 gap-y-2 text-xs text-white/75">
+      {["Home","About Us","Our Causes","Get Involved","Gallery","News & Updates","Contact Us","Donate"].map(x=><a href={"#"+(x==="Home"?"home":x==="About Us"?"about":x==="News & Updates"?"news":x==="Contact Us"?"contact":x==="Donate"?"donate":"programs")} key={x} className="transition hover:text-[#13d74c]">{x}</a>)}
+     </div>
+    </div>
+    <div>
+     <h3 className="font-bold">Contact Us</h3>
+     <div className="mt-3 space-y-3 text-xs text-white/80">
+      <a href="tel:+256705283679" className="footer-contact group"><span className="footer-contact-icon"><PhoneIcon/></span><span>+256 705 283 679<br/>+256 789 395 815</span></a>
+      <a href="mailto:info@ssemuyabafoundation.org" className="footer-contact group"><span className="footer-contact-icon"><MailIcon/></span><span>info@ssemuyabafoundation.org</span></a>
+      <span className="footer-contact"><span className="footer-contact-icon"><MapPinIcon/></span><span>Naama Village, Mityana, Uganda</span></span>
+     </div>
+     <div className="mt-5">
+      <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-white/60">Follow Us</p>
+      <div className="flex flex-wrap gap-2.5" aria-label="Social media">
+       <a href="#" aria-label="Facebook" className="social-brand social-brand-footer"><FacebookIcon/></a>
+       <a href="#" aria-label="Instagram" className="social-brand social-brand-footer"><InstagramIcon/></a>
+       <a href="#" aria-label="X" className="social-brand social-brand-footer"><XSocialIcon/></a>
+       <a href="#" aria-label="LinkedIn" className="social-brand social-brand-footer"><LinkedInIcon/></a>
+       <a href="#" aria-label="YouTube" className="social-brand social-brand-footer"><YouTubeIcon/></a>
+      </div>
+     </div>
+    </div>
+    <div>
+     <h3 className="font-bold">Subscribe to Our Newsletter</h3>
+     <p className="mt-2 text-xs leading-5 text-white/70">Get stories, updates and opportunities to make a difference delivered to your inbox.</p>
+     <form className="mt-4 space-y-2">
+      <label htmlFor="newsletter-email" className="sr-only">Email address</label>
+      <div className="flex overflow-hidden rounded-full border border-white/15 bg-white/10 p-1.5 backdrop-blur">
+       <input id="newsletter-email" type="email" placeholder="Your email address" className="min-w-0 flex-1 bg-transparent px-3 text-xs text-white outline-none placeholder:text-white/50" required/>
+       <button type="submit" className="shrink-0 rounded-full bg-[#ff1d2d] px-4 py-2 text-xs font-extrabold transition hover:bg-[#e91424]">Subscribe</button>
+      </div>
+     </form>
+     <p className="mt-3 text-[10px] text-white/50">No spam. Just meaningful stories and impact.</p>
+     <p className="mt-6 text-xl font-black italic leading-tight text-[#13d74c]">Empowering Vulnerable<br/>Orphans, Children &amp; Widows <span className="text-[#ff1d2d]">♡</span></p>
+    </div>
+   </div>
+   <div className="h-1 bg-gradient-to-r from-[#0c8f3e] via-[#13d74c] to-[#ff1d2d]"/>
+   <div className="section-wrap flex flex-col gap-2 py-4 text-[10px] text-white/70 sm:flex-row sm:items-center sm:justify-between">
+    <span>© {currentYear} Ssemuyaba Foundation. All rights reserved.</span>
+    <span>Empowering Vulnerable Orphans, Children &amp; Widows. <span className="text-[#ff1d2d]">♡</span></span>
+   </div>
+  </footer>
   <ScrollToTop/>
  </main>;
 }
