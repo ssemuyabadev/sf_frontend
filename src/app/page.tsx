@@ -53,7 +53,7 @@ export default function Home(){
   </div></section>
 
   <footer id="contact" className="bg-[#03160b] text-white"><div className="section-wrap grid gap-8 py-8 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1.2fr_1fr]">
-   <div><Image src="/images/ssemuyaba-logo.svg" alt="Ssemuyaba Foundation" width={270} height={210} className="h-24 w-auto object-contain object-left"/></div>
+   <div><Image src="/images/ssemuyaba-foundation-logo.png" alt="Ssemuyaba Foundation" width={900} height={600} className="h-24 w-auto object-contain object-left"/></div>
    <div><h3 className="font-bold">Quick Links</h3><div className="mt-3 grid grid-cols-2 gap-y-2 text-xs text-white/75">{["Home","About Us","Our Programs","Get Involved","Gallery","News & Updates","Contact","Donate"].map(x=><a href={"#"+(x==="Home"?"home":x==="About Us"?"about":x==="News & Updates"?"news":x==="Contact"?"contact":"programs")} key={x}>{x}</a>)}</div></div>
    <div><h3 className="font-bold">Contact Us</h3><div className="mt-3 space-y-2 text-xs text-white/80"><p>☎ +256 705 283 679 | +256 789 395 815</p><p>✉ info@ssemuyabafoundation.org</p><p>⌖ Kampala, Uganda</p></div></div>
    <div><h3 className="font-bold">Follow Us</h3><div className="mt-3 flex gap-2">{["f","𝕏","◎","▶"].map(x=><span key={x} className="grid h-8 w-8 place-items-center rounded-full bg-white/10 text-sm">{x}</span>)}</div><p className="mt-6 text-2xl font-black italic text-[#13d74c]">Together<br/>We Can <span className="text-[#ff1d2d]">♡</span></p></div>
