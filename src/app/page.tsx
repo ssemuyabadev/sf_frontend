@@ -106,13 +106,13 @@ export default function Home(){
      <p className="mt-2 text-xs leading-5 text-white/70">Get stories, updates and opportunities to make a difference delivered to your inbox.</p>
      <form className="mt-4 space-y-2">
       <label htmlFor="newsletter-email" className="sr-only">Email address</label>
-      <div className="flex overflow-hidden rounded-full border border-white/15 bg-white/10 p-1.5 backdrop-blur">
-       <input id="newsletter-email" type="email" placeholder="Your email address" className="min-w-0 flex-1 bg-transparent px-3 text-xs text-white outline-none placeholder:text-white/50" required/>
-       <button type="button" className="shrink-0 rounded-full bg-[#ff1d2d] px-4 py-2 text-xs font-extrabold transition hover:bg-[#e91424]">Subscribe</button>
+      <div className="flex flex-col gap-2 rounded-2xl border border-white/15 bg-white/10 p-1.5 backdrop-blur sm:flex-row sm:items-center sm:rounded-full">
+       <input id="newsletter-email" type="email" placeholder="Your email address" className="min-w-0 w-full flex-1 bg-transparent px-3 py-2 text-xs text-white outline-none placeholder:text-white/50 sm:py-1.5" required/>
+       <button type="button" className="w-full shrink-0 rounded-full bg-[#ff1d2d] px-4 py-2 text-xs font-extrabold transition hover:bg-[#e91424] sm:w-auto">Subscribe</button>
       </div>
      </form>
      <p className="mt-3 text-[10px] text-white/50">No spam. Just meaningful stories and impact.</p>
-     <p className="mt-6 text-xl font-black italic leading-tight text-[#13d74c]">Empowering Vulnerable<br/>Orphans, Children &amp; Widows <span className="text-[#ff1d2d]">♡</span></p>
+     <p className="mt-6 text-base font-black italic leading-tight text-[#13d74c] sm:text-xl">Empowering Vulnerable<br/>Orphans, Children &amp; Widows <span className="text-[#ff1d2d]">♡</span></p>
     </div>
    </div>
    <div className="h-1 bg-gradient-to-r from-[#0c8f3e] via-[#13d74c] to-[#ff1d2d]"/>
