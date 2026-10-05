@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { submitSponsor } from "../../lib/api";
 import { ArrowRight, ChevronDown, HeartIcon, HeartPulseIcon, GraduationIcon, LeafIcon, PhoneIcon, MailIcon, UsersIcon } from "../../components/icons";
 
 const roles = [
@@ -24,10 +25,16 @@ export default function SponsorPage() {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name || !form.email || !form.phone || !form.agree) return;
-    setSubmitted(true);
+    try {
+      await submitSponsor({
+        fullName:form.name,email:form.email,phone:form.phone,country:form.country,city:form.city,
+        preferredContact:form.preferredContact,sponsorshipPreference:form.frequency,message:form.message,consent:form.agree
+      });
+      setSubmitted(true);
+    } catch { window.alert("We could not submit your sponsorship enquiry right now. Please try again."); }
   }
 
   return (
