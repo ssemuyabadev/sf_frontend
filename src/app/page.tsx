@@ -19,21 +19,36 @@ const updates=[
 export default function Home(){
  return <main>
   <Header/>
-  <section id="home" className="relative min-h-[510px] overflow-hidden bg-[#062416]">
-   <Image src="/images/hero-family.svg" alt="A mother and children smiling together" fill priority className="object-cover object-right"/>
-   <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/15"/>
-   <div className="section-wrap relative flex min-h-[510px] items-center py-14"><div className="max-w-[540px] text-white">
-    <p className="mb-3 text-xs font-extrabold tracking-[0.18em] sm:text-sm">SSEMUYABA FOUNDATION</p>
-    <h1 className="hero-title text-shadow text-5xl font-black sm:text-6xl lg:text-[70px]">Together We<br/><span className="text-[#19db50]">Bring Hope</span></h1>
-    <div className="my-3 h-1.5 w-64 rounded-full bg-[#ff1d2d] sm:w-72"/>
-    <h2 className="max-w-md text-xl font-extrabold leading-tight sm:text-2xl">Empowering vulnerable Orphans,<br/>Children and Widows.</h2>
-    <p className="mt-3 max-w-[440px] text-sm leading-6 text-white/95 sm:text-base">We provide love, support, education and sustainable opportunities to help vulnerable children and widows build a better tomorrow.</p>
-    <div className="mt-5 flex flex-wrap gap-3"><a href="#donate" className="flex items-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3 text-sm font-extrabold shadow-lg transition hover:-translate-y-0.5"><HeartIcon className="h-4 w-4"/>Donate Now</a><a href="#about" className="flex items-center gap-2 rounded-full border border-white px-6 py-3 text-sm font-extrabold transition hover:bg-white hover:text-[#03491f]">Our Work <ArrowRight className="h-4 w-4"/></a></div>
-   </div></div>
-   <div className="absolute bottom-[-1px] left-0 right-0 h-7 rounded-[50%_50%_0_0] bg-white"/>
+  <section id="home" className="hero-section relative min-h-[470px] overflow-hidden bg-[#061d11] sm:min-h-[485px] lg:min-h-[500px]">
+   <Image
+    src="/images/home-hero.jpg"
+    alt="A mother and children smiling together"
+    fill
+    priority
+    sizes="100vw"
+    className="hero-image object-cover object-[62%_center] sm:object-[60%_center]"
+   />
+   <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.84)_0%,rgba(0,0,0,.66)_34%,rgba(0,0,0,.20)_67%,rgba(0,0,0,.04)_100%)]"/>
+   <div className="section-wrap relative z-10 flex min-h-[470px] items-center py-14 sm:min-h-[485px] lg:min-h-[500px] lg:py-16">
+    <div className="max-w-[560px] text-white">
+     <p className="mb-2 text-[11px] font-extrabold tracking-[0.22em] sm:text-xs">SSEMUYABA FOUNDATION</p>
+     <h1 className="hero-title text-5xl font-black sm:text-6xl lg:text-[64px]">Together We<br/><span className="text-[#19db50]">Bring Hope</span></h1>
+     <div className="hero-red-stroke my-2 h-[8px] w-[285px] sm:w-[310px]"/>
+     <h2 className="max-w-[430px] text-xl font-extrabold leading-[1.08] sm:text-[22px]">Empowering vulnerable Orphans,<br/>Children and Widows.</h2>
+     <p className="mt-3 max-w-[455px] text-[13px] leading-[1.55] text-white/95 sm:text-[15px]">We provide love, support, education and sustainable opportunities to help vulnerable children and widows build a better tomorrow.</p>
+     <div className="mt-5 flex flex-wrap gap-3">
+      <a href="#donate" className="flex items-center gap-2 rounded-full bg-[#ff1d2d] px-6 py-3 text-[13px] font-extrabold shadow-lg transition hover:-translate-y-0.5 hover:bg-[#e91424]"><HeartIcon className="h-4 w-4"/>Donate Now</a>
+      <a href="#about" className="flex items-center gap-2 rounded-full border border-white px-6 py-3 text-[13px] font-extrabold transition hover:bg-white hover:text-[#03491f]">Our Work <ArrowRight className="h-4 w-4"/></a>
+     </div>
+    </div>
+   </div>
+   <svg className="hero-curve absolute bottom-[-1px] left-0 z-20 h-[34px] w-full" viewBox="0 0 1200 34" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 8 C300 29 900 29 1200 8 L1200 34 L0 34 Z" fill="white"/>
+    <path d="M0 8 C300 29 900 29 1200 8" fill="none" stroke="#0c8f3e" stroke-width="3"/>
+   </svg>
   </section>
 
-  <section className="bg-white py-6 sm:py-8"><div className="section-wrap grid grid-cols-2 divide-x divide-[#b8dfc6] md:grid-cols-4">
+  <section className="bg-white/ py-6 sm:py-8"><div className="section-wrap grid grid-cols-2 divide-x divide-[#b8dfc6] md:grid-cols-4">
    {[[UsersIcon,"1,250+","Children Helped","With education, shelter and care"],[PinIcon,"12+","Districts Reached","Across Uganda"],[UsersIcon,"320+","Widows Supported","With empowerment programs"],[HeartIcon,"5+","Years of Impact","Changing lives, building futures"]].map(([Icon,stat,label,desc],i)=>{const C=Icon as React.ComponentType<{className?:string}>;return <div key={label as string} className={"flex flex-col items-center px-4 py-4 text-center "+(i>1?"border-t md:border-t-0":"")}><C className="mb-2 h-8 w-8 text-[#087a35]"/><div className="text-3xl font-black text-[#087a35] sm:text-4xl">{stat as string}</div><div className="text-sm font-extrabold text-[#05662c] sm:text-base">{label as string}</div><p className="mt-1 text-[11px] text-black/75 sm:text-xs">{desc as string}</p></div>})}
   </div></section>
 
