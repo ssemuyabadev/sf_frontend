@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, HeartIcon } from "@/components/icons";
+import { gql, queries } from "../../lib/api";
 
 const gallery = [
   { image: "/images/home-hero.jpg", title: "A community gathered in hope", category: "Community", featured: true },
@@ -26,6 +28,9 @@ const moments = [
 ];
 
 export default function GalleryPage() {
+  const [liveGallery,setLiveGallery]=useState<any[]>([]);
+  useEffect(()=>{gql<any>(queries.publicGallery).then(r=>setLiveGallery(r.gallery.map((x:any)=>({image:x.imageUrl,title:x.title,category:x.category||"Community"})))).catch(()=>{});},[]);
+  const galleryItems=liveGallery.length?liveGallery:gallery;
   return (
     <main className="overflow-hidden">
       <section className="relative isolate min-h-[590px] overflow-hidden bg-[#03160b] text-white">
