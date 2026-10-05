@@ -77,6 +77,17 @@ function Field({ label, value, onChange, type = "text", placeholder }: { label: 
   );
 }
 
+function NewsEditor({ value, onChange, onSave, onCancel, saving }: { value: any; onChange: (next:any)=>void; onSave: (file?:File)=>void; onCancel:()=>void; saving:boolean }) {
+  return <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#03160b]/70 p-4 backdrop-blur-sm"><div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8">
+    <div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-[#0c8f3e]">Content studio</p><h2 className="mt-1 text-2xl font-black">{value.id?"Update news":"Create news"}</h2></div><button onClick={onCancel} className="rounded-full bg-[#f1f5f2] px-3 py-2 text-xs font-black">✕</button></div>
+    <div className="mt-6 grid gap-4 sm:grid-cols-2"><Field label="Title" value={value.title} onChange={v=>onChange({...value,title:v})}/><Field label="Category" value={value.category} onChange={v=>onChange({...value,category:v})}/><Field label="Slug" value={value.slug} onChange={v=>onChange({...value,slug:v})}/><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Featured image</span><input type="file" accept="image/*" onChange={e=>onChange({...value,file:e.target.files?.[0]})} className="manage-input"/></label></div>
+    <div className="mt-4"><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Excerpt</span><textarea value={value.excerpt} onChange={e=>onChange({...value,excerpt:e.target.value})} className="manage-input min-h-24 resize-y"/></label></div>
+    <div className="mt-4"><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Story body</span><textarea value={value.body} onChange={e=>onChange({...value,body:e.target.value})} className="manage-input min-h-52 resize-y"/></label></div>
+    <label className="mt-4 flex items-center gap-3 text-xs font-extrabold text-[#26362c]"><input type="checkbox" checked={value.published} onChange={e=>onChange({...value,published:e.target.checked})}/> Publish this story</label>
+    <div className="mt-7 flex justify-end gap-3"><button onClick={onCancel} className="rounded-xl border border-[#dce5df] px-4 py-2.5 text-xs font-extrabold">Cancel</button><button disabled={saving} onClick={()=>onSave(value.file)} className="manage-primary-btn">{saving?"Saving...":value.id?"Update story":"Create story"}</button></div>
+  </div></div>;
+}
+
 function DonationMethodEditor({ method, details, onSave, onChange }: { method: DonationMethodAdmin; details: DonationDetail[]; onSave: (details: DonationDetail[]) => void; onChange: (next: Partial<DonationMethodAdmin>) => void }) {
   const [draftDetails,setDraftDetails]=useState<DonationDetail[]>(details);
   useEffect(()=>setDraftDetails(details),[method.id,method.detailsJson]);
@@ -117,6 +128,8 @@ export default function ManagePage()
   const [gallery, setGallery] = useState<any[]>([]);
   const [news, setNews] = useState<any[]>([]);
   const [donationMethods, setDonationMethods] = useState<DonationMethodAdmin[]>([]);
+  const [newsEditor, setNewsEditor] = useState<any|null>(null);
+  const [newsSaving, setNewsSaving] = useState(false);
 
   async function loadAdmin() {
     const [s,settingsResult,m,n,v,sp,g,nu,d] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.settings),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news),gql<any>(queries.adminDonationMethods)]);
@@ -207,19 +220,21 @@ export default function ManagePage()
     catch(error) { setNotice(error instanceof Error ? error.message : "Could not delete photo."); }
   }
 
-  async function addNewsItem() {
-    const title=window.prompt("Story title"), body=window.prompt("Story body"); if(!title||!body)return;
-    const slug=title.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")+"-"+Date.now().toString().slice(-5);
-    try { const r=await gql<any>(mutations.createNews,{input:{title,slug,body,published:true}}); const item=r.createNews; setNews(items=>[{...item,date:new Date(item.publishedAt||item.createdAt).toLocaleDateString(),status:"Published",image:item.imageUrl||"/images/home-hero.jpg"},...items]); setNotice("Story published."); }
-    catch(error) { setNotice(error instanceof Error ? error.message : "Could not publish story."); }
+  async function saveNewsEditor(file?:File) {
+    if(!newsEditor?.title?.trim()||!newsEditor?.body?.trim()){setNotice("Title and story body are required.");return;}
+    setNewsSaving(true);
+    try {
+      let imageUrl=newsEditor.imageUrl||undefined;
+      if(file){const base64=await new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(",")[1]||"");reader.onerror=reject;reader.readAsDataURL(file);}); imageUrl=(await gql<any>(mutations.uploadNewsImage,{filename:file.name,contentBase64:base64})).uploadNewsImage;}
+      const input={title:newsEditor.title.trim(),slug:newsEditor.slug?.trim()||"",category:newsEditor.category?.trim()||"Foundation Update",excerpt:newsEditor.excerpt?.trim()||undefined,body:newsEditor.body.trim(),imageUrl,published:!!newsEditor.published};
+      const r=newsEditor.id?await gql<any>(mutations.updateNews,{id:newsEditor.id,input}):await gql<any>(mutations.createNews,{input});
+      const item=newsEditor.id?r.updateNews:r.createNews;
+      setNews(items=>newsEditor.id?items.map(x=>x.id===item.id?{...x,date:new Date(item.publishedAt||item.createdAt).toLocaleDateString(),status:item.published?"Published":"Draft",image:item.imageUrl||"/images/home-hero.jpg"}):[{...item,date:new Date(item.publishedAt||item.createdAt).toLocaleDateString(),status:item.published?"Published":"Draft",image:item.imageUrl||"/images/home-hero.jpg"},...items]);
+      setNewsEditor(null);setNotice(newsEditor.id?"Story updated.":"Story created.");await loadAdmin();
+    } catch(error){setNotice(error instanceof Error?error.message:"Could not save story.");} finally{setNewsSaving(false);}
   }
-
-  async function deleteNewsItem(title:string) {
-    const item=news.find(x=>x.title===title); if(!item||!window.confirm("Delete this story?"))return;
-    try { await gql(mutations.deleteNews,{id:item.id}); setNews(items=>items.filter(x=>x.id!==item.id)); setNotice("Story deleted."); }
-    catch(error) { setNotice(error instanceof Error ? error.message : "Could not delete story."); }
-  }
-
+  function addNewsItem(){setNewsEditor({title:"",slug:"",category:"Foundation Update",excerpt:"",body:"",imageUrl:"",published:true});}
+  function editNewsItem(item:any){setNewsEditor({id:item.id,title:item.title,slug:item.slug,category:item.category||"Foundation Update",excerpt:item.excerpt||"",body:item.body||"",imageUrl:item.imageUrl||"",published:item.published});}
   function exportRows(filename:string,rows:string[][]) {
     const csv=rows.map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\n");
     const blob=new Blob([csv],{type:"text/csv"}),url=URL.createObjectURL(blob),a=document.createElement("a"); a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
@@ -481,11 +496,14 @@ export default function ManagePage()
           {section === "news" && (
             <>
               <SectionTitle eyebrow="Content studio" title="News & updates" description="Publish stories, announcements and impact updates directly to the public website." action={<button onClick={addNewsItem} className="manage-primary-btn">+ New story</button>} />
-              <div className="grid gap-4 xl:grid-cols-2">{news.map((item) => <article key={item.title} className="manage-card flex overflow-hidden"><div className="relative hidden w-36 shrink-0 sm:block"><Image src={item.image} alt={item.title} fill className="object-cover" /></div><div className="min-w-0 flex-1 p-5"><div className="flex items-start justify-between gap-3"><Status>{item.status}</Status><button onClick={()=>deleteNewsItem(item.title)} className="text-[9px] font-extrabold text-[#c91525]">Delete</button></div><h3 className="mt-3 text-sm font-black leading-5">{item.title}</h3><p className="mt-1 text-[10px] text-[#8b9790]">{item.date} • Ssemuyaba Foundation</p><p className="mt-3 text-[10px] leading-5 text-[#68766e]">Manage the headline, story copy, featured image and publication status from the content editor.</p></div></article>)}</div>
+              <div className="mb-5 grid gap-4 sm:grid-cols-3"><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Total stories</p><strong className="mt-1 block text-3xl font-black">{stats.news}</strong><span className="text-[10px] font-bold text-[#087a35]">Live from database</span></div><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Published</p><strong className="mt-1 block text-3xl font-black">{news.filter(x=>x.published).length}</strong><span className="text-[10px] font-bold text-[#087a35]">Visible on website</span></div><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Drafts</p><strong className="mt-1 block text-3xl font-black">{news.filter(x=>!x.published).length}</strong><span className="text-[10px] font-bold text-[#087a35]">Not yet public</span></div></div>
+              <div className="grid gap-4 xl:grid-cols-2">{news.map((item) => <article key={item.title} className="manage-card flex overflow-hidden"><div className="relative hidden w-36 shrink-0 sm:block"><Image src={item.image} alt={item.title} fill className="object-cover" /></div><div className="min-w-0 flex-1 p-5"><div className="flex items-start justify-between gap-3"><Status>{item.status}</Status><div className="flex items-center gap-3"><button onClick={()=>editNewsItem(item)} className="text-[9px] font-extrabold text-[#087a35]">Update</button><button onClick={()=>deleteNewsItem(item.title)} className="text-[9px] font-extrabold text-[#c91525]">Delete</button></div></div><h3 className="mt-3 text-sm font-black leading-5">{item.title}</h3><p className="mt-1 text-[10px] text-[#8b9790]">{item.date} • Ssemuyaba Foundation</p><p className="mt-3 text-[10px] leading-5 text-[#68766e]">Manage the headline, story copy, featured image and publication status from the content editor.</p></div></article>)}</div>
             </>
           )}
 
           {section === "donations" && (<><SectionTitle eyebrow="Giving" title="Donation methods" description="Update the payment details shown on the public Donate page. The existing card design and branding are not changed."/><div className="space-y-5">{donationMethods.map(method=><DonationMethodEditor key={method.id} method={method} details={parseDonationDetails(method.detailsJson)} onSave={(details)=>saveDonationMethod(method,details)} onChange={(next)=>setDonationMethods(items=>items.map(x=>x.id===method.id?{...x,...next}:x))}/>)}</div></>)}
+
+          {newsEditor && <NewsEditor value={newsEditor} onChange={setNewsEditor} onSave={saveNewsEditor} onCancel={()=>setNewsEditor(null)} saving={newsSaving} />}
 
           {section === "settings" && (
             <SectionTitle eyebrow="Account" title="Settings" description="Admin account preferences, security and future integrations will live here." />
