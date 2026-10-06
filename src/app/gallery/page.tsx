@@ -151,7 +151,6 @@ export default function GalleryPage() {
           </div>
         </div>
       </section>
-    </main>
     {selectedIndex !== null && galleryItems[selectedIndex] && (
       <ContentDetailModal
         type="gallery"
@@ -161,5 +160,7 @@ export default function GalleryPage() {
         onNavigate={(index) => setSelectedIndex(index)}
       />
     )}
+
+    </main>
   );
 }
