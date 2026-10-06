@@ -49,6 +49,15 @@ const nav = [
 
 
 
+const MAX_CONTENT_IMAGE_SIZE = 10 * 1024 * 1024;
+
+function validateContentImageFile(file?: File) {
+  if (!file) return true;
+  if (!file.type.startsWith("image/")) throw new Error("Please choose an image file.");
+  if (file.size > MAX_CONTENT_IMAGE_SIZE) throw new Error("Image file is too large. The maximum supported size is 10 MB.");
+  return true;
+}
+
 function Status({ children }: { children: string }) {
   const tone =
     children === "New" ? "bg-[#e8fff0] text-[#087a35]" :
@@ -136,7 +145,7 @@ function Field({ label, value, onChange, type = "text", placeholder }: { label: 
 function NewsEditor({ value, onChange, onSave, onCancel, saving }: { value: any; onChange: (next:any)=>void; onSave: (file?:File)=>void; onCancel:()=>void; saving:boolean }) {
   return <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#03160b]/70 p-4 backdrop-blur-sm"><div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8">
     <div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-[#0c8f3e]">Content studio</p><h2 className="mt-1 text-2xl font-black">{value.id?"Update news":"Create news"}</h2></div><button onClick={onCancel} className="rounded-full bg-[#f1f5f2] px-3 py-2 text-xs font-black">✕</button></div>
-    <div className="mt-6 grid gap-4 sm:grid-cols-2"><Field label="Title" value={value.title} onChange={v=>onChange({...value,title:v})}/><Field label="Category" value={value.category} onChange={v=>onChange({...value,category:v})}/><Field label="Slug" value={value.slug} onChange={v=>onChange({...value,slug:v})}/><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Featured image</span><input type="file" accept="image/*" onChange={e=>onChange({...value,file:e.target.files?.[0]})} className="manage-input"/></label></div>
+    <div className="mt-6 grid gap-4 sm:grid-cols-2"><Field label="Title" value={value.title} onChange={v=>onChange({...value,title:v})}/><Field label="Category" value={value.category} onChange={v=>onChange({...value,category:v})}/><Field label="Slug" value={value.slug} onChange={v=>onChange({...value,slug:v})}/><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Featured image</span><input type="file" accept="image/*" onChange={e=>{const file=e.target.files?.[0];try{validateContentImageFile(file);onChange({...value,file});}catch(error){e.currentTarget.value="";setNotice(error instanceof Error?error.message:"Invalid image file.");}}} className="manage-input"/></label></div>
     <div className="mt-4"><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Excerpt</span><textarea value={value.excerpt} onChange={e=>onChange({...value,excerpt:e.target.value})} className="manage-input min-h-24 resize-y"/></label></div>
     <div className="mt-4"><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Story body</span><textarea value={value.body} onChange={e=>onChange({...value,body:e.target.value})} className="manage-input min-h-52 resize-y"/></label></div>
     <label className="mt-4 flex items-center gap-3 text-xs font-extrabold text-[#26362c]"><input type="checkbox" checked={value.published} onChange={e=>onChange({...value,published:e.target.checked})}/> Publish this story</label>
@@ -152,7 +161,7 @@ function GalleryEditor({ value, onChange, onSave, onCancel, saving }: { value: a
         <Field label="Title" value={value.title} onChange={v=>onChange({...value,title:v})}/>
         <Field label="Category" value={value.category} onChange={v=>onChange({...value,category:v})}/>
       </div>
-      <div className="mt-4"><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Image file</span><input type="file" accept="image/*" onChange={e=>onChange({...value,file:e.target.files?.[0]})} className="manage-input"/></label><div className="mt-3"><Field label="Or image URL" value={value.imageUrl||""} placeholder="https://..." onChange={v=>onChange({...value,imageUrl:v})}/><p className="mt-1 text-[9px] text-[#829087]">Use a URL if server-side image upload is not configured.</p></div>{value.imageUrl&&<div className="relative mt-3 aspect-[1.8] overflow-hidden rounded-2xl bg-[#f1fbf5]"><img src={value.imageUrl} alt={value.title||"Gallery preview"} className="absolute inset-0 h-full w-full object-cover"/></div>}</div>
+      <div className="mt-4"><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Image file</span><input type="file" accept="image/*" onChange={e=>{const file=e.target.files?.[0];try{validateContentImageFile(file);onChange({...value,file});}catch(error){e.currentTarget.value="";setNotice(error instanceof Error?error.message:"Invalid image file.");}}} className="manage-input"/></label><div className="mt-3"><Field label="Or image URL" value={value.imageUrl||""} placeholder="https://..." onChange={v=>onChange({...value,imageUrl:v})}/><p className="mt-1 text-[9px] text-[#829087]">Maximum image size: 10 MB. Use a URL if server-side image upload is not configured.</p></div>{value.imageUrl&&<div className="relative mt-3 aspect-[1.8] overflow-hidden rounded-2xl bg-[#f1fbf5]"><img src={value.imageUrl} alt={value.title||"Gallery preview"} className="absolute inset-0 h-full w-full object-cover"/></div>}</div>
       <div className="mt-4"><label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Description</span><textarea value={value.description||""} onChange={e=>onChange({...value,description:e.target.value})} className="manage-input min-h-28 resize-y"/></label></div>
       <label className="mt-4 flex items-center gap-3 text-xs font-extrabold text-[#26362c]"><input type="checkbox" checked={value.published} onChange={e=>onChange({...value,published:e.target.checked})}/> Show this photo on the public gallery</label>
       <div className="mt-7 flex justify-end gap-3"><button onClick={onCancel} className="rounded-xl border border-[#dce5df] px-4 py-2.5 text-xs font-extrabold">Cancel</button><button disabled={saving} onClick={()=>onSave(value.file)} className="manage-primary-btn">{saving?"Saving...":value.id?"Update photo":"Create photo"}</button></div>
@@ -317,6 +326,7 @@ export default function ManagePage() {
   async function saveGalleryEditor(file?:File) {
     if(!galleryEditor?.title?.trim()){setNotice("Photo title is required.");return;}
     if(!galleryEditor.id && !file && !galleryEditor.imageUrl){setNotice("Please choose an image.");return;}
+    try { validateContentImageFile(file); } catch(error) { setNotice(error instanceof Error ? error.message : "Invalid image file."); return; }
     setGallerySaving(true);
     try {
       let imageUrl=galleryEditor.imageUrl||"";
@@ -339,6 +349,7 @@ export default function ManagePage() {
 
   async function saveNewsEditor(file?:File) {
     if(!newsEditor?.title?.trim()||!newsEditor?.body?.trim()){setNotice("Title and story body are required.");return;}
+    try { validateContentImageFile(file); } catch(error) { setNotice(error instanceof Error ? error.message : "Invalid image file."); return; }
     setNewsSaving(true);
     try {
       let imageUrl=newsEditor.imageUrl||undefined;
