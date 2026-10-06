@@ -7,8 +7,13 @@ const API_URL =
 
 export async function gql<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", cache: "no-store", body: JSON.stringify({ query, variables }) });
-  const payload = await response.json();
-  if (!response.ok || payload.errors?.length) throw new Error(payload.errors?.[0]?.message || "Request failed");
+  let payload: any;
+  try {
+    payload = await response.json();
+  } catch {
+    throw new Error(`Request failed (HTTP ${response.status}).`);
+  }
+  if (!response.ok || payload.errors?.length) throw new Error(payload.errors?.[0]?.message || payload?.message || `Request failed (HTTP ${response.status}).`);
   return payload.data as T;
 }
 
