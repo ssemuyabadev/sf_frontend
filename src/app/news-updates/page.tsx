@@ -230,5 +230,6 @@ export default function NewsUpdatesPage() {
         onClose={() => setSelectedStory(null)}
       />
     )}
+    </>
   );
 }
