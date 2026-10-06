@@ -14,8 +14,9 @@ import {
   XIcon,
 } from "../../components/icons";
 import { gql, mutations, queries } from "../../lib/api";
+import { DEFAULT_SITE_STATISTICS, formatStatisticValue, type SiteStatistic } from "../../lib/statistics";
 
-type Section = "dashboard" | "contact" | "messages" | "newsletter" | "volunteers" | "sponsors" | "gallery" | "news" | "donations" | "settings";
+type Section = "dashboard" | "contact" | "messages" | "newsletter" | "volunteers" | "sponsors" | "gallery" | "news" | "donations" | "statistics" | "settings";
 type DonationDetail = { label: string; value: string; copy?: string };
 type DonationMethodAdmin = { id: string; key: string; name: string; eyebrow: string; detailsJson: string; note: string; updatedAt?: string };
 
@@ -29,6 +30,7 @@ const nav = [
   { id: "gallery" as Section, label: "Gallery", icon: "▦" },
   { id: "news" as Section, label: "News & Updates", icon: "▤" },
   { id: "donations" as Section, label: "Donation Methods", icon: "◆" },
+  { id: "statistics" as Section, label: "Statistics", icon: "▥" },
   { id: "settings" as Section, label: "Settings", icon: "⚙" },
 ];
 
@@ -144,13 +146,14 @@ export default function ManagePage() {
   const [gallery, setGallery] = useState<any[]>([]);
   const [news, setNews] = useState<any[]>([]);
   const [donationMethods, setDonationMethods] = useState<DonationMethodAdmin[]>([]);
+  const [siteStatistics, setSiteStatistics] = useState<SiteStatistic[]>(DEFAULT_SITE_STATISTICS);
   const [newsEditor, setNewsEditor] = useState<any|null>(null);
   const [newsSaving, setNewsSaving] = useState(false);
   const [galleryEditor, setGalleryEditor] = useState<any|null>(null);
   const [gallerySaving, setGallerySaving] = useState(false);
 
   async function loadAdmin() {
-    const [s,settingsResult,m,n,v,sp,g,nu,d] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.settings),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news),gql<any>(queries.adminDonationMethods)]);
+    const [s,settingsResult,m,n,v,sp,g,nu,d,st] = await Promise.all([gql<any>(queries.stats),gql<any>(queries.settings),gql<any>(queries.messages),gql<any>(queries.subscribers),gql<any>(queries.volunteers),gql<any>(queries.sponsors),gql<any>(queries.gallery),gql<any>(queries.news),gql<any>(queries.adminDonationMethods),gql<any>(queries.adminStatistics)]);
     setStats(s.dashboardStats);
     const settingsData=settingsResult.siteSettings; setContact({phone1:settingsData.phone,phone2:settingsData.secondaryPhone||"",email:settingsData.email,location:settingsData.location,facebook:settingsData.facebook||"",instagram:settingsData.instagram||"",x:settingsData.x||"",linkedin:settingsData.linkedin||"",youtube:settingsData.youtube||"",whatsapp:settingsData.whatsapp||""});
     setMessages(m.contactMessages.map((x:any)=>({...x,date:new Date(x.createdAt).toLocaleString()})));
@@ -160,6 +163,7 @@ export default function ManagePage() {
     setGallery(g.adminGallery.map((x:any)=>({...x,image:x.imageUrl})));
     setNews(nu.adminNews.map((x:any)=>({...x,date:new Date(x.publishedAt||x.createdAt).toLocaleDateString(),status:x.published?"Published":"Draft",image:x.imageUrl||"/images/home-hero.jpg"})));
     setDonationMethods(d.adminDonationMethods);
+    setSiteStatistics(st.adminStatistics?.length ? st.adminStatistics : DEFAULT_SITE_STATISTICS);
   }
 
   useEffect(() => {
@@ -225,6 +229,15 @@ export default function ManagePage() {
 
   function parseDonationDetails(value:string): DonationDetail[] { try { const parsed=JSON.parse(value); return Array.isArray(parsed)?parsed.map((x:any)=>({label:String(x?.label||""),value:String(x?.value||""),copy:x?.copy?String(x.copy):undefined})):[]; } catch { return []; } }
   async function saveDonationMethod(method:DonationMethodAdmin, details:DonationDetail[]) { try { const detailsJson=JSON.stringify(details.map(x=>({label:x.label,value:x.value,...(x.copy?{copy:x.copy}:{})}))); const r=await gql<any>(mutations.updateDonationMethod,{id:method.id,input:{name:method.name,eyebrow:method.eyebrow,detailsJson,note:method.note}}); setDonationMethods(items=>items.map(x=>x.id===method.id?{...x,...r.updateDonationMethod}:x)); setNotice(method.name+" payment details saved."); } catch(error) { setNotice(error instanceof Error ? error.message : "Could not save donation details."); } }
+  async function saveStatistic(statistic:SiteStatistic) {
+    try {
+      const r=await gql<any>(mutations.updateStatistic,{key:statistic.key,input:{label:statistic.label,value:Math.max(0,Math.round(Number(statistic.value)||0)),suffix:statistic.suffix}});
+      setSiteStatistics(items=>items.map(x=>x.key===statistic.key?r.updateStatistic:x));
+      setNotice(statistic.label+" updated on the live website.");
+    } catch(error) {
+      setNotice(error instanceof Error ? error.message : "Could not save statistic.");
+    }
+  }
   async function saveGalleryEditor(file?:File) {
     if(!galleryEditor?.title?.trim()){setNotice("Photo title is required.");return;}
     if(!galleryEditor.id && !file && !galleryEditor.imageUrl){setNotice("Please choose an image.");return;}
@@ -441,7 +454,7 @@ export default function ManagePage() {
               <div className="mt-5 manage-card overflow-hidden">
                 <div className="flex flex-col gap-3 border-b border-[#edf1ee] px-5 py-4 sm:flex-row sm:items-center sm:justify-between"><div><h3 className="text-sm font-black">Content at a glance</h3><p className="text-[10px] text-[#829087]">Keep the public website fresh and active.</p></div><button onClick={() => setSection("gallery")} className="w-fit text-[10px] font-extrabold text-[#087a35]">Manage content →</button></div>
                 <div className="grid grid-cols-2 divide-x divide-[#edf1ee] sm:grid-cols-4">
-                  {[["Gallery photos",String(gallery.length),"▦"],["Published stories",String(news.filter(x=>x.published).length),"▤"],["Draft stories",String(news.filter(x=>!x.published).length),"✎"],["Active causes","6","♡"]].map(([label,value,icon]) => <div key={label} className="p-5"><span className="text-lg text-[#0c8f3e]">{icon}</span><p className="mt-2 text-xl font-black">{value}</p><p className="text-[9px] font-bold text-[#8b9790]">{label}</p></div>)}
+                  {[["Gallery photos",String(gallery.length),"▦"],["Published stories",String(news.filter(x=>x.published).length),"▤"],["Draft stories",String(news.filter(x=>!x.published).length),"✎"],["Active causes",String(siteStatistics.find(x=>x.key==="active_causes")?.value ?? 6),"♡"]].map(([label,value,icon]) => <div key={label} className="p-5"><span className="text-lg text-[#0c8f3e]">{icon}</span><p className="mt-2 text-xl font-black">{value}</p><p className="text-[9px] font-bold text-[#8b9790]">{label}</p></div>)}
                 </div>
               </div>
             </>
@@ -543,6 +556,43 @@ export default function ManagePage() {
           )}
 
           {section === "donations" && (<><SectionTitle eyebrow="Giving" title="Donation methods" description="Update the payment details shown on the public Donate page. The existing card design and branding are not changed."/><div className="space-y-5">{donationMethods.map(method=><DonationMethodEditor key={method.id} method={method} details={parseDonationDetails(method.detailsJson)} onSave={(details)=>saveDonationMethod(method,details)} onChange={(next)=>setDonationMethods(items=>items.map(x=>x.id===method.id?{...x,...next}:x))}/>)}</div></>)}
+          {section === "statistics" && (
+            <>
+              <SectionTitle eyebrow="Website figures" title="Statistics" description="Update the figures used across the public website. The existing typography, commas, plus signs and percentage formatting remain controlled by the website UI." />
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {siteStatistics.map((statistic) => (
+                  <div key={statistic.key} className="manage-card p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#0c8f3e]">{statistic.key.replace(/_/g," ")}</p>
+                        <h3 className="mt-1 text-sm font-black text-[#092113]">{statistic.label}</h3>
+                      </div>
+                      <span className="rounded-full bg-[#eaf8ef] px-2.5 py-1 text-[9px] font-black text-[#087a35]">Live</span>
+                    </div>
+                    <label className="mt-5 block">
+                      <span className="mb-1.5 block text-[10px] font-extrabold text-[#718078]">Figure</span>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={statistic.value.toLocaleString("en-US")}
+                          onChange={(e)=>setSiteStatistics(items=>items.map(x=>x.key===statistic.key?{...x,value:Math.max(0,Number(e.target.value.replace(/[^0-9]/g,""))||0)}:x))}
+                          className="manage-input text-lg font-black"
+                          aria-label={statistic.label}
+                        />
+                        <span className="min-w-8 text-center text-lg font-black text-[#087a35]">{statistic.suffix}</span>
+                      </div>
+                    </label>
+                    <div className="mt-4 flex items-center justify-between gap-3">
+                      <p className="text-[9px] font-semibold text-[#8b9790]">Public display: <strong className="text-[#087a35]">{formatStatisticValue(statistic)}</strong></p>
+                      <button type="button" onClick={()=>saveStatistic(statistic)} className="manage-primary-btn">Save</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
 
           {newsEditor && <NewsEditor value={newsEditor} onChange={setNewsEditor} onSave={saveNewsEditor} onCancel={()=>setNewsEditor(null)} saving={newsSaving} />}
           {galleryEditor && <GalleryEditor value={galleryEditor} onChange={setGalleryEditor} onSave={saveGalleryEditor} onCancel={()=>setGalleryEditor(null)} saving={gallerySaving} />}
