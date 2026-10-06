@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { DEFAULT_SITE_STATISTICS, fetchSiteStatistics, formatStatisticValue, getStatistic, type SiteStatistic } from "@/lib/statistics";
 import { ArrowRight, GraduationIcon, HeartIcon, HeartPulseIcon, LeafIcon, ToolsIcon, UsersIcon } from "@/components/icons";
 
 const causes = [
@@ -62,6 +64,9 @@ const givingLevels = [
 ];
 
 export default function CausesPage() {
+  const [siteStatistics,setSiteStatistics]=useState<SiteStatistic[]>(DEFAULT_SITE_STATISTICS);
+  useEffect(()=>{let active=true;fetchSiteStatistics().then(items=>{if(active)setSiteStatistics(items);}).catch(()=>{});return()=>{active=false};},[]);
+  const impactStatistic=getStatistic(siteStatistics,"impact_percent");
   return (
     <main className="overflow-hidden bg-white">
       <section className="causes-hero relative isolate min-h-[650px] overflow-hidden bg-[#03160b] text-white">
@@ -96,7 +101,7 @@ export default function CausesPage() {
           </div>
 
           <div className="causes-hero-note absolute bottom-20 right-[5%] hidden w-[255px] rotate-3 rounded-[2rem] border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-xl xl:block">
-            <p className="text-4xl font-black text-[#13d74c]">100%</p>
+            <p className="text-4xl font-black text-[#13d74c]">{formatStatisticValue(impactStatistic)}</p>
             <p className="mt-1 font-black">of your compassion matters.</p>
             <p className="mt-2 text-xs leading-5 text-white/60">Choose a specific cause or help us respond to the most urgent needs in our communities.</p>
           </div>
