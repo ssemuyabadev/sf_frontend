@@ -221,13 +221,13 @@ export default function NewsUpdatesPage() {
           </div>
         </div>
       </section>
-    {selectedStory && (
+    {selectedStory ? (
       <ContentDetailModal
         type="news"
         item={selectedStory}
         onClose={() => setSelectedStory(null)}
       />
-    )}
+    ) : null}
 
     </main>
 
