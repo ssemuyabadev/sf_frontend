@@ -84,7 +84,7 @@ export default function ContentDetailModal(props: Props) {
 
         <div className="grid min-h-0 overflow-y-auto lg:grid-cols-[1.05fr_.95fr]">
           <div className="relative min-h-[260px] bg-[#03160b] sm:min-h-[360px] lg:min-h-[560px]">
-            <Image src={item.image} alt={item.title} fill sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" />
+            <img src={item.image} alt={item.title} className="absolute inset-0 h-full w-full object-cover" />
           </div>
 
           <div className="min-h-0 p-6 sm:p-8 lg:p-10">
@@ -121,7 +121,7 @@ export default function ContentDetailModal(props: Props) {
                       aria-label={"Open " + galleryItem.title}
                       className={"relative h-16 w-20 shrink-0 overflow-hidden rounded-xl ring-2 transition " + (galleryItem === galleryProps.item ? "ring-[#13d74c]" : "ring-transparent hover:ring-black/10")}
                     >
-                      <Image src={galleryItem.image} alt="" fill sizes="80px" className="object-cover" />
+                      <img src={galleryItem.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
                     </button>
                   ))}
                 </div>
