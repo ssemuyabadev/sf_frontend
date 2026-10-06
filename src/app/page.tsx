@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { gql, queries } from "../lib/api";
 import {ArrowRight,FacebookIcon,GraduationIcon,HeartIcon,HeartPulseIcon,InstagramIcon,LeafIcon,LinkedInIcon,MailIcon,MapPinIcon,PhoneIcon,PinIcon,ToolsIcon,UsersIcon,WhatsAppIcon,XSocialIcon,YouTubeIcon} from "../components/icons";
 
 const programs=[
@@ -17,6 +19,19 @@ const updates=[
 
 export default function Home(){
  const currentYear = new Date().getFullYear();
+ const [latestNews,setLatestNews]=useState<typeof updates>(updates);
+ useEffect(()=>{
+  let active=true;
+  gql<any>(queries.publicNews).then(result=>{
+   if(!active)return;
+   const items=(result.news||[]).slice(0,4).map((item:any)=>{
+    const date=new Date(item.createdAt||item.publishedAt);
+    return {image:item.imageUrl||"/images/home-hero.jpg",date:date.toLocaleDateString("en-US",{day:"2-digit"}),month:date.toLocaleDateString("en-US",{month:"short"}),title:item.title,text:item.excerpt||item.body||""};
+   });
+   if(items.length)setLatestNews(items);
+  }).catch(()=>{});
+  return()=>{active=false};
+ },[]);
  return <main>
 <section id="home" className="hero-section relative min-h-[470px] overflow-hidden bg-[#061d11] sm:min-h-[485px] lg:min-h-[500px]">
    <Image
@@ -126,6 +141,6 @@ export default function Home(){
   </section>
 
   <section id="news" className="bg-white py-9 sm:py-11"><div className="section-wrap"><div className="mb-5 flex items-end justify-between gap-4"><div><h2 className="border-l-2 border-[#ff1d2d] pl-3 text-2xl font-black sm:text-3xl">Latest <span className="text-[#087a35]">Updates</span></h2><p className="mt-1 text-xs sm:text-sm">Stories, events and impact from our work.</p></div><a href="#news" className="hidden items-center gap-2 rounded-full bg-[#0c8f3e] px-5 py-2 text-xs font-bold text-white sm:flex">View All News <ArrowRight className="h-4 w-4"/></a></div>
-   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{updates.map(item=><article key={item.title} className="overflow-hidden rounded-lg bg-white shadow-soft ring-1 ring-black/5"><div className="relative h-24 overflow-hidden"><Image src={item.image} alt="" fill className="object-cover"/><div className="absolute bottom-0 left-3 grid min-w-11 place-items-center rounded-t-md bg-[#0c8f3e] px-2 py-1 text-white"><span className="text-sm font-black leading-none">{item.date}</span><span className="text-[9px] font-bold">{item.month}</span></div></div><div className="p-4"><h3 className="text-sm font-black leading-tight">{item.title}</h3><p className="mt-2 line-clamp-2 text-xs leading-4 text-black/65">{item.text}</p><a href="#news" className="mt-3 inline-flex items-center gap-1 text-xs font-extrabold text-[#087a35]">Read More <ArrowRight className="h-3 w-3"/></a></div></article>)}</div>
+   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{latestNews.map(item=><article key={item.title} className="overflow-hidden rounded-lg bg-white shadow-soft ring-1 ring-black/5"><div className="relative h-24 overflow-hidden"><Image src={item.image} alt="" fill className="object-cover"/><div className="absolute bottom-0 left-3 grid min-w-11 place-items-center rounded-t-md bg-[#0c8f3e] px-2 py-1 text-white"><span className="text-sm font-black leading-none">{item.date}</span><span className="text-[9px] font-bold">{item.month}</span></div></div><div className="p-4"><h3 className="text-sm font-black leading-tight">{item.title}</h3><p className="mt-2 line-clamp-2 text-xs leading-4 text-black/65">{item.text}</p><a href="#news" className="mt-3 inline-flex items-center gap-1 text-xs font-extrabold text-[#087a35]">Read More <ArrowRight className="h-3 w-3"/></a></div></article>)}</div>
   </div></section></main>;
 }
