@@ -263,6 +263,19 @@ export default function ManagePage() {
   }
   function addNewsItem(){setNewsEditor({title:"",slug:"",category:"Foundation Update",excerpt:"",body:"",imageUrl:"",published:true});}
   function editNewsItem(item:any){setNewsEditor({id:item.id,title:item.title,slug:item.slug,category:item.category||"Foundation Update",excerpt:item.excerpt||"",body:item.body||"",imageUrl:item.imageUrl||"",published:item.published});}
+  async function deleteNewsItem(id:string) {
+    const item=news.find(x=>x.id===id);
+    if(!item || !window.confirm("Delete this news story?")) return;
+    try {
+      await gql(mutations.deleteNews,{id});
+      setNews(items=>items.filter(x=>x.id!==id));
+      setStats(current=>({...current,news:Math.max(0,current.news-1)}));
+      setNotice("News story deleted.");
+    } catch(error) {
+      setNotice(error instanceof Error ? error.message : "Could not delete news story.");
+    }
+  }
+
   function exportRows(filename:string,rows:string[][]) {
     const csv=rows.map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\n");
     const blob=new Blob([csv],{type:"text/csv"}),url=URL.createObjectURL(blob),a=document.createElement("a"); a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
@@ -525,7 +538,7 @@ export default function ManagePage() {
             <>
               <SectionTitle eyebrow="Content studio" title="News & updates" description="Publish stories, announcements and impact updates directly to the public website." action={<button onClick={addNewsItem} className="manage-primary-btn">+ New story</button>} />
               <div className="mb-5 grid gap-4 sm:grid-cols-3"><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Total stories</p><strong className="mt-1 block text-3xl font-black">{stats.news}</strong><span className="text-[10px] font-bold text-[#087a35]">Live from database</span></div><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Published</p><strong className="mt-1 block text-3xl font-black">{news.filter(x=>x.published).length}</strong><span className="text-[10px] font-bold text-[#087a35]">Visible on website</span></div><div className="manage-stat-card"><p className="text-[10px] font-bold text-[#7c8982]">Drafts</p><strong className="mt-1 block text-3xl font-black">{news.filter(x=>!x.published).length}</strong><span className="text-[10px] font-bold text-[#087a35]">Not yet public</span></div></div>
-              <div className="grid gap-4 xl:grid-cols-2">{news.map((item) => <article key={item.title} className="manage-card flex overflow-hidden"><div className="relative hidden w-36 shrink-0 sm:block"><Image src={item.image} alt={item.title} fill className="object-cover" /></div><div className="min-w-0 flex-1 p-5"><div className="flex items-start justify-between gap-3"><Status>{item.status}</Status><div className="flex items-center gap-3"><button onClick={()=>editNewsItem(item)} className="text-[9px] font-extrabold text-[#087a35]">Update</button><button onClick={()=>deleteNewsItem(item.title)} className="text-[9px] font-extrabold text-[#c91525]">Delete</button></div></div><h3 className="mt-3 text-sm font-black leading-5">{item.title}</h3><p className="mt-1 text-[10px] text-[#8b9790]">{item.date} • Ssemuyaba Foundation</p><p className="mt-3 text-[10px] leading-5 text-[#68766e]">Manage the headline, story copy, featured image and publication status from the content editor.</p></div></article>)}</div>
+              <div className="grid gap-4 xl:grid-cols-2">{news.map((item) => <article key={item.title} className="manage-card flex overflow-hidden"><div className="relative hidden w-36 shrink-0 sm:block"><Image src={item.image} alt={item.title} fill className="object-cover" /></div><div className="min-w-0 flex-1 p-5"><div className="flex items-start justify-between gap-3"><Status>{item.status}</Status><div className="flex items-center gap-3"><button onClick={()=>editNewsItem(item)} className="text-[9px] font-extrabold text-[#087a35]">Update</button><button onClick={()=>deleteNewsItem(item.id)} className="text-[9px] font-extrabold text-[#c91525]">Delete</button></div></div><h3 className="mt-3 text-sm font-black leading-5">{item.title}</h3><p className="mt-1 text-[10px] text-[#8b9790]">{item.date} • Ssemuyaba Foundation</p><p className="mt-3 text-[10px] leading-5 text-[#68766e]">Manage the headline, story copy, featured image and publication status from the content editor.</p></div></article>)}</div>
             </>
           )}
 
