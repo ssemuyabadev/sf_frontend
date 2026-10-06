@@ -39,6 +39,8 @@ type Props =
 export default function ContentDetailModal(props: Props) {
   const { item, onClose } = props;
   const galleryProps = props.type === "gallery" ? props : null;
+  const isGallery = props.type === "gallery";
+  const date = isGallery ? undefined : props.item.date;
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -58,7 +60,6 @@ export default function ContentDetailModal(props: Props) {
     };
   }, [item, onClose, props]);
 
-  const isGallery = props.type === "gallery";
   const body = isGallery ? props.item.description : props.item.body || props.item.excerpt;
 
   return (
@@ -89,9 +90,9 @@ export default function ContentDetailModal(props: Props) {
           <div className="min-h-0 p-6 sm:p-8 lg:p-10">
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[.18em] text-[#0c8f3e]">
               {item.category && <span>{item.category}</span>}
-              {item.category && (item.date || isGallery) && <span className="h-1 w-1 rounded-full bg-[#ff1d2d]" />}
-              {item.date && <span>{item.date}</span>}
-              {isGallery && !item.date && <span>Ssemuyaba Foundation</span>}
+              {item.category && (date || isGallery) && <span className="h-1 w-1 rounded-full bg-[#ff1d2d]" />}
+              {date && <span>{date}</span>}
+              {isGallery && !date && <span>Ssemuyaba Foundation</span>}
             </div>
             <h2 className="mt-3 text-2xl font-black leading-tight text-[#07110a] sm:text-3xl lg:text-4xl">{item.title}</h2>
             {body && (
@@ -116,9 +117,9 @@ export default function ContentDetailModal(props: Props) {
                     <button
                       key={galleryItem.id || galleryItem.title + index}
                       type="button"
-                      onClick={() => props.onNavigate(index)}
+                      onClick={() => galleryProps.onNavigate(index)}
                       aria-label={"Open " + galleryItem.title}
-                      className={"relative h-16 w-20 shrink-0 overflow-hidden rounded-xl ring-2 transition " + (galleryItem === props.item ? "ring-[#13d74c]" : "ring-transparent hover:ring-black/10")}
+                      className={"relative h-16 w-20 shrink-0 overflow-hidden rounded-xl ring-2 transition " + (galleryItem === galleryProps.item ? "ring-[#13d74c]" : "ring-transparent hover:ring-black/10")}
                     >
                       <Image src={galleryItem.image} alt="" fill sizes="80px" className="object-cover" />
                     </button>
