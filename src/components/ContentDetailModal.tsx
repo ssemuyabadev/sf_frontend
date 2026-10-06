@@ -38,6 +38,7 @@ type Props =
 
 export default function ContentDetailModal(props: Props) {
   const { item, onClose } = props;
+  const galleryProps = props.type === "gallery" ? props : null;
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -58,7 +59,7 @@ export default function ContentDetailModal(props: Props) {
   }, [item, onClose, props]);
 
   const isGallery = props.type === "gallery";
-  const body = isGallery ? item.description : item.body || item.excerpt;
+  const body = isGallery ? props.item.description : props.item.body || props.item.excerpt;
 
   return (
     <div
