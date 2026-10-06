@@ -20,7 +20,7 @@ export const queries = {
   gallery: `query { adminGallery { id title imageUrl description category published createdAt } }`,
   news: `query { adminNews { id title slug category excerpt body imageUrl published publishedAt createdAt updatedAt } }`,
   publicGallery: `query { gallery(publishedOnly: true) { id title imageUrl description category } }`,
-  publicNews: `query { news(publishedOnly: true) { id title slug category excerpt body imageUrl publishedAt } }`,
+  publicNews: `query { news(publishedOnly: true) { id title slug category excerpt body imageUrl publishedAt createdAt } }`,
 };
 
 export const mutations = {
