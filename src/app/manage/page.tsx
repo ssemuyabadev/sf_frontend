@@ -441,7 +441,7 @@ export default function ManagePage() {
               <div className="mt-5 manage-card overflow-hidden">
                 <div className="flex flex-col gap-3 border-b border-[#edf1ee] px-5 py-4 sm:flex-row sm:items-center sm:justify-between"><div><h3 className="text-sm font-black">Content at a glance</h3><p className="text-[10px] text-[#829087]">Keep the public website fresh and active.</p></div><button onClick={() => setSection("gallery")} className="w-fit text-[10px] font-extrabold text-[#087a35]">Manage content →</button></div>
                 <div className="grid grid-cols-2 divide-x divide-[#edf1ee] sm:grid-cols-4">
-                  {[["Gallery photos","38","▦"],["Published stories","24","▤"],["Draft stories","3","✎"],["Active causes","6","♡"]].map(([label,value,icon]) => <div key={label} className="p-5"><span className="text-lg text-[#0c8f3e]">{icon}</span><p className="mt-2 text-xl font-black">{value}</p><p className="text-[9px] font-bold text-[#8b9790]">{label}</p></div>)}
+                  {[["Gallery photos",String(gallery.length),"▦"],["Published stories",String(news.filter(x=>x.published).length),"▤"],["Draft stories",String(news.filter(x=>!x.published).length),"✎"],["Active causes","6","♡"]].map(([label,value,icon]) => <div key={label} className="p-5"><span className="text-lg text-[#0c8f3e]">{icon}</span><p className="mt-2 text-xl font-black">{value}</p><p className="text-[9px] font-bold text-[#8b9790]">{label}</p></div>)}
                 </div>
               </div>
             </>
