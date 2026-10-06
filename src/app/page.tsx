@@ -22,6 +22,13 @@ const updates=[
 export default function Home(){
  const currentYear = new Date().getFullYear();
  const [latestNews,setLatestNews]=useState<typeof updates>(updates);
+ const [galleryItems,setGalleryItems]=useState<any[]>([
+  {imageUrl:"/images/home-hero.jpg",title:"Bringing hope closer to every community.",category:"Featured Moment"},
+  {imageUrl:"/images/food-4.jpg",title:"Community Care",category:"Community Care"},
+  {imageUrl:"/images/donation.jpg",title:"Widow Support",category:"Widow Support"},
+  {imageUrl:"/images/health-1.jpg",title:"Healthcare",category:"Healthcare"},
+  {imageUrl:"/images/preaching.jpg",title:"Faith & Outreach",category:"Faith & Outreach"}
+ ]);
  useEffect(()=>{
   let active=true;
   gql<any>(queries.publicNews).then(result=>{
@@ -31,6 +38,15 @@ export default function Home(){
     return {image:item.imageUrl||"/images/home-hero.jpg",date:date.toLocaleDateString("en-US",{day:"2-digit"}),month:date.toLocaleDateString("en-US",{month:"short"}),title:item.title,text:item.excerpt||item.body||""};
    });
    if(items.length)setLatestNews(items);
+  }).catch(()=>{});
+  return()=>{active=false};
+ },[]);
+ useEffect(()=>{
+  let active=true;
+  gql<any>(queries.publicGallery).then(result=>{
+   if(!active)return;
+   const items=(result.gallery||[]).slice(0,5);
+   if(items.length)setGalleryItems(items);
   }).catch(()=>{});
   return()=>{active=false};
  },[]);
@@ -115,28 +131,28 @@ export default function Home(){
     </div>
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
      <div className="group relative col-span-2 row-span-2 min-h-[300px] overflow-hidden rounded-[1.5rem] bg-[#063019] shadow-xl sm:min-h-[420px]">
-      <Image src="/images/home-hero.jpg" alt="Ssemuyaba Foundation community outreach" fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover transition duration-700 group-hover:scale-105"/>
+      <Image src={galleryItems[0]?.imageUrl || "/images/home-hero.jpg"} alt={galleryItems[0]?.title || "Ssemuyaba Foundation community outreach"} fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover transition duration-700 group-hover:scale-105"/>
       <div className="absolute inset-0 bg-gradient-to-t from-[#03160b]/90 via-[#03160b]/15 to-transparent"/>
       <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7">
-       <span className="inline-flex rounded-full bg-[#13d74c] px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-[#063019]">Featured Moment</span>
-       <h3 className="mt-2 text-xl font-black sm:text-2xl">Bringing hope closer to every community.</h3>
+       <span className="inline-flex rounded-full bg-[#13d74c] px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-[#063019]">{galleryItems[0]?.category || "Featured Moment"}</span>
+       <h3 className="mt-2 text-xl font-black sm:text-2xl">{galleryItems[0]?.title || "Bringing hope closer to every community."}</h3>
       </div>
      </div>
      <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
-      <Image src="/images/food-4.jpg" alt="Community food outreach" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">Community Care</span>
+      <Image src={galleryItems[1]?.imageUrl || "/images/food-4.jpg"} alt={galleryItems[1]?.title || "Community food outreach"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[1]?.category || "Community Care"}</span>
      </div>
      <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
-      <Image src="/images/donation.jpg" alt="Widow empowerment support" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">Widow Support</span>
+      <Image src={galleryItems[2]?.imageUrl || "/images/donation.jpg"} alt={galleryItems[2]?.title || "Widow empowerment support"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[2]?.category || "Widow Support"}</span>
      </div>
      <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
-      <Image src="/images/health-1.jpg" alt="Healthcare support in the community" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">Healthcare</span>
+      <Image src={galleryItems[3]?.imageUrl || "/images/health-1.jpg"} alt={galleryItems[3]?.title || "Healthcare support in the community"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[3]?.category || "Healthcare"}</span>
      </div>
      <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
-      <Image src="/images/preaching.jpg" alt="Community preaching and outreach" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">Faith &amp; Outreach</span>
+      <Image src={galleryItems[4]?.imageUrl || "/images/preaching.jpg"} alt={galleryItems[4]?.title || "Community preaching and outreach"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[4]?.category || "Faith &amp; Outreach"}</span>
      </div>
     </div>
    </div>
