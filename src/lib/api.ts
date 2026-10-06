@@ -5,6 +5,19 @@ const API_URL =
     ? configuredApiUrl
     : "https://sfbackend.up.railway.app/graphql";
 
+const CONTENT_IMAGE_BASE = "https://raw.githubusercontent.com/ssemuyabadev/sf_frontend/main/";
+function normalizeContentImages(value: any): any {
+  if (Array.isArray(value)) return value.map(normalizeContentImages);
+  if (value && typeof value === "object") {
+    const next: any = {};
+    for (const [key, item] of Object.entries(value)) {
+      next[key] = key === "imageUrl" && typeof item === "string" && item.startsWith("/images/") ? CONTENT_IMAGE_BASE + item.slice(1) : normalizeContentImages(item);
+    }
+    return next;
+  }
+  return value;
+}
+
 export async function gql<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", cache: "no-store", body: JSON.stringify({ query, variables }) });
   let payload: any;
@@ -14,7 +27,7 @@ export async function gql<T>(query: string, variables?: Record<string, unknown>)
     throw new Error(`Request failed (HTTP ${response.status}).`);
   }
   if (!response.ok || payload.errors?.length) throw new Error(payload.errors?.[0]?.message || payload?.message || `Request failed (HTTP ${response.status}).`);
-  return payload.data as T;
+  return normalizeContentImages(payload.data) as T;
 }
 
 export const queries = {
