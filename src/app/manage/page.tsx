@@ -126,6 +126,16 @@ export default function ManagePage() {
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
   const [section, setSection] = useState<Section>("dashboard");
   const [greeting, setGreeting] = useState(getKampalaGreeting());
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -354,7 +364,7 @@ export default function ManagePage() {
                 </div>
                 <form onSubmit={login} className="space-y-4">
                   <Field label="Email address" value={email} onChange={setEmail} type="email" placeholder="admin@ssemuyabafoundation.org" />
-                  <Field label="Password" value={password} onChange={setPassword} type="password" placeholder="Enter your password" />
+                  <label className="block"><span className="mb-1.5 block text-xs font-extrabold text-[#26362c]">Password</span><div className="relative"><input type={showLoginPassword ? "text" : "password"} value={password} onChange={e=>setPassword(e.target.value)} placeholder="Enter your password" className="manage-input pr-11"/><button type="button" onClick={()=>setShowLoginPassword(v=>!v)} aria-label={showLoginPassword ? "Hide password" : "Show password"} className="absolute inset-y-0 right-0 grid w-11 place-items-center text-[#7b8981] hover:text-[#087a35]">{showLoginPassword ? "◉" : "◌"}</button></div></label>
                   {notice && <p className="rounded-xl bg-[#fff0f1] px-3 py-2 text-xs font-semibold text-[#c91525]">{notice}</p>}
                   <button className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0c8f3e] px-5 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#0c8f3e]/15 transition hover:-translate-y-0.5 hover:bg-[#087a35]">
                     Sign in to dashboard <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
@@ -376,10 +386,10 @@ export default function ManagePage() {
   return (
     <main className="manage-app min-h-screen">
       {sidebarOpen && <button aria-label="Close sidebar" className="manage-sidebar-backdrop lg:hidden" onClick={() => setSidebarOpen(false)} />}
-      <aside className={`manage-sidebar ${sidebarOpen ? "is-open" : ""}`}>
+      <aside className={`manage-sidebar overflow-y-auto ${sidebarOpen ? "is-open" : ""}`}>
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between px-5 py-5">
-            <a href="/" className="flex items-center gap-2.5">
+            <button type="button" onClick={()=>{setSection("dashboard");setSidebarOpen(false)}} className="flex items-center gap-2.5 text-left">
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-white p-1.5 shadow-sm">
                 <Image src="/images/ssemuyaba-logo-icon-transparent.png" alt="" width={80} height={80} className="h-full w-full object-contain" />
               </span>
@@ -387,7 +397,7 @@ export default function ManagePage() {
                 <strong className="block text-[13px] font-black tracking-[-0.02em] text-white">SSEMUYABA</strong>
                 <span className="text-[8px] font-extrabold tracking-[0.3em] text-white/50">MANAGEMENT</span>
               </span>
-            </a>
+            </button>
             <button className="rounded-lg p-2 text-white/60 hover:bg-white/10 lg:hidden" onClick={() => setSidebarOpen(false)}><XIcon className="h-5 w-5" /></button>
           </div>
 
@@ -425,11 +435,7 @@ export default function ManagePage() {
           </div>
           <div className="flex items-center gap-2.5">
             <a href="/" className="hidden items-center gap-1.5 rounded-xl border border-[#e6ece8] bg-white px-3 py-2 text-[10px] font-extrabold text-[#46544c] shadow-sm transition hover:border-[#b8dfc6] hover:text-[#087a35] sm:flex">View website <ArrowRight className="h-3 w-3" /></a>
-            <button onClick={logout} className="flex items-center gap-2 rounded-xl bg-[#f0f6f2] px-3 py-2 text-[10px] font-extrabold text-[#087a35] transition hover:bg-[#e6f4eb]">
-              <span className="grid h-6 w-6 place-items-center rounded-lg bg-white text-[9px] font-black shadow-sm">SF</span>
-              <span className="hidden sm:block">Admin</span>
-              <ChevronDown className="h-3 w-3" />
-            </button>
+            <div className="relative"><button type="button" onClick={()=>setProfileOpen(v=>!v)} aria-expanded={profileOpen} className="flex items-center gap-2 rounded-xl bg-[#f0f6f2] px-3 py-2 text-[10px] font-extrabold text-[#087a35] transition hover:bg-[#e6f4eb]"><span className="grid h-6 w-6 place-items-center rounded-lg bg-white text-[9px] font-black shadow-sm">SF</span><span className="hidden sm:block">Admin</span><ChevronDown className="h-3 w-3" /></button>{profileOpen&&<div className="absolute right-0 top-[calc(100%+8px)] z-[70] w-48 overflow-hidden rounded-2xl border border-[#e4ebe6] bg-white p-1.5 shadow-xl"><button type="button" onClick={()=>{setChangePasswordOpen(true);setProfileOpen(false)}} className="w-full rounded-xl px-3 py-2.5 text-left text-[10px] font-extrabold text-[#26362c] hover:bg-[#f1fbf5] hover:text-[#087a35]">Change password</button><button type="button" onClick={()=>{setProfileOpen(false);logout()}} className="w-full rounded-xl px-3 py-2.5 text-left text-[10px] font-extrabold text-[#c91525] hover:bg-[#fff2f3]">Logout</button></div>}</div>
           </div>
         </header>
 
@@ -613,6 +619,7 @@ export default function ManagePage() {
           )}
 
 
+          <>{changePasswordOpen&&<div className="fixed inset-0 z-[100] grid place-items-center bg-[#03160b]/65 p-4 backdrop-blur-sm" role="dialog" aria-modal="true"><div className="w-full max-w-md rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[.18em] text-[#0c8f3e]">Account security</p><h3 className="mt-1 text-2xl font-black">Change password</h3></div><button type="button" onClick={()=>setChangePasswordOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-[#f1fbf5] text-xl">×</button></div><form className="mt-6 space-y-4" onSubmit={async e=>{e.preventDefault();if(newPassword.length<8){setNotice("New password must be at least 8 characters.");return}if(newPassword!==confirmPassword){setNotice("New password and confirmation do not match.");return}setPasswordSaving(true);try{await gql(mutations.changePassword,{currentPassword,newPassword});setNotice("Password changed successfully.");setCurrentPassword("");setNewPassword("");setConfirmPassword("");setChangePasswordOpen(false)}catch(error){setNotice(error instanceof Error?error.message:"Could not change password.")}finally{setPasswordSaving(false)}}}><label className="block"><span className="mb-1.5 block text-xs font-extrabold">Current password</span><div className="relative"><input type={showCurrentPassword?"text":"password"} value={currentPassword} onChange={e=>setCurrentPassword(e.target.value)} className="manage-input pr-11"/><button type="button" onClick={()=>setShowCurrentPassword(v=>!v)} className="absolute inset-y-0 right-0 w-11">{showCurrentPassword?"◉":"◌"}</button></div></label><label className="block"><span className="mb-1.5 block text-xs font-extrabold">New password</span><div className="relative"><input type={showNewPassword?"text":"password"} value={newPassword} onChange={e=>setNewPassword(e.target.value)} className="manage-input pr-11"/><button type="button" onClick={()=>setShowNewPassword(v=>!v)} className="absolute inset-y-0 right-0 w-11">{showNewPassword?"◉":"◌"}</button></div></label><label className="block"><span className="mb-1.5 block text-xs font-extrabold">Confirm new password</span><div className="relative"><input type={showConfirmPassword?"text":"password"} value={confirmPassword} onChange={e=>setConfirmPassword(e.target.value)} className="manage-input pr-11"/><button type="button" onClick={()=>setShowConfirmPassword(v=>!v)} className="absolute inset-y-0 right-0 w-11">{showConfirmPassword?"◉":"◌"}</button></div></label><div className="flex justify-end gap-3 pt-2"><button type="button" onClick={()=>setChangePasswordOpen(false)} className="rounded-xl border border-[#dce5df] px-4 py-2.5 text-xs font-extrabold">Cancel</button><button type="submit" disabled={passwordSaving} className="manage-primary-btn">{passwordSaving?"Changing...":"Change password"}</button></div></form></div></div>}</>
           {newsEditor && <NewsEditor value={newsEditor} onChange={setNewsEditor} onSave={saveNewsEditor} onCancel={()=>setNewsEditor(null)} saving={newsSaving} />}
           {galleryEditor && <GalleryEditor value={galleryEditor} onChange={setGalleryEditor} onSave={saveGalleryEditor} onCancel={()=>setGalleryEditor(null)} saving={gallerySaving} />}
 
