@@ -27,6 +27,7 @@ export const queries = {
 
 export const mutations = {
   login: `mutation($email:String!,$password:String!){ login(email:$email,password:$password){ admin { id email name } } }`,
+  changePassword: `mutation($currentPassword:String!,$newPassword:String!){ changePassword(currentPassword:$currentPassword,newPassword:$newPassword) }`,
   logout: `mutation { logout }`,
   updateSettings: `mutation($input:SettingsInput!){ updateSiteSettings(input:$input){ id phone secondaryPhone email location facebook instagram x linkedin youtube whatsapp } }`,
   updateDonationMethod: `mutation($id:String!,$input:DonationMethodInput!){ updateDonationMethod(id:$id,input:$input){ id key name eyebrow detailsJson note updatedAt } }`,
