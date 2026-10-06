@@ -162,5 +162,6 @@ export default function GalleryPage() {
         onNavigate={(index) => setSelectedIndex(index)}
       />
     )}
+    </>
   );
 }
