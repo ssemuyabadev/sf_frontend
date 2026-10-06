@@ -14,10 +14,16 @@ const roles = [
   { icon: LeafIcon, title: "Open doors for the future", text: "Beyond immediate needs, sponsorship contributes to skills, opportunities and a stronger foundation for adulthood." },
 ];
 
+const initialForm = {
+  name: "", email: "", phone: "", country: "", city: "", frequency: "Monthly", preferredContact: "WhatsApp",
+  message: "", agree: false,
+};
+
 export default function SponsorPage() {
   const [submitted, setSubmitted] = useState(false);
   const [open, setOpen] = useState<number | null>(0);
   const [siteContact, setSiteContact] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+  const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
     let mounted = true;
@@ -28,10 +34,6 @@ export default function SponsorPage() {
   }, []);
 
   const whatsapp = siteContact.whatsapp || whatsappHref(siteContact.secondaryPhone || siteContact.phone);
-  const [form, setForm] = useState({
-    name: "", email: "", phone: "", country: "", city: "", frequency: "Monthly", preferredContact: "WhatsApp",
-    message: "", agree: false,
-  });
 
   function update(key: keyof typeof form, value: string | boolean) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -39,14 +41,35 @@ export default function SponsorPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.phone || !form.agree) return;
+
+    const name = form.name.trim();
+    const email = form.email.trim();
+    const phone = form.phone.trim();
+    const country = form.country.trim();
+    const city = form.city.trim();
+    const preferredContact = form.preferredContact.trim();
+    const sponsorshipPreference = form.frequency.trim();
+    const message = form.message.trim();
+
+    if (!name || !email || !phone || !form.agree) return;
+
     try {
       await submitSponsor({
-        fullName:form.name,email:form.email || undefined,phone:form.phone,country:form.country,city:form.city,
-        preferredContact:form.preferredContact,sponsorshipPreference:form.frequency,message:form.message,consent:form.agree
+        fullName: name,
+        email,
+        phone,
+        country,
+        city,
+        preferredContact,
+        sponsorshipPreference,
+        message,
+        consent: true,
       });
+      setForm(initialForm);
       setSubmitted(true);
-    } catch { window.alert("We could not submit your sponsorship enquiry right now. Please try again."); }
+    } catch {
+      window.alert("We could not submit your sponsorship enquiry right now. Please try again.");
+    }
   }
 
   return (
@@ -143,39 +166,67 @@ export default function SponsorPage() {
             </div>
 
             <div className="rounded-[2rem] border border-[#e3ebe6] bg-[#fbfdfb] p-5 shadow-[0_25px_70px_rgba(7,54,27,.07)] sm:p-8">
-              {submitted ? (
-                <div className="flex min-h-[500px] flex-col items-center justify-center text-center">
-                  <span className="grid h-16 w-16 place-items-center rounded-full bg-[#e9fff0] text-[#087a35]"><HeartIcon className="h-8 w-8" /></span>
-                  <p className="mt-5 text-[10px] font-black uppercase tracking-[.2em] text-[#0c8f3e]">Thank you</p>
-                  <h3 className="mt-2 text-2xl font-black">Your sponsorship interest is received.</h3>
-                  <p className="mt-3 max-w-md text-sm leading-6 text-[#718078]">We’ll contact you using the details you provided to discuss the next steps and answer any questions.</p>
-                  <button onClick={() => setSubmitted(false)} className="mt-6 rounded-full border border-[#bfe3ca] px-5 py-2.5 text-xs font-extrabold text-[#087a35]">Submit another enquiry</button>
+              <form onSubmit={submit}>
+                <div className="mb-7"><h3 className="text-xl font-black">Sponsorship enquiry</h3><p className="mt-1 text-xs leading-5 text-[#839088]">Your first conversation with us starts here.</p></div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label><span className="sponsor-label">Full name *</span><input required value={form.name} onChange={(e) => update("name", e.target.value)} className="sponsor-field" placeholder="Your full name" /></label>
+                  <label><span className="sponsor-label">Email address *</span><input required type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className="sponsor-field" placeholder="you@example.com" /></label>
+                  <label><span className="sponsor-label">Phone / WhatsApp *</span><input required value={form.phone} onChange={(e) => update("phone", e.target.value)} className="sponsor-field" placeholder="+256 ..." /></label>
+                  <label><span className="sponsor-label">Country</span><input value={form.country} onChange={(e) => update("country", e.target.value)} className="sponsor-field" placeholder="Uganda" /></label>
+                  <label><span className="sponsor-label">City / Town</span><input value={form.city} onChange={(e) => update("city", e.target.value)} className="sponsor-field" placeholder="Kampala" /></label>
+                  <label><span className="sponsor-label">Preferred contact</span><select value={form.preferredContact} onChange={(e) => update("preferredContact", e.target.value)} className="sponsor-field"><option>WhatsApp</option><option>Phone call</option><option>Email</option></select></label>
                 </div>
-              ) : (
-                <form onSubmit={submit}>
-                  <div className="mb-7"><h3 className="text-xl font-black">Sponsorship enquiry</h3><p className="mt-1 text-xs leading-5 text-[#839088]">Your first conversation with us starts here.</p></div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <label><span className="sponsor-label">Full name *</span><input required value={form.name} onChange={(e) => update("name", e.target.value)} className="sponsor-field" placeholder="Your full name" /></label>
-                    <label><span className="sponsor-label">Email address</span><input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className="sponsor-field" placeholder="you@example.com" /></label>
-                    <label><span className="sponsor-label">Phone / WhatsApp *</span><input required value={form.phone} onChange={(e) => update("phone", e.target.value)} className="sponsor-field" placeholder="+256 ..." /></label>
-                    <label><span className="sponsor-label">Country</span><input value={form.country} onChange={(e) => update("country", e.target.value)} className="sponsor-field" placeholder="Uganda" /></label>
-                    <label><span className="sponsor-label">City / Town</span><input value={form.city} onChange={(e) => update("city", e.target.value)} className="sponsor-field" placeholder="Kampala" /></label>
-                    <label><span className="sponsor-label">Preferred contact</span><select value={form.preferredContact} onChange={(e) => update("preferredContact", e.target.value)} className="sponsor-field"><option>WhatsApp</option><option>Phone call</option><option>Email</option></select></label>
-                  </div>
-                  <div className="mt-4">
-                    <span className="sponsor-label">How would you like to sponsor?</span>
-                    <div className="grid gap-2 sm:grid-cols-3">{["Monthly", "Quarterly", "I’d like to discuss"].map((item) => <button type="button" key={item} onClick={() => update("frequency", item)} className={`rounded-xl border px-3 py-3 text-xs font-extrabold transition ${form.frequency === item ? "border-[#0c8f3e] bg-[#eafff0] text-[#087a35]" : "border-[#dfe9e3] bg-white text-[#718078] hover:border-[#bfe3ca]"}`}>{item}</button>)}</div>
-                  </div>
-                  <label className="mt-4 block"><span className="sponsor-label">Message / questions</span><textarea value={form.message} onChange={(e) => update("message", e.target.value)} rows={5} className="sponsor-field resize-none" placeholder="Tell us anything you would like our team to know..." /></label>
-                  <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-[#e5ece7] bg-white p-3"><input required type="checkbox" checked={form.agree} onChange={(e) => update("agree", e.target.checked)} className="mt-0.5 accent-[#0c8f3e]" /><span className="text-[10px] leading-5 text-[#718078]">I agree that Ssemuyaba Foundation may contact me about child sponsorship and related opportunities. *</span></label>
-                  <button type="submit" className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0c8f3e] px-5 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#0c8f3e]/15 transition hover:-translate-y-0.5 hover:bg-[#087a35]">Send sponsorship enquiry <ArrowRight className="h-4 w-4" /></button>
-                  <p className="mt-3 text-center text-[9px] leading-4 text-[#96a09a]">We’ll respond with the sponsorship options and next steps. Sponsorship availability and support arrangements are discussed with our team.</p>
-                </form>
-              )}
+                <div className="mt-4">
+                  <span className="sponsor-label">How would you like to sponsor?</span>
+                  <div className="grid gap-2 sm:grid-cols-3">{["Monthly", "Quarterly", "I’d like to discuss"].map((item) => <button type="button" key={item} onClick={() => update("frequency", item)} className={`rounded-xl border px-3 py-3 text-xs font-extrabold transition ${form.frequency === item ? "border-[#0c8f3e] bg-[#eafff0] text-[#087a35]" : "border-[#dfe9e3] bg-white text-[#718078] hover:border-[#bfe3ca]"}`}>{item}</button>)}</div>
+                </div>
+                <label className="mt-4 block"><span className="sponsor-label">Message / questions</span><textarea value={form.message} onChange={(e) => update("message", e.target.value)} rows={5} className="sponsor-field resize-none" placeholder="Tell us anything you would like our team to know..." /></label>
+                <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-[#e5ece7] bg-white p-3"><input required type="checkbox" checked={form.agree} onChange={(e) => update("agree", e.target.checked)} className="mt-0.5 accent-[#0c8f3e]" /><span className="text-[10px] leading-5 text-[#718078]">I agree that Ssemuyaba Foundation may contact me about child sponsorship and related opportunities. *</span></label>
+                <button type="submit" className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0c8f3e] px-5 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#0c8f3e]/15 transition hover:-translate-y-0.5 hover:bg-[#087a35]">Send sponsorship enquiry <ArrowRight className="h-4 w-4" /></button>
+                <p className="mt-3 text-center text-[9px] leading-4 text-[#96a09a]">We’ll respond with the sponsorship options and next steps. Sponsorship availability and support arrangements are discussed with our team.</p>
+              </form>
             </div>
           </div>
         </div>
       </section>
+
+      {submitted && (
+        <div
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-[#03160b]/75 p-4 backdrop-blur-md"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sponsor-success-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setSubmitted(false);
+          }}
+        >
+          <div className="relative w-full max-w-md rounded-[2rem] bg-white p-7 text-center shadow-2xl sm:p-9">
+            <button
+              type="button"
+              onClick={() => setSubmitted(false)}
+              aria-label="Close success message"
+              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-black/5 text-lg font-bold text-black/60 transition hover:bg-black/10"
+            >
+              ×
+            </button>
+            <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#e9fff0] text-[#087a35]">
+              <HeartIcon className="h-8 w-8" />
+            </span>
+            <p className="mt-5 text-[10px] font-black uppercase tracking-[.2em] text-[#0c8f3e]">Thank you</p>
+            <h3 id="sponsor-success-title" className="mt-2 text-2xl font-black text-[#07110a]">Sponsorship enquiry sent!</h3>
+            <p className="mt-3 text-sm leading-6 text-[#718078]">
+              Thank you for your interest in sponsoring a child. Our team has received your enquiry and will contact you using the details you provided to discuss the next steps.
+            </p>
+            <button
+              type="button"
+              onClick={() => setSubmitted(false)}
+              className="mt-6 rounded-full bg-[#0c8f3e] px-6 py-3 text-sm font-extrabold text-white transition hover:bg-[#087a35]"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       <section className="relative overflow-hidden bg-[#006b2f] py-16 text-white sm:py-20">
         <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#13d74c]/10 blur-2xl" />
