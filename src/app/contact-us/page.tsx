@@ -27,10 +27,22 @@ export default function ContactPage() {
   const [error,setError]=useState("");
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError(""); setSending(true);
-    const data=new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const data=new FormData(form);
+    const name=String(data.get("name") ?? "").trim();
+    const email=String(data.get("email") ?? "").trim();
+    const phone=String(data.get("phone") ?? "").trim();
+    const subject=String(data.get("subject") ?? "").trim();
+    const message=String(data.get("message") ?? "").trim();
+    if (!name || !email || !subject || !message) {
+      setError("Please complete your name, email address, subject and message.");
+      setSending(false);
+      return;
+    }
     try {
-      await submitContact({name:String(data.get("name")),email:String(data.get("email")),subject:String(data.get("subject")||""),message:String(data.get("message")),phone:String(data.get("phone")||"")});
-      setSent(true); event.currentTarget.reset();
+      await submitContact({name,email,subject,message,phone});
+      form.reset();
+      setSent(true);
     } catch (err) { setError(err instanceof Error ? err.message : "Could not send your message."); }
     finally { setSending(false); }
   }
@@ -125,9 +137,8 @@ export default function ContactPage() {
             <h2 className="mt-2 border-l-2 border-[#ff1d2d] pl-3 text-3xl font-black sm:text-4xl">Tell Us <span className="text-[#087a35]">How We Can Help</span></h2>
             <p className="mt-3 max-w-xl text-sm leading-6 text-black/65">Have a question, partnership idea or volunteering opportunity? Leave us a message and our team can follow up.</p>
             <form onSubmit={handleSubmit} className="mt-7 grid gap-4 sm:grid-cols-2">
-              {sent ? <div className="sm:col-span-2 rounded-2xl bg-[#e9fff0] p-5 text-sm font-bold text-[#087a35]">Thank you. Your message has been sent to the foundation team. We’ll get back to you soon.</div> : null}
               <label className="text-xs font-bold">Your Name<input required name="name" type="text" placeholder="Your full name" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
-              <label className="text-xs font-bold">Email Address<input name="email" type="email" placeholder="you@example.com" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
+              <label className="text-xs font-bold">Email Address<input required name="email" type="email" placeholder="you@example.com" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
               <label className="text-xs font-bold">Phone / WhatsApp<input name="phone" type="tel" placeholder="+256 ..." className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
               <label className="text-xs font-bold">Subject<input required name="subject" type="text" placeholder="How can we help?" className="mt-2 w-full rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
               <label className="text-xs font-bold sm:col-span-2">Message<textarea required name="message" rows={5} placeholder="Write your message..." className="mt-2 w-full resize-none rounded-xl border border-[#d9e8de] bg-[#f9fcfa] px-4 py-3 text-sm outline-none transition focus:border-[#0c8f3e] focus:ring-4 focus:ring-[#13d74c]/10" /></label>
@@ -160,6 +171,19 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      {sent ? (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="contact-success-title">
+          <div className="w-full max-w-md rounded-[2rem] bg-white p-7 text-center shadow-2xl sm:p-9">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#e9fff0] text-[#087a35]">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-8 w-8" aria-hidden="true"><path d="m5 12 4 4L19 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </div>
+            <h2 id="contact-success-title" className="mt-5 text-2xl font-black text-[#063019]">Message Sent Successfully</h2>
+            <p className="mt-3 text-sm leading-6 text-black/60">Thank you for contacting Ssemuyaba Foundation. Your message has been received and our team will get back to you soon.</p>
+            <button type="button" onClick={() => setSent(false)} className="mt-6 rounded-full bg-[#087a35] px-7 py-3 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-1 hover:bg-[#006b2f]">Close</button>
+          </div>
+        </div>
+      ) : null}
 
       <section className="relative overflow-hidden bg-[#006b2f] py-12 text-white sm:py-16">
         <div className="absolute -left-20 top-[-100px] h-72 w-72 rounded-full border-[45px] border-white/5" />
