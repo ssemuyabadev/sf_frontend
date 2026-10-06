@@ -111,7 +111,7 @@ export default function GalleryPage() {
             {galleryItems.map((item: any, index) => (
               <button type="button" key={item.id || item.title} onClick={()=>setSelectedIndex(index)} className={"gallery-tile group block w-full text-left " + (item.featured ? "gallery-tile-featured" : "")} style={{ animationDelay: index * 55 + "ms" }}>
                 <div className="relative h-full min-h-[270px] overflow-hidden rounded-[1.65rem]">
-                  <Image src={item.image} alt={item.title} fill className="object-cover transition duration-700 group-hover:scale-110" />
+                  <img src={item.image} alt={item.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#03160b]/85 via-transparent to-transparent opacity-70 transition duration-500 group-hover:opacity-90" />
                   <div className="absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1.5 text-[9px] font-black uppercase tracking-[.14em] text-[#087a35] shadow-sm">{item.category}</div>
                   <div className="absolute inset-x-0 bottom-0 p-6 text-white">
