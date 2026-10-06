@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { gql, queries } from "../lib/api";
+import { DEFAULT_SITE_STATISTICS, fetchSiteStatistics, formatStatisticValue, getStatistic, type SiteStatistic } from "../lib/statistics";
 import {ArrowRight,FacebookIcon,GraduationIcon,HeartIcon,HeartPulseIcon,InstagramIcon,LeafIcon,LinkedInIcon,MailIcon,MapPinIcon,PhoneIcon,PinIcon,ToolsIcon,UsersIcon,WhatsAppIcon,XSocialIcon,YouTubeIcon} from "../components/icons";
 
 const programs=[
@@ -22,6 +23,7 @@ const updates=[
 export default function Home(){
  const currentYear = new Date().getFullYear();
  const [latestNews,setLatestNews]=useState<typeof updates>(updates);
+ const [siteStatistics,setSiteStatistics]=useState<SiteStatistic[]>(DEFAULT_SITE_STATISTICS);
  const [galleryItems,setGalleryItems]=useState<any[]>([
   {imageUrl:"/images/home-hero.jpg",title:"Bringing hope closer to every community.",category:"Featured Moment"},
   {imageUrl:"/images/food-4.jpg",title:"Community Care",category:"Community Care"},
@@ -48,6 +50,11 @@ export default function Home(){
    const items=(result.gallery||[]).slice(0,5);
    if(items.length)setGalleryItems(items);
   }).catch(()=>{});
+  return()=>{active=false};
+ },[]);
+ useEffect(()=>{
+  let active=true;
+  fetchSiteStatistics().then(items=>{if(active)setSiteStatistics(items);}).catch(()=>{});
   return()=>{active=false};
  },[]);
  return <main>
@@ -82,7 +89,7 @@ export default function Home(){
   </section>
 
   <section className="bg-white/ py-6 sm:py-8"><div className="section-wrap grid grid-cols-2 divide-x divide-[#b8dfc6] md:grid-cols-4">
-   {[[UsersIcon,"1,250+","Children Helped","With education, shelter and care"],[PinIcon,"12+","Districts Reached","Across Uganda"],[UsersIcon,"320+","Widows Supported","With empowerment programs"],[HeartIcon,"5+","Years of Impact","Changing lives, building futures"]].map(([Icon,stat,label,desc],i)=>{const C=Icon as React.ComponentType<{className?:string}>;return <div key={label as string} className={"flex flex-col items-center px-4 py-4 text-center "+(i>1?"border-t md:border-t-0":"")}><C className="mb-2 h-8 w-8 text-[#087a35]"/><div className="text-3xl font-black text-[#087a35] sm:text-4xl">{stat as string}</div><div className="text-sm font-extrabold text-[#05662c] sm:text-base">{label as string}</div><p className="mt-1 text-[11px] text-black/75 sm:text-xs">{desc as string}</p></div>})}
+   {[[UsersIcon,"children_helped","With education, shelter and care"],[PinIcon,"districts_reached","Across Uganda"],[UsersIcon,"widows_supported","With empowerment programs"],[HeartIcon,"years_impact","Changing lives, building futures"]].map(([Icon,key,desc],i)=>{const C=Icon as React.ComponentType<{className?:string}>;const statistic=getStatistic(siteStatistics,key as string);return <div key={key as string} className={"flex flex-col items-center px-4 py-4 text-center "+(i>1?"border-t md:border-t-0":"")}><C className="mb-2 h-8 w-8 text-[#087a35]"/><div className="text-3xl font-black text-[#087a35] sm:text-4xl">{formatStatisticValue(statistic)}</div><div className="text-sm font-extrabold text-[#05662c] sm:text-base">{statistic.label}</div><p className="mt-1 text-[11px] text-black/75 sm:text-xs">{desc as string}</p></div>})}
   </div></section>
 
   <section id="about" className="bg-[#f1fbf5] py-8 sm:py-10"><div className="section-wrap grid gap-8 lg:grid-cols-[1.1fr_2fr_1fr] lg:items-center">
