@@ -77,7 +77,7 @@ export default function GetInvolvedPage() {
     try {
       await submitVolunteer({
         name, email:email || undefined, phone, interest, availability:availability || undefined,
-        message:["Location: "+location,"Preferred involvement: "+involvement,message].filter(Boolean).join("\n\n")
+        message:[location ? "Location: "+location : "", involvement ? "Preferred involvement: "+involvement : "", message].filter(Boolean).join("\n\n") || undefined
       });
       setSubmitted(true); form.reset();
     } catch (error) {
