@@ -1,4 +1,9 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://sfbackend.up.railway.app/graphql";
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
+const API_URL =
+  configuredApiUrl &&
+  !/localhost|127\\.0\\.0\\.1|your-sf-backend/i.test(configuredApiUrl)
+    ? configuredApiUrl
+    : "https://sfbackend.up.railway.app/graphql";
 
 export async function gql<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", cache: "no-store", body: JSON.stringify({ query, variables }) });
