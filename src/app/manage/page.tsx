@@ -257,7 +257,7 @@ export default function ManagePage() {
       const input={title:newsEditor.title.trim(),slug:newsEditor.slug?.trim()||"",category:newsEditor.category?.trim()||"Foundation Update",excerpt:newsEditor.excerpt?.trim()||undefined,body:newsEditor.body.trim(),imageUrl,published:!!newsEditor.published};
       const r=newsEditor.id?await gql<any>(mutations.updateNews,{id:newsEditor.id,input}):await gql<any>(mutations.createNews,{input});
       const item=newsEditor.id?r.updateNews:r.createNews;
-      setNews(items=>newsEditor.id?items.map(x=>x.id===item.id?{...x,date:new Date(item.publishedAt||item.createdAt).toLocaleDateString(),status:item.published?"Published":"Draft",image:item.imageUrl||"/images/home-hero.jpg"}):[{...item,date:new Date(item.publishedAt||item.createdAt).toLocaleDateString(),status:item.published?"Published":"Draft",image:item.imageUrl||"/images/home-hero.jpg"},...items]);
+      setNews(items=>newsEditor.id ? items.map(x=>x.id===item.id ? {...x,date:new Date(item.publishedAt||item.createdAt).toLocaleDateString(),status:item.published?"Published":"Draft",image:item.imageUrl||"/images/home-hero.jpg"} : x) : [{...item,date:new Date(item.publishedAt||item.createdAt).toLocaleDateString(),status:item.published?"Published":"Draft",image:item.imageUrl||"/images/home-hero.jpg"},...items]);
       setNewsEditor(null);setNotice(newsEditor.id?"Story updated.":"Story created.");await loadAdmin();
     } catch(error){setNotice(error instanceof Error?error.message:"Could not save story.");} finally{setNewsSaving(false);}
   }
