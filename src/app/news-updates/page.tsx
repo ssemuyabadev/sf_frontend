@@ -116,7 +116,7 @@ export default function NewsUpdatesPage() {
           <div className="mt-12 grid gap-6 lg:grid-cols-12">
             <button type="button" onClick={()=>setSelectedStory(featuredStory)} className="group block w-full overflow-hidden rounded-[2rem] bg-[#063019] text-left text-white shadow-[0_25px_70px_rgba(3,73,31,.16)] lg:col-span-7">
               <div className="relative h-[330px] overflow-hidden sm:h-[430px]">
-                <Image src={featuredStory.image} alt={featuredStory.title} fill className="object-cover transition duration-700 group-hover:scale-105" />
+                <img src={featuredStory.image} alt={featuredStory.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#03160b] via-[#03160b]/15 to-transparent" />
                 <div className="absolute left-6 top-6 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-[.16em] text-[#087a35]">Featured story</div>
                 <div className="absolute inset-x-0 bottom-0 p-7 sm:p-9">
@@ -131,7 +131,7 @@ export default function NewsUpdatesPage() {
               {storyItems.slice(1, 3).map((story) => (
                 <button type="button" key={story.title} onClick={()=>setSelectedStory(story)} className="group grid w-full overflow-hidden rounded-[1.75rem] border border-black/5 bg-[#f1fbf5] text-left shadow-sm transition duration-500 hover:-translate-y-1 hover:shadow-xl sm:grid-cols-[180px_1fr] lg:grid-cols-[190px_1fr]">
                   <div className="relative min-h-[190px] overflow-hidden">
-                    <Image src={story.image} alt={story.title} fill className="object-cover transition duration-700 group-hover:scale-110" />
+                    <img src={story.image} alt={story.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110" />
                   </div>
                   <div className="p-5">
                     <span className="text-[10px] font-black uppercase tracking-[.15em] text-[#0c8f3e]">{story.category}</span>
@@ -181,7 +181,7 @@ export default function NewsUpdatesPage() {
             {storyItems.slice(3).map((story, index) => (
               <button type="button" key={story.title} onClick={()=>setSelectedStory(story)} className="group block w-full overflow-hidden rounded-[1.75rem] border border-black/5 bg-white text-left shadow-[0_12px_40px_rgba(0,0,0,.06)] transition duration-500 hover:-translate-y-2 hover:shadow-[0_24px_60px_rgba(3,73,31,.13)]">
                 <div className="relative h-56 overflow-hidden">
-                  <Image src={story.image} alt={story.title} fill className="object-cover transition duration-700 group-hover:scale-105" />
+                  <img src={story.image} alt={story.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
                   <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-[.12em] text-[#087a35]">{story.category}</span>
                 </div>
                 <div className="p-6">
