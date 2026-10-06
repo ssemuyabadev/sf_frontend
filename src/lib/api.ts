@@ -1,7 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/graphql";
 
 export async function gql<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
-  const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ query, variables }) });
+  const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", cache: "no-store", body: JSON.stringify({ query, variables }) });
   const payload = await response.json();
   if (!response.ok || payload.errors?.length) throw new Error(payload.errors?.[0]?.message || "Request failed");
   return payload.data as T;
