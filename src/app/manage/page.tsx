@@ -20,6 +20,15 @@ type Section = "dashboard" | "contact" | "messages" | "newsletter" | "volunteers
 type DonationDetail = { label: string; value: string; copy?: string };
 type DonationMethodAdmin = { id: string; key: string; name: string; eyebrow: string; detailsJson: string; note: string; updatedAt?: string };
 
+function getKampalaGreeting() {
+  const hour = Number(new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Kampala", hour: "numeric", hour12: false }).format(new Date()));
+  if (hour >= 5 && hour < 12) return "Good morning";
+  if (hour >= 12 && hour < 18) return "Good afternoon";
+  if (hour >= 18 && hour < 22) return "Good evening";
+  return "Good night";
+}
+
+
 const nav = [
   { id: "dashboard" as Section, label: "Dashboard", icon: "⌂" },
   { id: "contact" as Section, label: "Contact Details", icon: "⌖" },
@@ -118,6 +127,7 @@ export default function ManagePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [section, setSection] = useState<Section>("dashboard");
+  const [greeting, setGreeting] = useState(getKampalaGreeting());
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const [messageSearch, setMessageSearch] = useState("");
@@ -168,6 +178,13 @@ export default function ManagePage() {
 
   useEffect(() => {
     gql(queries.me).then(() => { setAuthenticated(true); return loadAdmin(); }).catch(() => {}).finally(() => setReady(true));
+  }, []);
+
+  useEffect(() => {
+    const updateGreeting = () => setGreeting(getKampalaGreeting());
+    updateGreeting();
+    const interval = window.setInterval(updateGreeting, 60_000);
+    return () => window.clearInterval(interval);
   }, []);
 
   const sectionLabel = useMemo(() => nav.find((item) => item.id === section)?.label || "Dashboard", [section]);
@@ -419,7 +436,7 @@ export default function ManagePage() {
 
           {section === "dashboard" && (
             <>
-              <SectionTitle eyebrow="Overview" title="Good morning, Admin." description="Here’s what is happening across the foundation website today." action={<button onClick={() => setSection("news")} className="manage-primary-btn">Create update <ArrowRight className="h-4 w-4" /></button>} />
+              <SectionTitle eyebrow="Overview" title={`${greeting}, Admin.`} description="Here’s what is happening across the foundation website today." action={<button onClick={() => setSection("news")} className="manage-primary-btn">Create update <ArrowRight className="h-4 w-4" /></button>} />
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
                 {[
                   ["Contact messages", String(stats.messages), `${stats.newMessages} new`, "✉"],
