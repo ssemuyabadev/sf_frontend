@@ -67,8 +67,8 @@ export default function SponsorPage() {
       });
       setForm(initialForm);
       setSubmitted(true);
-    } catch {
-      window.alert("We could not submit your sponsorship enquiry right now. Please try again.");
+    } catch (error) {
+      window.alert(error instanceof Error && error.message ? error.message : "We could not submit your sponsorship enquiry right now. Please try again.");
     }
   }
 
