@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/graphql";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://sfbackend.up.railway.app/graphql";
 
 export async function gql<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", cache: "no-store", body: JSON.stringify({ query, variables }) });
