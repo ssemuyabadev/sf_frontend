@@ -66,6 +66,7 @@ export default function NewsUpdatesPage() {
   const storyItems=liveStories.length?liveStories:stories;
   const featuredStory=storyItems[0];
   return (
+    <>
     <main className="overflow-hidden">
       <section className="relative isolate min-h-[560px] overflow-hidden bg-[#03160b] text-white">
         <Image src="/images/home-hero.jpg" alt="Ssemuyaba Foundation community activity" fill priority className="object-cover opacity-45" />
