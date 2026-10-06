@@ -34,7 +34,6 @@ export default function GalleryPage() {
   useEffect(()=>{gql<any>(queries.publicGallery).then(r=>setLiveGallery(r.gallery.map((x:any)=>({id:x.id,image:x.imageUrl,title:x.title,category:x.category||"Community",description:x.description})))).catch(()=>{});},[]);
   const galleryItems=liveGallery.length?liveGallery:gallery;
   return (
-    <>
     <main className="overflow-hidden">
       <section className="relative isolate min-h-[590px] overflow-hidden bg-[#03160b] text-white">
         <Image src="/images/home-hero.jpg" alt="Ssemuyaba Foundation community" fill priority className="object-cover opacity-55 gallery-hero-image" />
@@ -162,6 +161,5 @@ export default function GalleryPage() {
         onNavigate={(index) => setSelectedIndex(index)}
       />
     )}
-    </>
   );
 }
