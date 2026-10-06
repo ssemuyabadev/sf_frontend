@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { gql, queries } from "../lib/api";
 import { DEFAULT_SITE_STATISTICS, fetchSiteStatistics, formatStatisticValue, getStatistic, type SiteStatistic } from "../lib/statistics";
-import {ArrowRight,FacebookIcon,GraduationIcon,HeartIcon,HeartPulseIcon,InstagramIcon,LeafIcon,LinkedInIcon,MailIcon,MapPinIcon,PhoneIcon,PinIcon,ToolsIcon,UsersIcon,WhatsAppIcon,XSocialIcon,YouTubeIcon} from "../components/icons";\nimport ContentDetailModal, { type GalleryModalItem, type NewsModalItem } from "../components/ContentDetailModal";
+import {ArrowRight,FacebookIcon,GraduationIcon,HeartIcon,HeartPulseIcon,InstagramIcon,LeafIcon,LinkedInIcon,MailIcon,MapPinIcon,PhoneIcon,PinIcon,ToolsIcon,UsersIcon,WhatsAppIcon,XSocialIcon,YouTubeIcon} from "../components/icons";
+import ContentDetailModal, { type GalleryModalItem, type NewsModalItem } from "../components/ContentDetailModal";
 
 const programs=[
  {title:"Education Support",text:"Quality education for a brighter future.",icon:GraduationIcon},
@@ -23,7 +24,9 @@ const updates=[
 export default function Home(){
  const currentYear = new Date().getFullYear();
  const [latestNews,setLatestNews]=useState<any[]>(updates);
- const [siteStatistics,setSiteStatistics]=useState<SiteStatistic[]>(DEFAULT_SITE_STATISTICS);\n const [selectedGalleryIndex,setSelectedGalleryIndex]=useState<number | null>(null);\n const [selectedNews,setSelectedNews]=useState<NewsModalItem | null>(null);
+ const [siteStatistics,setSiteStatistics]=useState<SiteStatistic[]>(DEFAULT_SITE_STATISTICS);
+ const [selectedGalleryIndex,setSelectedGalleryIndex]=useState<number | null>(null);
+ const [selectedNews,setSelectedNews]=useState<NewsModalItem | null>(null);
  const [galleryItems,setGalleryItems]=useState<any[]>([
   {imageUrl:"/images/home-hero.jpg",title:"Bringing hope closer to every community.",category:"Featured Moment"},
   {imageUrl:"/images/food-4.jpg",title:"Community Care",category:"Community Care"},
@@ -144,28 +147,31 @@ export default function Home(){
        <span className="inline-flex rounded-full bg-[#13d74c] px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-[#063019]">{galleryItems[0]?.category || "Featured Moment"}</span>
        <h3 className="mt-2 text-xl font-black sm:text-2xl">{galleryItems[0]?.title || "Bringing hope closer to every community."}</h3>
       </div>
-     </div>
-     <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
-      <Image src={galleryItems[1]?.imageUrl || "/images/food-4.jpg"} alt={galleryItems[1]?.title || "Community food outreach"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[1]?.category || "Community Care"}</span>
-     </div>
-     <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
-      <Image src={galleryItems[2]?.imageUrl || "/images/donation.jpg"} alt={galleryItems[2]?.title || "Widow empowerment support"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[2]?.category || "Widow Support"}</span>
-     </div>
-     <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
-      <Image src={galleryItems[3]?.imageUrl || "/images/health-1.jpg"} alt={galleryItems[3]?.title || "Healthcare support in the community"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[3]?.category || "Healthcare"}</span>
-     </div>
-     <div className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white shadow-lg ring-1 ring-black/5">
-      <Image src={galleryItems[4]?.imageUrl || "/images/preaching.jpg"} alt={galleryItems[4]?.title || "Community preaching and outreach"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[4]?.category || "Faith &amp; Outreach"}</span>
-     </div>
+     </button>
+     <button type="button" onClick={()=>setSelectedGalleryIndex(1)} className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white text-left shadow-lg ring-1 ring-black/5">
+      <Image src={galleryItems[1]?.imageUrl || "/images/food-4.jpg"} alt={galleryItems[1]?.title || "Ssemuyaba Foundation community moment"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[1]?.category || "Community"}</span>
+     </button>
+     <button type="button" onClick={()=>setSelectedGalleryIndex(2)} className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white text-left shadow-lg ring-1 ring-black/5">
+      <Image src={galleryItems[2]?.imageUrl || "/images/donation.jpg"} alt={galleryItems[2]?.title || "Ssemuyaba Foundation community moment"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[2]?.category || "Community"}</span>
+     </button>
+     <button type="button" onClick={()=>setSelectedGalleryIndex(3)} className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white text-left shadow-lg ring-1 ring-black/5">
+      <Image src={galleryItems[3]?.imageUrl || "/images/health-1.jpg"} alt={galleryItems[3]?.title || "Ssemuyaba Foundation community moment"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[3]?.category || "Community"}</span>
+     </button>
+     <button type="button" onClick={()=>setSelectedGalleryIndex(4)} className="group relative min-h-[190px] overflow-hidden rounded-[1.5rem] bg-white text-left shadow-lg ring-1 ring-black/5">
+      <Image src={galleryItems[4]?.imageUrl || "/images/preaching.jpg"} alt={galleryItems[4]?.title || "Ssemuyaba Foundation community moment"} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"/><span className="absolute bottom-3 left-3 text-xs font-extrabold text-white">{galleryItems[4]?.category || "Community"}</span>
+     </button>
     </div>
    </div>
   </section>
 
   <section id="news" className="bg-white py-9 sm:py-11"><div className="section-wrap"><div className="mb-5 flex items-end justify-between gap-4"><div><h2 className="border-l-2 border-[#ff1d2d] pl-3 text-2xl font-black sm:text-3xl">Latest <span className="text-[#087a35]">Updates</span></h2><p className="mt-1 text-xs sm:text-sm">Stories, events and impact from our work.</p></div><a href="#news" className="hidden items-center gap-2 rounded-full bg-[#0c8f3e] px-5 py-2 text-xs font-bold text-white sm:flex">View All News <ArrowRight className="h-4 w-4"/></a></div>
    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{latestNews.map((item,index)=><button type="button" key={item.title} onClick={()=>setSelectedNews({id:item.id,image:item.image,date:`${item.date} ${item.month}`,title:item.title,excerpt:item.text,body:item.body,category:item.category})} className="overflow-hidden rounded-lg bg-white text-left shadow-soft ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-lg"><div className="relative h-24 overflow-hidden"><Image src={item.image} alt="" fill className="object-cover"/><div className="absolute bottom-0 left-3 grid min-w-11 place-items-center rounded-t-md bg-[#0c8f3e] px-2 py-1 text-white"><span className="text-sm font-black leading-none">{item.date}</span><span className="text-[9px] font-bold">{item.month}</span></div></div><div className="p-4"><h3 className="text-sm font-black leading-tight">{item.title}</h3><p className="mt-2 line-clamp-2 text-xs leading-4 text-black/65">{item.text}</p><span className="mt-3 inline-flex items-center gap-1 text-xs font-extrabold text-[#087a35]">Read More <ArrowRight className="h-3 w-3"/></span></div></button>)}</div>
-  </div></section>\n  {selectedGalleryIndex !== null && galleryItems.length > 0 && <ContentDetailModal type="gallery" item={{id:galleryItems[selectedGalleryIndex]?.id,image:galleryItems[selectedGalleryIndex]?.imageUrl,title:galleryItems[selectedGalleryIndex]?.title,category:galleryItems[selectedGalleryIndex]?.category,description:galleryItems[selectedGalleryIndex]?.description}} items={galleryItems.map((x:any)=>({id:x.id,image:x.imageUrl||"/images/home-hero.jpg",title:x.title,category:x.category,description:x.description})) as GalleryModalItem[]} onClose={()=>setSelectedGalleryIndex(null)} onNavigate={setSelectedGalleryIndex}/>}\n  {selectedNews && <ContentDetailModal type="news" item={selectedNews} onClose={()=>setSelectedNews(null)}/>}\n </main>;
+  </div></section>
+  {selectedGalleryIndex !== null && galleryItems.length > 0 && <ContentDetailModal type="gallery" item={{id:galleryItems[selectedGalleryIndex]?.id,image:galleryItems[selectedGalleryIndex]?.imageUrl,title:galleryItems[selectedGalleryIndex]?.title,category:galleryItems[selectedGalleryIndex]?.category,description:galleryItems[selectedGalleryIndex]?.description}} items={galleryItems.map((x:any)=>({id:x.id,image:x.imageUrl||"/images/home-hero.jpg",title:x.title,category:x.category,description:x.description})) as GalleryModalItem[]} onClose={()=>setSelectedGalleryIndex(null)} onNavigate={setSelectedGalleryIndex}/>}
+  {selectedNews && <ContentDetailModal type="news" item={selectedNews} onClose={()=>setSelectedNews(null)}/>}
+ </main>;
 }
