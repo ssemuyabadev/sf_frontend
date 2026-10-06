@@ -119,7 +119,7 @@ export default function GalleryPage() {
                     </div>
                   </div>
                 </div>
-              </article>
+              </button>
             ))}
           </div>
         </div>
