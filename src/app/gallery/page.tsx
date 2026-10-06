@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, HeartIcon } from "@/components/icons";\nimport ContentDetailModal, { type GalleryModalItem } from "@/components/ContentDetailModal";
+import { ArrowRight, HeartIcon } from "@/components/icons";
+import ContentDetailModal, { type GalleryModalItem } from "@/components/ContentDetailModal";
 import { gql, queries } from "../../lib/api";
 
 const gallery = [
@@ -28,7 +29,8 @@ const moments = [
 ];
 
 export default function GalleryPage() {
-  const [liveGallery,setLiveGallery]=useState<any[]>([]);\n  const [selectedIndex,setSelectedIndex]=useState<number | null>(null);
+  const [liveGallery,setLiveGallery]=useState<any[]>([]);
+  const [selectedIndex,setSelectedIndex]=useState<number | null>(null);
   useEffect(()=>{gql<any>(queries.publicGallery).then(r=>setLiveGallery(r.gallery.map((x:any)=>({id:x.id,image:x.imageUrl,title:x.title,category:x.category||"Community",description:x.description})))).catch(()=>{});},[]);
   const galleryItems=liveGallery.length?liveGallery:gallery;
   return (
