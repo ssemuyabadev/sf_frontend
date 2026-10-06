@@ -221,8 +221,6 @@ export default function NewsUpdatesPage() {
           </div>
         </div>
       </section>
-    </main>
-
     {selectedStory && (
       <ContentDetailModal
         type="news"
@@ -230,5 +228,8 @@ export default function NewsUpdatesPage() {
         onClose={() => setSelectedStory(null)}
       />
     )}
+
+    </main>
+
   );
 }
