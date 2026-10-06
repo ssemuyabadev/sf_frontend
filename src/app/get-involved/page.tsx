@@ -64,15 +64,25 @@ export default function GetInvolvedPage() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form=event.currentTarget; const data=new FormData(form);
+    const form=event.currentTarget;
+    const getFieldValue=(fieldName:string)=>String((form.elements.namedItem(fieldName) as HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement|null)?.value ?? "").trim();
+    const name=getFieldValue("name");
+    const email=getFieldValue("email");
+    const phone=getFieldValue("phone");
+    const location=getFieldValue("location");
+    const interest=getFieldValue("interest");
+    const availability=getFieldValue("availability");
+    const involvement=getFieldValue("involvement");
+    const message=getFieldValue("message");
     try {
       await submitVolunteer({
-        name:String(data.get("name")), email:String(data.get("email")||"") || undefined, phone:String(data.get("phone")),
-        interest:String(data.get("interest")), availability:String(data.get("availability")||""),
-        message:[`Location: ${data.get("location")||""}`,`Preferred involvement: ${data.get("involvement")||""}`,String(data.get("message")||"")].join("\n\n")
+        name, email:email || undefined, phone, interest, availability:availability || undefined,
+        message:["Location: "+location,"Preferred involvement: "+involvement,message].filter(Boolean).join("\n\n")
       });
       setSubmitted(true); form.reset();
-    } catch { window.alert("We could not submit your application right now. Please try again."); }
+    } catch (error) {
+      window.alert(error instanceof Error && error.message ? error.message : "We could not submit your application right now. Please try again.");
+    }
   }
 
   return (
