@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, HeartIcon, UsersIcon, GraduationIcon, HeartPulseIcon, LeafIcon } from "@/components/icons";
 import { useEffect, useState } from "react";
-import { gql, queries } from "../../lib/api";
+import { gql, queries } from "../../lib/api";\nimport ContentDetailModal, { type NewsModalItem } from "@/components/ContentDetailModal";
 
 const stories = [
   {
@@ -59,8 +59,8 @@ const focusAreas = [
 ];
 
 export default function NewsUpdatesPage() {
-  const [liveStories,setLiveStories]=useState<any[]>([]);
-  useEffect(()=>{gql<any>(queries.publicNews).then(r=>setLiveStories(r.news.map((x:any)=>({category:x.category||"Foundation Update",date:x.publishedAt?new Date(x.publishedAt).toLocaleDateString():"Recent",title:x.title,excerpt:x.excerpt||x.body.slice(0,150),image:x.imageUrl||"/images/home-hero.jpg",slug:x.slug})))).catch(()=>{});},[]);
+  const [liveStories,setLiveStories]=useState<any[]>([]);\n  const [selectedStory,setSelectedStory]=useState<NewsModalItem | null>(null);
+  useEffect(()=>{gql<any>(queries.publicNews).then(r=>setLiveStories(r.news.map((x:any)=>({category:x.category||"Foundation Update",date:x.publishedAt?new Date(x.publishedAt).toLocaleDateString():"Recent",title:x.title,excerpt:x.excerpt||x.body?.slice(0,150),body:x.body||"",image:x.imageUrl||"/images/home-hero.jpg",slug:x.slug,id:x.id})))).catch(()=>{});},[]);
   const storyItems=liveStories.length?liveStories:stories;
   const featuredStory=storyItems[0];
   return (
@@ -112,7 +112,7 @@ export default function NewsUpdatesPage() {
           </div>
 
           <div className="mt-12 grid gap-6 lg:grid-cols-12">
-            <article className="group overflow-hidden rounded-[2rem] bg-[#063019] text-white shadow-[0_25px_70px_rgba(3,73,31,.16)] lg:col-span-7">
+            <button type="button" onClick={()=>setSelectedStory(featuredStory)} className="group block w-full overflow-hidden rounded-[2rem] bg-[#063019] text-left text-white shadow-[0_25px_70px_rgba(3,73,31,.16)] lg:col-span-7">
               <div className="relative h-[330px] overflow-hidden sm:h-[430px]">
                 <Image src={featuredStory.image} alt={featuredStory.title} fill className="object-cover transition duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#03160b] via-[#03160b]/15 to-transparent" />
@@ -127,7 +127,7 @@ export default function NewsUpdatesPage() {
 
             <div className="grid gap-6 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
               {storyItems.slice(1, 3).map((story) => (
-                <article key={story.title} className="group grid overflow-hidden rounded-[1.75rem] border border-black/5 bg-[#f1fbf5] shadow-sm transition duration-500 hover:-translate-y-1 hover:shadow-xl sm:grid-cols-[180px_1fr] lg:grid-cols-[190px_1fr]">
+                <button type="button" key={story.title} onClick={()=>setSelectedStory(story)} className="group grid w-full overflow-hidden rounded-[1.75rem] border border-black/5 bg-[#f1fbf5] text-left shadow-sm transition duration-500 hover:-translate-y-1 hover:shadow-xl sm:grid-cols-[180px_1fr] lg:grid-cols-[190px_1fr]">
                   <div className="relative min-h-[190px] overflow-hidden">
                     <Image src={story.image} alt={story.title} fill className="object-cover transition duration-700 group-hover:scale-110" />
                   </div>
@@ -177,7 +177,7 @@ export default function NewsUpdatesPage() {
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {storyItems.slice(3).map((story, index) => (
-              <article key={story.title} className="group overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_12px_40px_rgba(0,0,0,.06)] transition duration-500 hover:-translate-y-2 hover:shadow-[0_24px_60px_rgba(3,73,31,.13)]">
+              <button type="button" key={story.title} onClick={()=>setSelectedStory(story)} className="group block w-full overflow-hidden rounded-[1.75rem] border border-black/5 bg-white text-left shadow-[0_12px_40px_rgba(0,0,0,.06)] transition duration-500 hover:-translate-y-2 hover:shadow-[0_24px_60px_rgba(3,73,31,.13)]">
                 <div className="relative h-56 overflow-hidden">
                   <Image src={story.image} alt={story.title} fill className="object-cover transition duration-700 group-hover:scale-105" />
                   <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-[.12em] text-[#087a35]">{story.category}</span>
