@@ -28,12 +28,12 @@ export default function ContactPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError(""); setSending(true);
     const form = event.currentTarget;
-    const data=new FormData(form);
-    const name=String(data.get("name") ?? "").trim();
-    const email=String(data.get("email") ?? "").trim();
-    const phone=String(data.get("phone") ?? "").trim();
-    const subject=String(data.get("subject") ?? "").trim();
-    const message=String(data.get("message") ?? "").trim();
+    const getFieldValue=(fieldName:string)=>String((form.elements.namedItem(fieldName) as HTMLInputElement|HTMLTextAreaElement|null)?.value ?? "").trim();
+    const name=getFieldValue("name");
+    const email=getFieldValue("email");
+    const phone=getFieldValue("phone");
+    const subject=getFieldValue("subject");
+    const message=getFieldValue("message");
     if (!name || !email || !subject || !message) {
       setError("Please complete your name, email address, subject and message.");
       setSending(false);
