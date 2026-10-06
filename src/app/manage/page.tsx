@@ -205,9 +205,11 @@ export default function ManagePage() {
     e.preventDefault();
     try {
       const r=await gql<any>(mutations.updateSettings,{input:{phone:contact.phone1,secondaryPhone:contact.phone2||null,email:contact.email,location:contact.location,facebook:contact.facebook||null,instagram:contact.instagram||null,x:contact.x||null,linkedin:contact.linkedin||null,youtube:contact.youtube||null,whatsapp:contact.whatsapp||null}});
-      const s=r.updateSiteSettings;
+      const saved=r.updateSiteSettings;
+      const fresh=await gql<any>(queries.settings);
+      const s=fresh.siteSettings;
       setContact({phone1:s.phone,phone2:s.secondaryPhone||"",email:s.email,location:s.location,facebook:s.facebook||"",instagram:s.instagram||"",x:s.x||"",linkedin:s.linkedin||"",youtube:s.youtube||"",whatsapp:s.whatsapp||""});
-      setNotice("Contact details saved to the live database.");
+      setNotice(saved?.id ? "Contact details saved to the live database." : "Contact details saved.");
     } catch(error) { setNotice(error instanceof Error ? error.message : "Could not save contact details."); }
   }
 
