@@ -123,7 +123,7 @@ export default function NewsUpdatesPage() {
                   <p className="mt-3 max-w-xl text-sm leading-6 text-white/72">{featuredStory.excerpt}</p>
                 </div>
               </div>
-            </article>
+            </button>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
               {storyItems.slice(1, 3).map((story) => (
@@ -137,7 +137,7 @@ export default function NewsUpdatesPage() {
                     <p className="mt-2 text-xs leading-5 text-black/55">{story.excerpt}</p>
                     <span className="mt-4 inline-flex items-center gap-1 text-xs font-extrabold text-[#087a35]">Read story <ArrowRight className="h-3.5 w-3.5" /></span>
                   </div>
-                </article>
+                </button>
               ))}
             </div>
           </div>
@@ -191,7 +191,7 @@ export default function NewsUpdatesPage() {
                   <p className="mt-3 text-sm leading-6 text-black/55">{story.excerpt}</p>
                   <div className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-[#087a35]">Discover the impact <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></div>
                 </div>
-              </article>
+              </button>
             ))}
           </div>
         </div>
