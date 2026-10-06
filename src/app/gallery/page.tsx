@@ -152,5 +152,14 @@ export default function GalleryPage() {
         </div>
       </section>
     </main>
+    {selectedIndex !== null && galleryItems[selectedIndex] && (
+      <ContentDetailModal
+        type="gallery"
+        item={galleryItems[selectedIndex]}
+        items={galleryItems}
+        onClose={() => setSelectedIndex(null)}
+        onNavigate={(index) => setSelectedIndex(index)}
+      />
+    )}
   );
 }
