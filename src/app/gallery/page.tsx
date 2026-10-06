@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, HeartIcon } from "@/components/icons";
+import { ArrowRight, HeartIcon } from "@/components/icons";\nimport ContentDetailModal, { type GalleryModalItem } from "@/components/ContentDetailModal";
 import { gql, queries } from "../../lib/api";
 
 const gallery = [
@@ -28,8 +28,8 @@ const moments = [
 ];
 
 export default function GalleryPage() {
-  const [liveGallery,setLiveGallery]=useState<any[]>([]);
-  useEffect(()=>{gql<any>(queries.publicGallery).then(r=>setLiveGallery(r.gallery.map((x:any)=>({image:x.imageUrl,title:x.title,category:x.category||"Community"})))).catch(()=>{});},[]);
+  const [liveGallery,setLiveGallery]=useState<any[]>([]);\n  const [selectedIndex,setSelectedIndex]=useState<number | null>(null);
+  useEffect(()=>{gql<any>(queries.publicGallery).then(r=>setLiveGallery(r.gallery.map((x:any)=>({id:x.id,image:x.imageUrl,title:x.title,category:x.category||"Community",description:x.description})))).catch(()=>{});},[]);
   const galleryItems=liveGallery.length?liveGallery:gallery;
   return (
     <main className="overflow-hidden">
@@ -107,7 +107,7 @@ export default function GalleryPage() {
 
           <div className="gallery-masonry mt-12">
             {galleryItems.map((item: any, index) => (
-              <article key={item.title} className={"gallery-tile group " + (item.featured ? "gallery-tile-featured" : "")} style={{ animationDelay: index * 55 + "ms" }}>
+              <button type="button" key={item.id || item.title} onClick={()=>setSelectedIndex(index)} className={"gallery-tile group block w-full text-left " + (item.featured ? "gallery-tile-featured" : "")} style={{ animationDelay: index * 55 + "ms" }}>
                 <div className="relative h-full min-h-[270px] overflow-hidden rounded-[1.65rem]">
                   <Image src={item.image} alt={item.title} fill className="object-cover transition duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#03160b]/85 via-transparent to-transparent opacity-70 transition duration-500 group-hover:opacity-90" />
