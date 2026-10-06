@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, HeartIcon, UsersIcon, GraduationIcon, HeartPulseIcon, LeafIcon } from "@/components/icons";
 import { useEffect, useState } from "react";
-import { gql, queries } from "../../lib/api";\nimport ContentDetailModal, { type NewsModalItem } from "@/components/ContentDetailModal";
+import { gql, queries } from "../../lib/api";
+import ContentDetailModal, { type NewsModalItem } from "@/components/ContentDetailModal";
 
 const stories = [
   {
@@ -59,7 +60,8 @@ const focusAreas = [
 ];
 
 export default function NewsUpdatesPage() {
-  const [liveStories,setLiveStories]=useState<any[]>([]);\n  const [selectedStory,setSelectedStory]=useState<NewsModalItem | null>(null);
+  const [liveStories,setLiveStories]=useState<any[]>([]);
+  const [selectedStory,setSelectedStory]=useState<NewsModalItem | null>(null);
   useEffect(()=>{gql<any>(queries.publicNews).then(r=>setLiveStories(r.news.map((x:any)=>({category:x.category||"Foundation Update",date:x.publishedAt?new Date(x.publishedAt).toLocaleDateString():"Recent",title:x.title,excerpt:x.excerpt||x.body?.slice(0,150),body:x.body||"",image:x.imageUrl||"/images/home-hero.jpg",slug:x.slug,id:x.id})))).catch(()=>{});},[]);
   const storyItems=liveStories.length?liveStories:stories;
   const featuredStory=storyItems[0];
