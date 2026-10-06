@@ -101,17 +101,17 @@ export default function ContentDetailModal(props: Props) {
               </div>
             )}
 
-            {isGallery && (
+            {galleryProps && (
               <div className="mt-7 border-t border-black/5 pt-5">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <span className="text-[10px] font-black uppercase tracking-[.15em] text-black/40">Browse gallery</span>
                   <div className="flex gap-2">
-                    <button type="button" onClick={() => props.onNavigate((props.items.indexOf(props.item) - 1 + props.items.length) % props.items.length)} className="grid h-9 w-9 place-items-center rounded-full border border-black/10 text-[#087a35] transition hover:bg-[#f1fbf5]" aria-label="Previous gallery item">←</button>
-                    <button type="button" onClick={() => props.onNavigate((props.items.indexOf(props.item) + 1) % props.items.length)} className="grid h-9 w-9 place-items-center rounded-full bg-[#0c8f3e] text-white transition hover:bg-[#087a35]" aria-label="Next gallery item"><ArrowRight className="h-4 w-4" /></button>
+                    <button type="button" onClick={() => galleryProps.onNavigate((galleryProps.items.indexOf(galleryProps.item) - 1 + galleryProps.items.length) % galleryProps.items.length)} className="grid h-9 w-9 place-items-center rounded-full border border-black/10 text-[#087a35] transition hover:bg-[#f1fbf5]" aria-label="Previous gallery item">←</button>
+                    <button type="button" onClick={() => galleryProps.onNavigate((galleryProps.items.indexOf(galleryProps.item) + 1) % galleryProps.items.length)} className="grid h-9 w-9 place-items-center rounded-full bg-[#0c8f3e] text-white transition hover:bg-[#087a35]" aria-label="Next gallery item"><ArrowRight className="h-4 w-4" /></button>
                   </div>
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-2">
-                  {props.items.map((galleryItem, index) => (
+                  {galleryProps.items.map((galleryItem, index) => (
                     <button
                       key={galleryItem.id || galleryItem.title + index}
                       type="button"
