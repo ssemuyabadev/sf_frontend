@@ -11,6 +11,7 @@ import {
   MenuIcon,
   PhoneIcon,
   UsersIcon,
+  UserIcon,
   XIcon,
 } from "../../components/icons";
 import { gql, mutations, queries } from "../../lib/api";
